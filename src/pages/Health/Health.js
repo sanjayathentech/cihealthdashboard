@@ -42,8 +42,13 @@ function Health() {
     }, [])
 
     const getResources = async () => {
+        const config = {
+            headers: {
+                Accept: 'application/json'
+            }
+        };
         try {
-            let res = await axios.get("https://zaacthealthcheck.azurewebsites.net/a10f46b9-0853-4b30-99bc-73c642177ec5/Resources")
+            let res = await axios.get("https://zaacthealthcheck.azurewebsites.net/a10f46b9-0853-4b30-99bc-73c642177ec5/Resources", config)
             console.log(res)
         }
         catch (error) {
