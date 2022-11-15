@@ -35,7 +35,7 @@ function Health() {
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
             <Toolbar />
             <Box className="tableHeaderContainer">
-                <Grid container rowSpacing={0} columnSpacing={2} >
+                <Grid container rowSpacing={0} columnSpacing={2}>
                     <Grid item xs={3}><span className="tableHeader">Service Name</span></Grid>
                     <Grid item xs={6}><span className="tableHeader">Friendly Name</span></Grid>
                     <Grid item xs={3}><span className="tableHeader">Status Overview</span></Grid>
@@ -57,7 +57,7 @@ function Health() {
                     </Box>
                 ))}
             </Box>
-        </Box >
+        </Box>
     )
 }
 

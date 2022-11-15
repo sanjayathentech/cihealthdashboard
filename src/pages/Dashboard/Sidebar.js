@@ -14,6 +14,7 @@ import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { PageRoutes } from '../../layouts/pageRoutes';
 
 import "./Dashboard.css";
+import UserProfile from './UserProfile';
 
 const drawerWidth = 240;
 
@@ -22,11 +23,14 @@ export default function Sidebar({ Children }) {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar>
-          <Typography variant="h6" noWrap component="div">
-            CI Health Dashboard
-          </Typography>
-        </Toolbar>
+        <Box className="appBar_userprofile">
+          <Toolbar>
+            <Typography variant="h6" noWrap component="div">
+              CI Health Dashboard
+            </Typography>
+          </Toolbar>
+          <UserProfile />
+        </Box>
       </AppBar>
       <Drawer
         variant="permanent"
