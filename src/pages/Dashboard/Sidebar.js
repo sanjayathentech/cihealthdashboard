@@ -22,9 +22,9 @@ export default function Sidebar({ Children }) {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, }} >
         <Box className="appBar_userprofile">
-          <Toolbar>
+          <Toolbar sx={{ minHeight: "50px" }}>
             <Typography variant="h6" noWrap component="div">
               CI Health Dashboard
             </Typography>

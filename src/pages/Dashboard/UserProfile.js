@@ -1,7 +1,9 @@
 
 import React, { useState } from "react";
 
-import { Menu, MenuItem, Button, Avatar, Box } from "@mui/material";
+import { Menu, MenuItem, Button, Avatar, Box, ListItemIcon } from "@mui/material";
+import Settings from '@mui/icons-material/Settings';
+import Logout from '@mui/icons-material/Logout';
 
 
 function UserProfile() {
@@ -28,10 +30,19 @@ function UserProfile() {
                 open={open}
                 onClose={handleClose}
             >
-                <Box sx={{ width: '250px' }}>
-                    <MenuItem>Profile</MenuItem>
-                    <MenuItem>Reset Password</MenuItem>
-                    <MenuItem>Settings</MenuItem>
+                <Box sx={{ width: '200px' }}>
+                    <MenuItem>
+                        <ListItemIcon>
+                            <Settings fontSize="small" />
+                        </ListItemIcon>
+                        Settings
+                    </MenuItem>
+                    <MenuItem>
+                        <ListItemIcon>
+                            <Logout fontSize="small" />
+                        </ListItemIcon>
+                        Logout
+                    </MenuItem>
                 </Box>
             </Menu>
         </Box>
