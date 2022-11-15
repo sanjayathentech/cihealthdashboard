@@ -1,0 +1,36 @@
+.circleRed {
+    height: 15px;
+    width: 15px;
+    background-color: #FF0000;
+    border-radius: 50%;
+}
+
+.circleGreen {
+    height: 15px;
+    width: 15px;
+    background-color: #00FF00;
+    border-radius: 50%;
+}
+
+.circleAmber {
+    height: 15px;
+    width: 15px;
+    background-color: #FFBF00;
+    border-radius: 50%;
+}
+
+.tableRow {
+    padding: 10px 10px 10px 0;
+    border-top: solid 1px #E8E8E8;
+    font-size: 12px;
+}
+
+.tableHeaderContainer {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.tableRow:hover {
+    background: aliceblue;
+}
