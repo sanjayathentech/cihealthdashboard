@@ -2,8 +2,8 @@ const geturl = window.location.origin
 
 export const msalConfig = {
     auth: {
-        clientId: "d37c5ba1-bce3-4fc1-a233-cef861feda29",
-        authority: "https://login.microsoft.com/cb4a12d1-e1d9-4cef-ae5d-91705fa99a50",
+        clientId: "19d3f59f-791a-48af-bfd1-5f5181901f27",
+        authority: "https://login.microsoft.com/5fd4f69a-b02a-42d5-aea1-65211293d688",
         redirectUri: `${geturl}/login`,
         postLogoutRedirectUri: "",
     },

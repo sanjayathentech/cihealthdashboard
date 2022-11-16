@@ -85,7 +85,7 @@ function Login() {
             instance.acquireTokenSilent(request).then((response) => {
                 if (response) {
                     setAccessToken(response.accessToken);
-                    navigate('/login')
+                    navigate('/health')
                 }
             }).catch((e) => {
                 instance.acquireTokenPopup(request).then((response) => {

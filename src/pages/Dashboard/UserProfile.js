@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { Menu, MenuItem, Button, Avatar, Box, ListItemIcon } from "@mui/material";
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
+import PersonIcon from '@mui/icons-material/Person';
+
 
 
 function UserProfile() {
@@ -17,27 +19,31 @@ function UserProfile() {
         setAnchorEl(null);
     };
 
+    const logOut = () => {
+        localStorage.clear()
+        sessionStorage.clear()
+        window.location.href="/login"
+    }
 
     return (
         <Box className="Profile">
-            <Avatar
-                id="basic-button"
-                onClick={handleClick}
-                sx={{ width: '32px', height: '32px' }}
-            />
+            <PersonIcon onClick={handleClick}
+                sx={{ width: '28px', height: '28px' }}
+                className="pointer" />
+            
             <Menu
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handleClose}
             >
                 <Box sx={{ width: '200px' }}>
-                    <MenuItem>
+                    <MenuItem className="pointer">
                         <ListItemIcon>
                             <Settings fontSize="small" />
                         </ListItemIcon>
                         Settings
                     </MenuItem>
-                    <MenuItem>
+                    <MenuItem className="pointer" onClick={logOut}>
                         <ListItemIcon>
                             <Logout fontSize="small" />
                         </ListItemIcon>

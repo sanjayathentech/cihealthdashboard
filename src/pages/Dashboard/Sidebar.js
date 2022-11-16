@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Grid, Stack } from '@mui/material';
+import { Avatar, Box } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import AppBar from '@mui/material/AppBar';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,10 +13,12 @@ import ListItemText from '@mui/material/ListItemText';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { PageRoutes } from '../../layouts/pageRoutes';
 
+
+
 import "./Dashboard.css";
 import UserProfile from './UserProfile';
 
-const drawerWidth = 240;
+const drawerWidth = 170;
 
 export default function Sidebar({ Children }) {
   return (
@@ -24,8 +26,9 @@ export default function Sidebar({ Children }) {
       <CssBaseline />
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, }} >
         <Box className="appBar_userprofile">
-          <Toolbar sx={{ minHeight: "50px" }}>
-            <Typography variant="h6" noWrap component="div">
+          <Toolbar>
+            <Avatar src="https://pbs.twimg.com/profile_images/1057293119090233344/EEs06nhL_400x400.jpg" sx={{width:'35px',height:'35px'}}/> &emsp;
+            <Typography variant="body" noWrap component="div">
               CI Health Dashboard
             </Typography>
           </Toolbar>
@@ -45,10 +48,8 @@ export default function Sidebar({ Children }) {
           <List>
             <ListItem disablePadding>
               <ListItemButton >
-                <ListItemIcon>
-                  {<LocalHospitalIcon />}
-                </ListItemIcon>
-                <ListItemText primary="Health" />
+                  {<LocalHospitalIcon sx={{color:'green'}}/>}
+                <ListItemText primary="Health Status" />
               </ListItemButton>
             </ListItem>
           </List>

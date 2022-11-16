@@ -27,10 +27,30 @@
 
 .tableHeaderContainer {
     margin-bottom: 10px;
-    font-size: 18px;
+    font-size: 15px;
+    font-family: Inter;
     font-weight: 600;
 }
 
+.data{
+    font-size: 12px;
+    word-wrap: break-word;
+    white-space: nowrap; 
+    width: 90%; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+.health_data{
+    word-wrap: break-word;
+}
+
 .tableRow:hover {
-    background: aliceblue;
+    background: #f5f5f5;
+    cursor: pointer;
+}
+
+
+.loader_spacing{
+    margin: 20px 0px 20px 0px;
 }

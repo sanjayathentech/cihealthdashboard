@@ -1,66 +1,60 @@
-import React, { useEffect } from 'react'
-import { Box, Grid, Stack } from '@mui/material';
+import React, { useEffect,useState } from 'react'
+import { Box, Button, Grid, Skeleton, Stack, Tooltip } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import './Health.css'
+import { getAll, getApi } from '../../api/apiMethods/apiMethods';
+import { endPoints } from '../../api/apiEndpoints/endPoints';
+import { parentUrl } from '../../api/parentUrl/parentUrl';
 import axios from 'axios';
+import { statusIndicator } from '../../utils/status/statusIndicator';
 
-const serviceHealths = [
-    {
-        serviceName: "zaactcoreinteract",
-        friendlyName: "Zaact Core Interact",
-        statusOverview: "Healthy",
-        status: "green"
-    },
-    {
-        serviceName: "Athencoreinteract",
-        friendlyName: "Athen Core Interact",
-        statusOverview: "Warning",
-        status: "amber"
-    },
-    {
-        serviceName: "Altigencoreinteract",
-        friendlyName: "Altigen Core Interact",
-        statusOverview: "Danger",
-        status: "red"
-    }
-]
-
-let colorClass = {
-    red: "circleRed",
-    amber: "circleAmber",
-    green: "circleGreen"
+let skeletonStyle = {
+    height:'20px'
 }
 
-
-
 function Health() {
-
+ 
     useEffect(() => {
+        getResources();
+    },[])
 
-        getResources()
-
-    }, [])
+    const [health,setHealth] = useState([])
+    const [loader,setLoader] = useState(false)
 
     const getResources = async () => {
-        const config = {
-            headers: {
-                Accept: 'application/json'
-            }
-        };
-        try {
-            let res = await axios.get("https://zaacthealthcheck.azurewebsites.net/a10f46b9-0853-4b30-99bc-73c642177ec5/Resources", config)
-            console.log(res)
+        setLoader(true)
+        const api1 = `${parentUrl.url}${endPoints.generateToken}`;
+        const api2 = `${parentUrl.url}${endPoints.getResourceId}`
+      axios.all([axios(api1),axios(api2)
+      ]).then(res => {
+        localStorage.setItem('token',res[0].data);
+        for(let i = 0; i < res[1].data.length; i++){
+            console.log(res[1].data[i].friendlyName)
+            axios(`https://management.azure.com${res[1].data[i].resourceName}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then(response => {
+            setHealth(previousState => [...previousState,{...response, friendlyname : res[1].data[i].friendlyName }])
+            setLoader(false)
+            }).catch(e => {
+                console.log(e)
+            })  
         }
-        catch (error) {
-            console.log(error)
-        }
-
+      }) 
     }
+
+    console.log(health);
+
+    const dummyArray = [1,2,3,4,5]
+  
+
+
+
     return (
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <>
+         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
             <Toolbar />
             <Box className="tableHeaderContainer">
-                <Grid container rowSpacing={0} columnSpacing={2}>
+                <Grid container  direction="row"
+  justifyContent="flex-start"
+  alignItems="center" rowSpacing={0} columnSpacing={6}>
                     <Grid item xs={1}><span className="tableHeader">Status</span></Grid>
                     <Grid item xs={3}><span className="tableHeader">Service Name</span></Grid>
                     <Grid item xs={4}><span className="tableHeader">Friendly Name</span></Grid>
@@ -68,24 +62,67 @@ function Health() {
                 </Grid>
             </Box>
             <Box>
-                {serviceHealths?.map((item, index) => (
+
+            {loader ? dummyArray.map((item,index) => (
+                <Box className='loader_spacing'>
+                <Grid container rowSpacing={0} columnSpacing={6}>
+                    <Grid item xs={1}>
+                        <Box>
+                        <Skeleton sx={skeletonStyle}/>
+                        </Box>
+                        </Grid>
+                    <Grid item xs={3}>
+                     <Box className="serviceName">
+                     <Skeleton sx={skeletonStyle}/>
+                            </Box>
+                    </Grid>
+                    <Grid item xs={4}><Skeleton sx={skeletonStyle}/></Grid>
+                    <Grid item xs={3}><Skeleton sx={skeletonStyle}/></Grid> 
+                </Grid>
+            </Box>
+            ))
+                  :  health?.map((item, index) => (
                     <Box className="tableRow">
-                        <Grid container rowSpacing={0} columnSpacing={3}>
-                            <Grid item xs={1}><Box className={colorClass[item.status]} ></Box></Grid>
+                        <Grid container   direction="row"
+  justifyContent="flex-start"
+  alignItems="center"
+   rowSpacing={0} columnSpacing={6}>
+                            <Grid item xs={1}>
+                                <Box>
+                                {
+                                    statusIndicator(item.data.properties.availabilityState)
+                                }
+                                </Box>
+                                </Grid>
                             <Grid item xs={3}>
-                                <Stack direction="row" alignItems="center" gap={2}>
-                                    <span>{item.serviceName}</span>
-                                </Stack>
+                            <Tooltip title={item.data.id}>
+                             <Box className="data">
+                               
+                                    {item.data.id}
+                                    
+                                    </Box>
+                                    </Tooltip>  
                             </Grid>
-                            <Grid item xs={4}>{item.friendlyName}</Grid>
-                            <Grid item xs={3}>{item.statusOverview}</Grid>
+                            <Grid item xs={4}>
+                                <Box className="data">
+                                {item.friendlyname}
+                                </Box>
+                                </Grid>
+                            <Grid item xs={3}>
+                                <Box className="health_data">
+                                {item.data.properties.summary}
+                                </Box>
+                                </Grid> 
                         </Grid>
                     </Box>
-                ))}
+                ))
+            }
             </Box>
-        </Box>
+        </Box>   
+        </>
     )
 }
+
 
 export default Health
 
