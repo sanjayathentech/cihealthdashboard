@@ -1,6 +1,5 @@
 import { Formik, Form } from 'formik';
 import { Grid, Box, InputAdornment, IconButton, Button } from '@mui/material'
-import { makeStyles } from '@mui/styles';
 import { useState, useEffect } from 'react'
 import React from 'react'
 import loginImage from '../../assets/MSlogin.svg'
@@ -49,7 +48,7 @@ function Login() {
             // Silently acquires an access token which is then attached to a request for Microsoft Graph data
             instance.acquireTokenSilent(request).then((response) => {
                 if (response) {
-                    localStorage.setItem('loginToken',response.accessToken)
+                    localStorage.setItem('loginToken', response.accessToken)
                     navigate('/health')
                 }
             }).catch((e) => {
@@ -70,32 +69,32 @@ function Login() {
     }
 
     return (
-       <>
-       
-        <Grid container>
-            <Grid item lg={6} md={6} xs={12}>
-                <div className='imageContainer'>
-                    <img src={loginImage} className="loginimage"/>
-                </div>
+        <>
+
+            <Grid container>
+                <Grid item lg={6} md={6} xs={12}>
+                    <div className='imageContainer'>
+                        <img src={loginImage} className="loginimage" />
+                    </div>
+                </Grid>
+                <Grid item lg={6} md={6} xs={12}>
+                    <div className='login_button_container'>
+                        <Button onClick={() => handleLogin()} variant="text" sx={{ border: '1px solid #4ab7fc', fontSize: '18px', fontWeight: '100' }}>
+                            <Box sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                gap: "10px",
+                            }}>
+                                <img width="30px" height="30px" style={{ objectFit: 'cover', }} src={MSlogo}></img>
+                                Sign in with Microsoft
+                            </Box>
+                        </Button>
+                    </div>
+                </Grid>
             </Grid>
-            <Grid item lg={6} md={6} xs={12}>
-                <div className='login_button_container'>
-                <Button onClick={() => handleLogin()} variant="text" sx={{border:'1px solid #4ab7fc',fontSize:'18px',fontWeight:'100'}}>
-                                        <Box sx={{
-                                            display: "flex",
-                                            flexDirection: "row",
-                                            alignItems: "center",
-                                            gap: "10px",
-                                            }}>
-                                            <img width="30px" height="30px" style={{ objectFit: 'cover', }} src={MSlogo}></img>
-                                            Sign in with Microsoft
-                </Box>
-                </Button>
-                </div>
-            </Grid>
-        </Grid>
-        
-       </>
+
+        </>
     )
 }
 

@@ -12,14 +12,22 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { PageRoutes } from '../../layouts/pageRoutes';
-
+import InsightsIcon from '@mui/icons-material/Insights';
 
 
 import "./Dashboard.css";
 import UserProfile from './UserProfile';
+import { NavLink } from 'react-router-dom';
 
 const drawerWidth = 170;
-
+let activeStyle = {
+  color: "black",
+  textDecoration: "none",
+};
+let inactiveStyle = {
+  color: "grey",
+  textDecoration: "none"
+};
 export default function Sidebar({ Children }) {
   return (
     <Box sx={{ display: 'flex' }}>
@@ -27,7 +35,7 @@ export default function Sidebar({ Children }) {
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, }} >
         <Box className="appBar_userprofile">
           <Toolbar>
-            <Avatar src="https://pbs.twimg.com/profile_images/1057293119090233344/EEs06nhL_400x400.jpg" sx={{width:'35px',height:'35px'}}/> &emsp;
+            <Avatar src="https://pbs.twimg.com/profile_images/1057293119090233344/EEs06nhL_400x400.jpg" sx={{ width: '35px', height: '35px' }} /> &emsp;
             <Typography variant="body" noWrap component="div">
               CI Health Dashboard
             </Typography>
@@ -46,16 +54,31 @@ export default function Sidebar({ Children }) {
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
           <List>
-            <ListItem disablePadding>
-              <ListItemButton >
-                  {<LocalHospitalIcon sx={{color:'green'}}/>}
-                <ListItemText primary="Health Status" />
-              </ListItemButton>
-            </ListItem>
+            <NavLink style={({ isActive }) => isActive ? activeStyle : inactiveStyle} to="health">
+              <ListItem disablePadding>
+                <ListItemButton>
+                  {<LocalHospitalIcon sx={{ color: 'green' }} />}
+                  <ListItemText primary="Health Status" />
+                </ListItemButton>
+              </ListItem>
+            </NavLink>
+            <NavLink style={({ isActive }) => isActive ? activeStyle : inactiveStyle} to="insights">
+              <ListItem disablePadding>
+                <ListItemButton>
+                  {<InsightsIcon sx={{ color: '#6495ED' }} />}
+                  <ListItemText primary="Insights" />
+                </ListItemButton>
+              </ListItem>
+            </NavLink>
+
           </List>
         </Box>
       </Drawer>
-      <PageRoutes />
-    </Box>
+
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Toolbar />
+        <PageRoutes />
+      </Box>
+    </Box >
   );
 }
