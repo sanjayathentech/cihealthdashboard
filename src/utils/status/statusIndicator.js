@@ -9,27 +9,27 @@ import './statusIndicator.css';
 export const statusIndicator = (status) => {
     if(status == "Available"){
         return (<div className='status_alignment'>
-            <CheckCircleIcon sx={{color:'green'}}/> &emsp;
-            <span>{status}</span>
+            <CheckCircleIcon sx={{color:'green'}}/> &nbsp;
+            <span> {status}</span>
         </div> )
     }else if(status == "Unknown"){
         return (
         <div className='status_alignment'>
-            <CircleIcon sx={{color:'#FFBF00'}}/> &emsp;
-            <span>{status}</span>
+            <HelpIcon sx={{color:'#a4a7ab'}} /> &nbsp;
+            <span> {status}</span>
         </div>)
     }else if(status == "Degraded"){
         return (
         <div className='status_alignment'>
-            <CancelIcon sx={{color:'red'}}/> &emsp;
-            <span>{status}</span>
+            <CircleIcon sx={{color:'#FFBF00'}}/> &nbsp;
+            <span> {status}</span>
         </div>
         )
     }else if(status == "Unavailable"){
         return(
         <div className='status_alignment'>
-            <HelpIcon sx={{color:'#a4a7ab'}} /> &emsp;
-            <span>{status}</span>
+            <CancelIcon sx={{color:'red'}} /> &nbsp;
+            <span> {status}</span>
         </div>
         )
     }

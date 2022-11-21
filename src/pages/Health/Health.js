@@ -54,30 +54,25 @@ function Health() {
             <Box className="tableHeaderContainer">
                 <Grid container  direction="row"
   justifyContent="flex-start"
-  alignItems="center" rowSpacing={0} columnSpacing={6}>
+  alignItems="center" rowSpacing={0} columnSpacing={10}>
                     <Grid item xs={1}><span className="tableHeader">Status</span></Grid>
-                    <Grid item xs={3}><span className="tableHeader">Service Name</span></Grid>
-                    <Grid item xs={4}><span className="tableHeader">Friendly Name</span></Grid>
-                    <Grid item xs={3}><span className="tableHeader">Status Overview</span></Grid>
+                    <Grid item xs={3}><span className="tableHeader">Friendly Name</span></Grid>
+                    <Grid item xs={7}><span className="tableHeader">Status Overview</span></Grid>
                 </Grid>
             </Box>
             <Box>
 
             {loader ? dummyArray.map((item,index) => (
                 <Box className='loader_spacing'>
-                <Grid container rowSpacing={0} columnSpacing={6}>
+                <Grid container rowSpacing={0} columnSpacing={10}>
                     <Grid item xs={1}>
                         <Box>
                         <Skeleton sx={skeletonStyle}/>
                         </Box>
                         </Grid>
-                    <Grid item xs={3}>
-                     <Box className="serviceName">
-                     <Skeleton sx={skeletonStyle}/>
-                            </Box>
-                    </Grid>
-                    <Grid item xs={4}><Skeleton sx={skeletonStyle}/></Grid>
-                    <Grid item xs={3}><Skeleton sx={skeletonStyle}/></Grid> 
+                  
+                    <Grid item xs={3}><Skeleton sx={skeletonStyle}/></Grid>
+                    <Grid item xs={7}><Skeleton sx={skeletonStyle}/></Grid> 
                 </Grid>
             </Box>
             ))
@@ -86,7 +81,7 @@ function Health() {
                         <Grid container   direction="row"
   justifyContent="flex-start"
   alignItems="center"
-   rowSpacing={0} columnSpacing={6}>
+   rowSpacing={0} columnSpacing={10}>
                             <Grid item xs={1}>
                                 <Box>
                                 {
@@ -95,20 +90,11 @@ function Health() {
                                 </Box>
                                 </Grid>
                             <Grid item xs={3}>
-                            <Tooltip title={item.data.id}>
-                             <Box className="data">
-                               
-                                    {item.data.id}
-                                    
-                                    </Box>
-                                    </Tooltip>  
-                            </Grid>
-                            <Grid item xs={4}>
                                 <Box className="data">
                                 {item.friendlyname}
                                 </Box>
                                 </Grid>
-                            <Grid item xs={3}>
+                            <Grid item xs={7}>
                                 <Box className="health_data">
                                 {item.data.properties.summary}
                                 </Box>
