@@ -33,7 +33,7 @@ function Health() {
             localStorage.setItem('token', res[0].data);
             for (let i = 0; i < res[1].data.length; i++) {
                 console.log(res[1].data[i].friendlyName)
-                axios(`https://management.azure.com${res[1].data[i].resourceName}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then(response => {
+                axios(`https://management.azure.com${res[1].data[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then(response => {
                     setHealth(previousState => [...previousState, { ...response, friendlyname: res[1].data[i].friendlyName }])
                     setLoader(false)
                 }).catch(e => {
