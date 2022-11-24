@@ -12,6 +12,8 @@ import { useMsal } from "@azure/msal-react";
 import { loginRequest } from "../../utils/SSO/authConfig";
 import { useIsAuthenticated } from "@azure/msal-react";
 import { callMsGraph } from '../../utils/SSO/graph';
+import { parentUrl } from '../../api/parentUrl/parentUrl';
+import { endPoints } from '../../api/apiEndpoints/endPoints';
 
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -19,6 +21,7 @@ import { Navigate } from 'react-router-dom';
 
 // css
 import './login.css';
+import { getApi } from '../../api/apiMethods/apiMethods';
 
 
 
