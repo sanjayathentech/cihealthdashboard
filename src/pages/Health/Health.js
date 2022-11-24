@@ -1,54 +1,26 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Box, Button, Grid, Skeleton, Stack, Tooltip } from '@mui/material';
-import Toolbar from '@mui/material/Toolbar';
-import './Health.css'
-import { getAll, getApi } from '../../api/apiMethods/apiMethods';
-import { endPoints } from '../../api/apiEndpoints/endPoints';
-import { parentUrl } from '../../api/parentUrl/parentUrl';
-import axios from 'axios';
+import { Box, Button, Grid, Skeleton, Stack, Tooltip, Fab } from '@mui/material';
+import './Health.css';
 import { statusIndicator } from '../../utils/status/statusIndicator';
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 import { ResourceContext } from '../Dashboard/Sidebar';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import CircularProgress from '@mui/material/CircularProgress';
+import { NoBackpackSharp } from '@mui/icons-material';
+
 
 let skeletonStyle = {
     height: '20px'
 }
 
+
 function Health() {
 
-    // useEffect(() => {
-    //     getResources();
-    // }, [])
-
     const navigate = useNavigate()
-
-    // const getResources = async () => {
-    //     setLoader(true)
-    //     const api1 = `${parentUrl.url}${endPoints.generateToken}`;
-    //     const api2 = `${parentUrl.url}${endPoints.getResourceId}`
-    //     axios.all([axios(api1), axios(api2)
-    //     ]).then(res => {
-    //         localStorage.setItem('token', res[0].data);
-    //         for (let i = 0; i < res[1].data.length; i++) {
-    //             console.log(res[1].data[i].friendlyName)
-    //             axios(`https://management.azure.com${res[1].data[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then(response => {
-    //                 setHealth(previousState => [...previousState, { ...response, friendlyname: res[1].data[i].friendlyName }])
-    //                 setLoader(false)
-    //             }).catch(e => {
-    //                 console.log(e)
-    //             })
-    //         }
-    //     })
-    // }
-
-
     const dummyArray = [1, 2, 3, 4, 5]
 
+    const { health, loader, pullResources, fetchloader } = useContext(ResourceContext)
 
-
-
-    const { health, loader } = useContext(ResourceContext)
-    console.log(health, loader)
     return (
         <>
 
@@ -105,6 +77,7 @@ function Health() {
                     ))
                 }
             </Box>
+
         </>
     )
 }

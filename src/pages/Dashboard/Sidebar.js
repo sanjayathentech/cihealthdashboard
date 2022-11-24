@@ -18,6 +18,7 @@ import axios from 'axios';
 import { endPoints } from '../../api/apiEndpoints/endPoints';
 import { parentUrl } from '../../api/parentUrl/parentUrl';
 import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
+import CISnackbar from '../../components/SnackBar/SnackBar';
 
 import "./Dashboard.css";
 import UserProfile from './UserProfile';
@@ -32,6 +33,13 @@ let inactiveStyle = {
   color: "grey",
   textDecoration: "none"
 };
+let initialSnack = {
+  Open: false,
+  message: "",
+  severity: "",
+};
+
+
 export const ResourceContext = createContext()
 
 export default function Sidebar({ Children }) {
@@ -44,6 +52,39 @@ export default function Sidebar({ Children }) {
 
   const [health, setHealth] = useState([])
   const [loader, setLoader] = useState(false)
+  const [fetchloader, setfetchLoader] = useState(false)
+
+  const [snack, setSnack] = useState({
+    Open: false,
+    message: "",
+    severity: ""
+  });
+  const { Open, message, severity } = snack
+  const handleClose = () => {
+    setSnack(initialSnack)
+  }
+  const pullResources = async () => {
+    setfetchLoader(true)
+    try {
+      let res = await axios.get(parentUrl.url + endPoints.pushNewResources)
+      setfetchLoader(false)
+      setSnack({
+        Open: true,
+        message: res.pushResponse,
+        severity: "warning"
+      })
+      if (res.updatedCount != 0) {
+        getResources()
+      }
+    } catch (error) {
+      setSnack({
+        Open: true,
+        message: "Error while Fetching ",
+        severity: "warning"
+      })
+      console.log(error)
+    }
+  }
 
   const getResources = async () => {
     setLoader(true)
@@ -55,7 +96,7 @@ export default function Sidebar({ Children }) {
 
       const config = {
         headers: {
-          "Retry-After": 2000
+          "Retry-After": 3600
         }
       };
       for (let i = 0; i < res[1].data.length; i++) {
@@ -73,8 +114,10 @@ export default function Sidebar({ Children }) {
     })
   }
 
+
+
   return (
-    <ResourceContext.Provider value={{ health, loader, setHealth }}>
+    <ResourceContext.Provider value={{ health, loader, setHealth, pullResources, getResources, fetchloader }}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, }} >
@@ -133,6 +176,7 @@ export default function Sidebar({ Children }) {
           <PageRoutes />
         </Box>
       </Box >
+      <CISnackbar snackOpen={Open} onClose={handleClose} message={message} position1={'top'} position2={'right'} severity={severity} />
     </ResourceContext.Provider>
   );
 }
