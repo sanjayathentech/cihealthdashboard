@@ -1,4 +1,4 @@
 export const endPoints = {
-    getResourceId:'a10f46b9-0853-4b30-99bc-73c642177ec5/resources',
+    getResourceId:'abde34c8-4147-4bf7-9744-54056591ff01/resources',
     generateToken:'GetAccessToken',
 }
