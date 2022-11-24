@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Box, Button, Grid, Skeleton, Stack, Tooltip } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import './Health.css'
@@ -8,6 +8,7 @@ import { parentUrl } from '../../api/parentUrl/parentUrl';
 import axios from 'axios';
 import { statusIndicator } from '../../utils/status/statusIndicator';
 import { useNavigate } from "react-router-dom"
+import { ResourceContext } from '../Dashboard/Sidebar';
 
 let skeletonStyle = {
     height: '20px'
@@ -15,41 +16,39 @@ let skeletonStyle = {
 
 function Health() {
 
-    useEffect(() => {
-        getResources();
-    }, [])
+    // useEffect(() => {
+    //     getResources();
+    // }, [])
 
     const navigate = useNavigate()
 
-    const [health, setHealth] = useState([])
-    const [loader, setLoader] = useState(false)
+    // const getResources = async () => {
+    //     setLoader(true)
+    //     const api1 = `${parentUrl.url}${endPoints.generateToken}`;
+    //     const api2 = `${parentUrl.url}${endPoints.getResourceId}`
+    //     axios.all([axios(api1), axios(api2)
+    //     ]).then(res => {
+    //         localStorage.setItem('token', res[0].data);
+    //         for (let i = 0; i < res[1].data.length; i++) {
+    //             console.log(res[1].data[i].friendlyName)
+    //             axios(`https://management.azure.com${res[1].data[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then(response => {
+    //                 setHealth(previousState => [...previousState, { ...response, friendlyname: res[1].data[i].friendlyName }])
+    //                 setLoader(false)
+    //             }).catch(e => {
+    //                 console.log(e)
+    //             })
+    //         }
+    //     })
+    // }
 
-    const getResources = async () => {
-        setLoader(true)
-        const api1 = `${parentUrl.url}${endPoints.generateToken}`;
-        const api2 = `${parentUrl.url}${endPoints.getResourceId}`
-        axios.all([axios(api1), axios(api2)
-        ]).then(res => {
-            localStorage.setItem('token', res[0].data);
-            for (let i = 0; i < res[1].data.length; i++) {
-                console.log(res[1].data[i].friendlyName)
-                axios(`https://management.azure.com${res[1].data[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then(response => {
-                    setHealth(previousState => [...previousState, { ...response, friendlyname: res[1].data[i].friendlyName }])
-                    setLoader(false)
-                }).catch(e => {
-                    console.log(e)
-                })
-            }
-        })
-    }
-
-    console.log(health);
 
     const dummyArray = [1, 2, 3, 4, 5]
 
 
 
 
+    const { health, loader } = useContext(ResourceContext)
+    console.log(health, loader)
     return (
         <>
 
@@ -78,7 +77,7 @@ function Health() {
                         </Grid>
                     </Box>
                 ))
-                    : health?.map((item, index) => (
+                    : health.filter(x => x.friendlyname != "")?.map((item, index) => (
                         <Box className="tableRow" onClick={() => navigate('/insights')}>
                             <Grid container direction="row"
                                 justifyContent="flex-start"

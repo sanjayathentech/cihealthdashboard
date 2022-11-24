@@ -20,12 +20,13 @@
 }
 
 .tableRow {
-    padding: 10px 10px 10px 0;
+    padding: 10px;
     border-top: solid 1px #E8E8E8;
     font-size: 12px;
 }
 
 .tableHeaderContainer {
+    padding: 0px 10px 0px 10px;
     margin-bottom: 10px;
     font-size: 15px;
     font-family: Inter;
