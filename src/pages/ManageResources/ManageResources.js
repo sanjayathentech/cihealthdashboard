@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Grid, Box, Skeleton, IconButton, TextField, Fab } from '@mui/material'
 import { useContext } from 'react'
 import { ResourceContext } from '../Dashboard/Sidebar'
@@ -17,6 +17,8 @@ import Slide from '@mui/material/Slide';
 import axios from 'axios'
 import { parentUrl } from '../../api/parentUrl/parentUrl'
 import { endPoints } from '../../api/apiEndpoints/endPoints'
+import { getApi } from '../../api/apiMethods/apiMethods'
+import CISnackbar from '../../components/SnackBar/SnackBar'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -26,11 +28,41 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 let skeletonStyle = {
     height: '20px'
 }
+let initialSnack = {
+    Open: false,
+    message: "",
+    severity: "",
+};
+let initialUpdateState = {
+    ResourceId: "",
+    ResourceName: "",
+    FriendlyName: "",
+    HealthStatus: "",
+}
+
 function ManageResources() {
 
-    const { health, loader, setHealth, pullResources, fetchloader } = useContext(ResourceContext)
 
-    const [friendlyname, setfriedlyName] = useState('')
+    const [snack, setSnack] = useState({
+        Open: false,
+        message: "",
+        severity: ""
+    });
+    const { Open, message, severity } = snack
+    const handlesnackClose = () => {
+        setSnack(initialSnack)
+    }
+
+
+
+
+    const { health, loader, setHealth, fetchloader, receivingID, manageResources, loaderMR, getmanageResources } = useContext(ResourceContext)
+
+
+
+
+
+
     const [resourceId, setresourceId] = useState(0)
     const [updatePayload, setupdatePayload] = useState({
         ResourceId: "",
@@ -40,17 +72,19 @@ function ManageResources() {
     })
 
     const handleEdit = (item) => {
+        console.log(item)
+        setresourceId(item.resourceAutoId)
         setOpen(true)
         setupdatePayload({
-            ResourceId: item.data.id,
-            ResourceName: item.data.name,
-            FriendlyName: item.friendlyname,
-            HealthStatus: item.data.properties.availabilityState,
+            ResourceId: item.resourceId,
+            ResourceName: item.resourceName,
+            HealthStatus: item.healthStatus,
+            FriendlyName: item.friendlyName
         })
     }
 
     const handleChange = (e) => {
-        setfriedlyName(e.target.value)
+        setupdatePayload({ ...updatePayload, FriendlyName: e.target.value })
     }
 
     const [open, setOpen] = React.useState(false);
@@ -60,8 +94,34 @@ function ManageResources() {
     };
     const UpdateFriendlyName = async () => {
         try {
-            let res = await axios.put(parentUrl.url + endPoints.updateFriendlyname(), updatePayload)
+            let res = await axios.put(parentUrl.url + endPoints.updateFriendlyname(resourceId), updatePayload)
+            if (res) {
+                getmanageResources()
+                setupdatePayload(initialUpdateState)
+                setOpen(false)
+            }
         } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const pullResources = async () => {
+        try {
+            let res = await axios.get(parentUrl.url + endPoints.pushNewResources)
+            if (res.updatedCount != 0) {
+                getmanageResources()
+            }
+            setSnack({
+                Open: true,
+                message: res.pushResponse,
+                severity: "warning"
+            })
+        } catch (error) {
+            setSnack({
+                Open: true,
+                message: "Error while Fetching ",
+                severity: "warning"
+            })
             console.log(error)
         }
     }
@@ -70,18 +130,18 @@ function ManageResources() {
             <Box className="tableHeaderContainer">
                 <Grid container columnSpacing={4}>
                     <Grid item xs={3}><span className="tableHeader">Friendly Name</span></Grid>
-                    <Grid item xs={6}><span className="tableHeader">Status Overview</span></Grid>
+                    <Grid item xs={6}><span className="tableHeader">Resource ID</span></Grid>
                     <Grid item xs={2}><span className="tableHeader">Action</span></Grid>
                 </Grid>
             </Box>
-            {loader ? [1, 2, 3, 4, 5].map(() => (
+            {loaderMR ? [1, 2, 3, 4, 5].map(() => (
                 <SkeletonLoading />
             )) :
-                health.map((item, index) => (
+                manageResources.map((item, index) => (
                     <Box className="tableRow">
                         <Grid container columnSpacing={4}>
-                            <Grid item xs={3}>{item.friendlyname}</Grid>
-                            <Grid item xs={6}><span>{item.data.properties.summary}</span></Grid>
+                            <Grid item xs={3}>{item.friendlyName}</Grid>
+                            <Grid item xs={6}><span>{item.resourceId}</span></Grid>
                             <Grid item xs={2}><span>
                                 <IconButton onClick={() => handleEdit(item)} color="primary" aria-label="add to shopping cart">
                                     <EditIcon />
@@ -102,7 +162,7 @@ function ManageResources() {
                 }
 
             } variant="extended" size="medium" color="primary" aria-label="add">
-                {fetchloader ? <> <CircularProgress sx={{ color: '#ffffff', scale: '0.6' }} />Fetching...</> : <><CompareArrowsIcon sx={{ mr: 1 }} />
+                {loaderMR ? <> <CircularProgress sx={{ color: '#ffffff', scale: '0.6' }} />Fetching...</> : <><CompareArrowsIcon sx={{ mr: 1 }} />
                     Pull Resources</>}
             </Fab>
             <div>
@@ -116,7 +176,7 @@ function ManageResources() {
                 >
                     <DialogTitle>{"Update Friendly name"}</DialogTitle>
                     <DialogContent>
-                        <TextField value={friendlyname}
+                        <TextField value={updatePayload.FriendlyName}
                             fullWidth
                             label="Friendly Name"
                             variant='standard'
@@ -126,10 +186,11 @@ function ManageResources() {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleClose}>Close</Button>
-                        <Button onClick={handleClose}>Save</Button>
+                        <Button onClick={UpdateFriendlyName}>Save</Button>
                     </DialogActions>
                 </Dialog>
             </div>
+            <CISnackbar snackOpen={Open} onClose={handlesnackClose} message={message} position1={'top'} position2={'right'} severity={severity} />
         </>
     )
 }

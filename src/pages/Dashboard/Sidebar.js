@@ -23,6 +23,7 @@ import CISnackbar from '../../components/SnackBar/SnackBar';
 import "./Dashboard.css";
 import UserProfile from './UserProfile';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { getApi } from '../../api/apiMethods/apiMethods';
 
 const drawerWidth = 170;
 let activeStyle = {
@@ -33,91 +34,119 @@ let inactiveStyle = {
   color: "grey",
   textDecoration: "none"
 };
-let initialSnack = {
-  Open: false,
-  message: "",
-  severity: "",
-};
 
 
 export const ResourceContext = createContext()
 
 export default function Sidebar({ Children }) {
-
-
-  useEffect(() => {
-    getResources();
-  }, [])
-
-
+  // const [healthIDs, sethealthIDs] = useState([])
   const [health, setHealth] = useState([])
   const [loader, setLoader] = useState(false)
   const [fetchloader, setfetchLoader] = useState(false)
+  const [manageResources, setmanageResources] = useState([])
+  const [loaderMR, setloaderMr] = useState(false)
 
-  const [snack, setSnack] = useState({
-    Open: false,
-    message: "",
-    severity: ""
-  });
-  const { Open, message, severity } = snack
-  const handleClose = () => {
-    setSnack(initialSnack)
-  }
-  const pullResources = async () => {
-    setfetchLoader(true)
+
+  var healthIDs = []
+  console.log("my", healthIDs)
+
+  // const receivingID = (id) => {
+  //   sethealthIDs(id)
+  // }
+  useEffect(() => {
+    getmanageResources()
+  }, [])
+  const getmanageResources = async () => {
+    healthIDs = []
+
+    setloaderMr(true)
     try {
-      let res = await axios.get(parentUrl.url + endPoints.pushNewResources)
-      setfetchLoader(false)
-      setSnack({
-        Open: true,
-        message: res.pushResponse,
-        severity: "warning"
-      })
-      if (res.updatedCount != 0) {
+      let res = await getApi(`${parentUrl.url}${endPoints.getResourceId}`)
+      console.log(res.data)
+      if (res) {
+        for (let i = 0; i < res.data.length; i++) {
+          if (res.data[i].friendlyName != "") {
+            console.log("RES", res.data[i])
+            healthIDs.push(res.data[i])
+            // sethealthIDs(prev => [...prev, res.data[i]])
+            console.log(res.data[i].resourceId)
+          }
+        }
+        setloaderMr(false)
+        setmanageResources(res.data)
         getResources()
       }
+
     } catch (error) {
-      setSnack({
-        Open: true,
-        message: "Error while Fetching ",
-        severity: "warning"
-      })
       console.log(error)
     }
   }
+  console.log(healthIDs)
+
+
+  // const getResources = async () => {
+  //   setLoader(true)
+  //   // const api1 = `${parentUrl.url}${endPoints.generateToken}`;
+  //   // const api2 = `${parentUrl.url}${endPoints.getResourceId}`
+  //   // axios.all([axios(api1), axios(api2)
+  //   // ]).then(res => {
+  //   //   localStorage.setItem('token', res[0].data);
+  //   //   console.log(res[1])
+  //   //   for (let i = 0; i < res[1].data.length; i++) {
+  //   //     console.log(res[1].data[i].friendlyName)
+  //   //     axios.get(`https://management.azure.com${res[1].data[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then(response => {
+  //   //       setHealth(previousState => [...previousState, { ...response, friendlyname: res[1].data[i].friendlyName, autoid: res[1].data[i].resourceAutoId }])
+  //   //       setLoader(false)
+  //   //     }).catch(e => {
+  //   //       console.log(e)
+  //   //     })
+  //   //   }
+  //   // })
+  // }
 
   const getResources = async () => {
+    debugger;
     setLoader(true)
-    const api1 = `${parentUrl.url}${endPoints.generateToken}`;
-    const api2 = `${parentUrl.url}${endPoints.getResourceId}`
-    axios.all([axios(api1), axios(api2)
-    ]).then(res => {
-      localStorage.setItem('token', res[0].data);
+    try {
+      let res = await getApi(`${parentUrl.url}${endPoints.generateToken}`)
+      localStorage.setItem('token', res.data);
 
-      const config = {
-        headers: {
-          "Retry-After": 3600
-        }
-      };
-      for (let i = 0; i < res[1].data.length; i++) {
-        console.log(res[1].data[i].friendlyName)
-        setTimeout(function () {
-          axios.get(`https://management.azure.com${res[1].data[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`, config).then(response => {
-            setHealth(previousState => [...previousState, { ...response, friendlyname: res[1].data[i].friendlyName }])
-            setLoader(false)
-          }).catch(e => {
-            console.log(e)
+      if (res) {
+        console.log(res)
+        setLoader(false)
+
+        for (let i = 0; i < healthIDs.length; i++) {
+          console.log(healthIDs[i])
+          axios(`https://management.azure.com${healthIDs[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then((res) => {
+            console.log(res)
+            setHealth(previousState => [...previousState, { ...res, friendlyname: healthIDs[i].friendlyName }])
           })
-        }, 1000);
+          // console.log(response)
 
+
+        }
+
+        // healthIDs.map(async (item, i) => {
+        //   console.log("res", item)
+        //   try {
+        //     let response = await getApi(`https://management.azure.com${item.resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`)
+        //     console.log(response)
+        //     // setHealth(previousState => [...previousState, { ...response, friendlyname: item.friendlyName }])
+        //   } catch (error) {
+        //     console.log(error)
+        //   }
+        // })
       }
-    })
+
+    } catch (error) {
+      setLoader(false)
+    }
   }
 
 
 
   return (
-    <ResourceContext.Provider value={{ health, loader, setHealth, pullResources, getResources, fetchloader }}>
+    <ResourceContext.Provider value={{ health, loader, setHealth, getResources, fetchloader, manageResources, loaderMR, getmanageResources }}>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, }} >
@@ -176,7 +205,7 @@ export default function Sidebar({ Children }) {
           <PageRoutes />
         </Box>
       </Box >
-      <CISnackbar snackOpen={Open} onClose={handleClose} message={message} position1={'top'} position2={'right'} severity={severity} />
+
     </ResourceContext.Provider>
   );
 }
