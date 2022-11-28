@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Box, Skeleton, IconButton, TextField, Fab } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Skeleton,
+  IconButton,
+  TextField,
+  Fab,
+  Checkbox,
+} from "@mui/material";
 import { useContext } from "react";
 import { ResourceContext } from "../Dashboard/Sidebar";
 import { statusIndicator } from "../../utils/status/statusIndicator";
@@ -19,7 +27,6 @@ import { parentUrl } from "../../api/parentUrl/parentUrl";
 import { endPoints } from "../../api/apiEndpoints/endPoints";
 import { getApi } from "../../api/apiMethods/apiMethods";
 import CISnackbar from "../../components/SnackBar/SnackBar";
-import InlineText from "../../components/inlinetext/InlineText";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -116,13 +123,6 @@ function ManageResources() {
       if (res.updatedCount != 0) {
         getmanageResource();
       }
-
-      console.log("==============================================");
-      console.log(res);
-      console.log(res.data);
-      console.log(res.pushResponse);
-      console.log("==============================================");
-
       setSnack({
         Open: true,
         message: res.data.pushResponse,
@@ -137,15 +137,46 @@ function ManageResources() {
       console.log(error);
     }
   };
+
+  const [changedvalue, setChangedvalue] = React.useState([]);
+  const [checked, setChecked] = React.useState([]);
+
+  const checkedchange = (e, ind) => {
+    setChecked((state) => ({ ...state, [ind]: e.target.checked }));
+  };
+
+  const handletextchange = (e, ind) => {
+    const findind = changedvalue.findIndex((item) => {
+      return item.resourceAutoId === manageResources[ind].resourceAutoId;
+    });
+
+    let changedvaluetemp = [...changedvalue];
+    console.log(findind);
+    if (findind != -1) {
+      changedvalue[findind].friendlyName = e.target.value;
+    } else {
+      changedvaluetemp = [
+        ...changedvaluetemp,
+        {
+          ...manageResources[ind],
+          friendlyName: e.target.value,
+        },
+      ];
+    }
+    setChangedvalue(changedvaluetemp);
+  };
+
+  console.log(changedvalue);
+
+  console.log(checked);
   return (
     <>
       <Box className="tableHeaderContainer">
-        <InlineText text="iam editable" handlechange={(val) => alert(val)} />
         <Grid container columnSpacing={4}>
           <Grid item xs={1}>
-            <span className="tableHeader">Checkbox</span>
+            <Checkbox inputProps={{ "aria-label": "controlled" }} />
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={2}>
             <span className="tableHeader">Friendly Name</span>
           </Grid>
           <Grid item xs={6}>
@@ -162,10 +193,22 @@ function ManageResources() {
             <Box className="tableRow">
               <Grid container columnSpacing={4}>
                 <Grid item xs={1}>
-                  {item.friendlyName}
+                  <Checkbox
+                    inputProps={{ "aria-label": "controlled" }}
+                    onChange={(e) => checkedchange(e, index)}
+                  />
                 </Grid>
-                <Grid item xs={3}>
-                  {item.friendlyName}
+                <Grid item xs={2}>
+                  {checked[index] ? (
+                    <TextField
+                      defaultValue={item.friendlyName}
+                      size="small"
+                      placeholder="Friendly Name"
+                      onChange={(e) => handletextchange(e, index)}
+                    />
+                  ) : (
+                    <>{item.friendlyName}</>
+                  )}
                 </Grid>
                 <Grid item xs={6}>
                   <span>{item.resourceName}</span>
