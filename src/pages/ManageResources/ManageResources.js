@@ -1,33 +1,41 @@
-import React, { useEffect, useState } from 'react'
-import { Grid, Box, Skeleton, IconButton, TextField, Fab, Checkbox } from '@mui/material'
-import { useContext } from 'react'
-import { ResourceContext } from '../Dashboard/Sidebar'
-import { statusIndicator } from '../../utils/status/statusIndicator'
-import EditIcon from '@mui/icons-material/Edit';
-import './manage-resources.css'
-import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
-import CircularProgress from '@mui/material/CircularProgress';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Slide from '@mui/material/Slide';
-import axios from 'axios'
-import { parentUrl } from '../../api/parentUrl/parentUrl'
-import { endPoints } from '../../api/apiEndpoints/endPoints'
-import { getApi } from '../../api/apiMethods/apiMethods'
-import CISnackbar from '../../components/SnackBar/SnackBar'
+import React, { useEffect, useState } from "react";
+import {
+    Grid,
+    Box,
+    Skeleton,
+    IconButton,
+    TextField,
+    Fab,
+    Checkbox,
+    Paper,
+} from "@mui/material";
+import { useContext } from "react";
+import { ResourceContext } from "../Dashboard/Sidebar";
+import { statusIndicator } from "../../utils/status/statusIndicator";
+import EditIcon from "@mui/icons-material/Edit";
+import "./manage-resources.css";
+import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
+import CircularProgress from "@mui/material/CircularProgress";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+import axios from "axios";
+import { parentUrl } from "../../api/parentUrl/parentUrl";
+import { endPoints } from "../../api/apiEndpoints/endPoints";
+import { getApi } from "../../api/apiMethods/apiMethods";
+import CISnackbar from "../../components/SnackBar/SnackBar";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-
 let skeletonStyle = {
-    height: '20px'
-}
+    height: "20px",
+};
 let initialSnack = {
     Open: false,
     message: "",
@@ -38,50 +46,54 @@ let initialUpdateState = {
     ResourceName: "",
     FriendlyName: "",
     HealthStatus: "",
-}
+};
 
 function ManageResources() {
-
-
     const [snack, setSnack] = useState({
         Open: false,
         message: "",
-        severity: ""
+        severity: "",
     });
-    const [pullLoader, setpull] = useState(false)
-    const { Open, message, severity } = snack
+    const [pullLoader, setpull] = useState(false);
+    const { Open, message, severity } = snack;
     const handlesnackClose = () => {
-        setSnack(initialSnack)
-    }
+        setSnack(initialSnack);
+    };
 
+    const {
+        health,
+        loader,
+        fetchloader,
+        receivingID,
+        manageResources,
+        loaderMR,
+        dummyFunction,
+        dummystate,
+        getmanageResource,
+    } = useContext(ResourceContext);
 
-
-
-    const { health, loader, fetchloader, receivingID, manageResources, loaderMR, dummyFunction, dummystate, getmanageResource } = useContext(ResourceContext)
-
-    const [resourceId, setresourceId] = useState(0)
+    const [resourceId, setresourceId] = useState(0);
     const [updatePayload, setupdatePayload] = useState({
         ResourceId: "",
         ResourceName: "",
         FriendlyName: "",
         HealthStatus: "",
-    })
+    });
 
     const handleEdit = (item) => {
-
-        setresourceId(item.resourceAutoId)
-        setOpen(true)
+        setresourceId(item.resourceAutoId);
+        setOpen(true);
         setupdatePayload({
             ResourceId: item.resourceId,
             ResourceName: item.resourceName,
             HealthStatus: item.healthStatus,
-            FriendlyName: item.friendlyName
-        })
-    }
+            FriendlyName: item.friendlyName,
+        });
+    };
 
     const handleChange = (e) => {
-        setupdatePayload({ ...updatePayload, FriendlyName: e.target.value })
-    }
+        setupdatePayload({ ...updatePayload, FriendlyName: e.target.value });
+    };
 
     const [open, setOpen] = React.useState(false);
 
@@ -90,95 +102,157 @@ function ManageResources() {
     };
     const UpdateFriendlyName = async () => {
         try {
-            let res = await axios.put(parentUrl.url + endPoints.updateFriendlyname(resourceId), updatePayload)
+            let res = await axios.put(
+                parentUrl.url + endPoints.updateFriendlyname(resourceId),
+                updatePayload
+            );
             if (res) {
-                setupdatePayload(initialUpdateState)
-                setOpen(false)
-                dummyFunction(!dummystate)
+                setupdatePayload(initialUpdateState);
+                setOpen(false);
+                dummyFunction(!dummystate);
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
+    };
 
     const pullResources = async () => {
-        setpull(true)
+        setpull(true);
         try {
-            let res = await axios.get(parentUrl.url + endPoints.pushNewResources)
-            setpull(false)
+            let res = await axios.get(parentUrl.url + endPoints.pushNewResources);
+            setpull(false);
             if (res.updatedCount != 0) {
-
-                getmanageResource()
+                getmanageResource();
             }
             setSnack({
                 Open: true,
                 message: res.data.pushResponse,
-                severity: "warning"
-            })
+                severity: "warning",
+            });
         } catch (error) {
             setSnack({
                 Open: true,
                 message: "Error while Pulling Resources",
-                severity: "warning"
-            })
-            console.log(error)
+                severity: "warning",
+            });
+            console.log(error);
         }
-    }
-
-    const [checked, setChecked] = React.useState(true);
-
-    const handlecheckChange = (event) => {
-        setChecked(event.target.checked);
     };
+
+    const [changedvalue, setChangedvalue] = React.useState([]);
+    const [checked, setChecked] = React.useState([]);
+
+    const checkedchange = (e, ind) => {
+        setChecked((state) => ({ ...state, [ind]: e.target.checked }));
+    };
+
+    const handletextchange = (e, ind) => {
+        const findind = changedvalue.findIndex((item) => {
+            return item.resourceAutoId === manageResources[ind].resourceAutoId;
+        });
+
+        let changedvaluetemp = [...changedvalue];
+        console.log(findind);
+        if (findind != -1) {
+            changedvalue[findind].friendlyName = e.target.value;
+        } else {
+            changedvaluetemp = [
+                ...changedvaluetemp,
+                {
+                    ...manageResources[ind],
+                    friendlyName: e.target.value,
+                },
+            ];
+        }
+        setChangedvalue(changedvaluetemp);
+    };
+
     return (
         <>
             <Box className="mr-table">
                 <Box className="tableHeaderContainer">
                     <Grid container columnSpacing={4}>
-                        <Grid item xs={1}></Grid>
-                        <Grid item xs={2}><span className="tableHeader">Friendly Name</span></Grid>
-                        <Grid item xs={6}><span className="tableHeader">Resource Name</span></Grid>
-                        <Grid item xs={2}><span className="tableHeader">Action</span></Grid>
+                        <Grid item xs={1}>
+                            <Checkbox inputProps={{ "aria-label": "controlled" }} />
+                        </Grid>
+                        <Grid item xs={2}>
+                            <span className="tableHeader">Friendly Name</span>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <span className="tableHeader">Resource Name</span>
+                        </Grid>
+                        <Grid item xs={2}>
+                            <span className="tableHeader">Action</span>
+                        </Grid>
                     </Grid>
                 </Box>
-                {loaderMR || pullLoader ? [1, 2, 3, 4, 5].map(() => (
-                    <SkeletonLoading />
-                )) :
-                    manageResources.map((item, index) => (
-                        <Box className="mr-tableRow">
+                {loaderMR || pullLoader
+                    ? [1, 2, 3, 4, 5].map(() => <SkeletonLoading />)
+                    : manageResources.map((item, index) => (
+                        <Box className="tableRow">
                             <Grid container columnSpacing={4}>
                                 <Grid item xs={1}>
                                     <Checkbox
-                                        checked={checked}
-                                        onChange={handlecheckChange}
-                                        inputProps={{ 'aria-label': 'controlled' }}
+                                        inputProps={{ "aria-label": "controlled" }}
+                                        onChange={(e) => checkedchange(e, index)}
                                     />
-
                                 </Grid>
-                                <Grid item xs={2}>{item.friendlyName}</Grid>
-                                <Grid item xs={6}><span>{item.resourceName}</span></Grid>
-                                <Grid item xs={2}><span>
-                                    <IconButton onClick={() => handleEdit(item)} color="primary" aria-label="add to shopping cart">
-                                        <EditIcon />
-                                    </IconButton>
-                                </span></Grid>
+                                <Grid item xs={2}>
+                                    {checked[index] ? (
+                                        <TextField
+                                            defaultValue={item.friendlyName}
+                                            size="small"
+                                            placeholder="Friendly Name"
+                                            onChange={(e) => handletextchange(e, index)}
+                                        />
+                                    ) : (
+                                        <>{item.friendlyName}</>
+                                    )}
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <span>{item.resourceName}</span>
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <span>
+                                        <IconButton
+                                            onClick={() => handleEdit(item)}
+                                            color="primary"
+                                            aria-label="add to shopping cart"
+                                        >
+                                            <EditIcon />
+                                        </IconButton>
+                                    </span>
+                                </Grid>
                             </Grid>
                         </Box>
-                    ))
-                }
-                <Fab onClick={pullResources} sx={
-                    {
+                    ))}
+                <Fab
+                    onClick={pullResources}
+                    sx={{
                         margin: 0,
-                        top: 'auto',
+                        top: "auto",
                         right: 20,
                         bottom: 20,
-                        left: 'auto',
-                        position: 'fixed',
-                    }
-
-                } variant="extended" size="medium" color="primary" aria-label="add">
-                    {loaderMR || pullLoader ? <> <CircularProgress sx={{ color: '#ffffff', scale: '0.6' }} />Fetching...</> : <><CompareArrowsIcon sx={{ mr: 1 }} />
-                        Pull Resources</>}
+                        left: "auto",
+                        position: "fixed",
+                    }}
+                    variant="extended"
+                    size="medium"
+                    color="primary"
+                    aria-label="add"
+                >
+                    {loaderMR || pullLoader ? (
+                        <>
+                            {" "}
+                            <CircularProgress sx={{ color: "#ffffff", scale: "0.6" }} />
+                            Fetching...
+                        </>
+                    ) : (
+                        <>
+                            <CompareArrowsIcon sx={{ mr: 1 }} />
+                            Pull Resources
+                        </>
+                    )}
                 </Fab>
                 <div>
                     <Dialog
@@ -191,10 +265,11 @@ function ManageResources() {
                     >
                         <DialogTitle>{"Update Friendly name"}</DialogTitle>
                         <DialogContent>
-                            <TextField value={updatePayload.FriendlyName}
+                            <TextField
+                                value={updatePayload.FriendlyName}
                                 fullWidth
                                 label="Friendly Name"
-                                variant='standard'
+                                variant="standard"
                                 name="friendlyname"
                                 onChange={handleChange}
                             />
@@ -206,18 +281,24 @@ function ManageResources() {
                     </Dialog>
                 </div>
             </Box>
-            <CISnackbar snackOpen={Open} onClose={handlesnackClose} message={message} position1={'top'} position2={'right'} severity={severity} />
+            <CISnackbar
+                snackOpen={Open}
+                onClose={handlesnackClose}
+                message={message}
+                position1={"top"}
+                position2={"right"}
+                severity={severity}
+            />
+
         </>
-    )
+    );
+
 }
-
-export default ManageResources
-
-
+export default ManageResources;
 
 function SkeletonLoading() {
     return (
-        <Box className='loader_spacing'>
+        <Box className="loader_spacing">
             <Grid container rowSpacing={0} columnSpacing={4}>
                 <Grid item xs={3}>
                     <Box>
@@ -225,9 +306,13 @@ function SkeletonLoading() {
                     </Box>
                 </Grid>
 
-                <Grid item xs={6}><Skeleton sx={skeletonStyle} /></Grid>
-                <Grid item xs={2}><Skeleton sx={skeletonStyle} /></Grid>
+                <Grid item xs={6}>
+                    <Skeleton sx={skeletonStyle} />
+                </Grid>
+                <Grid item xs={2}>
+                    <Skeleton sx={skeletonStyle} />
+                </Grid>
             </Grid>
         </Box>
-    )
+    );
 }

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Box, Button, Grid, Skeleton, Stack, Tooltip, Fab, Checkbox } from '@mui/material';
+import { Box, Button, Grid, Skeleton, Stack, Tooltip, Fab, Checkbox, Paper } from '@mui/material';
 import './Health.css';
 import { statusIndicator } from '../../utils/status/statusIndicator';
 import { useNavigate } from "react-router-dom";
@@ -29,13 +29,12 @@ function Health() {
 
     return (
         <>
+            {/* <Paper elevation={1}> */}
             <Box className="health-table">
                 <Box className="tableHeaderContainer">
                     <Grid container direction="row"
                         justifyContent="flex-start"
                         alignItems="center" rowSpacing={0} columnSpacing={10}>
-                        <Grid item xs={1}>
-                        </Grid>
                         <Grid item xs={3}><span className="tableHeader">Status</span></Grid>
                         <Grid item xs={2}><span className="tableHeader">Friendly Name</span></Grid>
                         <Grid item xs={5}><span className="tableHeader">Status Overview</span></Grid>
@@ -64,13 +63,6 @@ function Health() {
                                     justifyContent="flex-start"
                                     alignItems="center"
                                     rowSpacing={0} columnSpacing={10}>
-                                    <Grid item xs={1}>
-                                        <Checkbox
-                                            checked={checked}
-                                            onChange={handleChange}
-                                            inputProps={{ 'aria-label': 'controlled' }}
-                                        />
-                                    </Grid>
                                     <Grid item xs={3}>
                                         <span>
                                             {
@@ -94,6 +86,7 @@ function Health() {
                     }
                 </Box>
             </Box>
+            {/* </Paper> */}
         </>
     )
 }

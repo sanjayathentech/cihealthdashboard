@@ -207,11 +207,11 @@ export default function Sidebar({ Children }) {
             <CssBaseline />
             <AppBar elevation={0} sx={{ height: "50px", justifyContent: "center", backgroundColor: "black" }} position="fixed" open={open}>
                 <Toolbar>
-                    <Avatar alt="Remy Sharp" src={AltigenLogo} sx={{ width: 28, height: 28, marginRight: "10px" }}
+                    <Avatar alt="Remy Sharp" src={AltigenLogo} sx={{ border: '1px solid #fff', width: 28, height: 28, marginRight: "10px" }}
                     />
                     <Box className="appBar_userprofile">
                         <Typography variant="span" noWrap component="div" sx={{ fontSize: "16px" }}>
-                            {!open && 'CI Health Dashboard'}
+                            {!open && 'CI Health dashboard'}
                         </Typography>
                         <UserProfile />
                     </Box>
@@ -223,7 +223,7 @@ export default function Sidebar({ Children }) {
                 open={open}>
                 <div style={{ background: '#f6f6f5', height: '100vh' }}>
                     <DrawerHeader sx={{ minHeight: "50px !important", alignItems: "center", }}>
-                        {open && "CI Health Dashboard"}
+                        {open && "CI Health dashboard"}
                         <IconButton onClick={handleDrawerClose}>
                             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                         </IconButton>
