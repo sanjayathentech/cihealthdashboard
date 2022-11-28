@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Avatar, Box, IconButton, Divider, getIconButtonUtilityClass } from '@mui/material';
+import { Avatar, Box, IconButton, Divider, getIconButtonUtilityClass, Tooltip } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -23,10 +23,11 @@ import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded
 import CISnackbar from '../../components/SnackBar/SnackBar';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import AltigenLogo from '../../assets/logo.jpg'
 
 import "./Dashboard.css";
 import UserProfile from './UserProfile';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { getApi } from '../../api/apiMethods/apiMethods';
 import { sidebarlist } from '../../layouts/sidebarlist'
 
@@ -109,7 +110,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export const ResourceContext = createContext()
 
 export default function Sidebar({ Children }) {
-
+    const location = useLocation()
+    const navigate = useNavigate()
+    const activeRoute = (routeName) => {
+        return location.pathname === routeName ? true : false;
+    }
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
 
@@ -196,59 +201,60 @@ export default function Sidebar({ Children }) {
 
             <Box sx={{ display: 'flex' }} >
                 <CssBaseline />
-                <AppBar sx={{ background: '#0a0a0a' }} position="fixed" open={open}>
-
+                <AppBar elevation={0} sx={{ height: "50px", justifyContent: "center", backgroundColor: "black" }} position="fixed" open={open}>
                     <Toolbar>
-                        <IconButton
-                            color="inherit"
-                            aria-label="open drawer"
-                            onClick={handleDrawerOpen}
-                            edge="start"
-                            sx={{
-                                marginRight: 5,
-                                ...(open && { display: 'none' }),
-                            }}
-                        >
-                            <MenuIcon />
-                        </IconButton>
+                        <Avatar alt="Remy Sharp" src={AltigenLogo} sx={{ width: 28, height: 28, marginRight: "10px" }}
+                        />
                         <Box className="appBar_userprofile">
                             <Typography variant="h6" noWrap component="div">
-                                CI Health Dashboard
+                                {!open && 'CI Health Dashboard'}
                             </Typography>
                             <UserProfile />
                         </Box>
                     </Toolbar>
 
                 </AppBar>
-                <Drawer variant="permanent" open={open} >
-                    <DrawerHeader>
+                <Drawer variant="permanent" open={open} sx={{
+                    paper: {
+                        backgroundColor: "#4ab7fc"
+                    }
+                }} >
+                    <DrawerHeader sx={{ minHeight: "50px !important", alignItems: "center", }}>
+                        {open && "CI Health Dashboard"}
                         <IconButton onClick={handleDrawerClose}>
                             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
                         </IconButton>
                     </DrawerHeader>
-                    <Divider />
                     <List>
                         {sidebarlist.map((item, index) => (
-                            <ListItem key={item.name} disablePadding sx={{ display: 'block' }}>
-                                <ListItemButton
-                                    sx={{
-                                        minHeight: 48,
-                                        justifyContent: open ? 'initial' : 'center',
-                                        px: 2.5,
-                                    }}
-                                >
-                                    <ListItemIcon
+                            <Tooltip title={item.name} placement="right">
+                                <ListItem key={item.name} disablePadding sx={{ display: 'block' }}>
+                                    <ListItemButton
+                                        onClick={() => navigate(item.path)}
+                                        selected={activeRoute(item.path)}
                                         sx={{
-                                            minWidth: 0,
-                                            mr: open ? 3 : 'auto',
-                                            justifyContent: 'center',
+                                            minHeight: 48,
+                                            justifyContent: open ? 'initial' : 'center',
+                                            px: 2.5,
+                                            "&selected": {
+                                                backgroundColor: "beige",
+                                                border: "2px solid blue"
+                                            }
                                         }}
                                     >
-                                        {gettingIcon(item)}
-                                    </ListItemIcon>
-                                    <ListItemText primary={item.name} sx={{ opacity: open ? 1 : 0 }} />
-                                </ListItemButton>
-                            </ListItem>
+                                        <ListItemIcon
+                                            sx={{
+                                                minWidth: 0,
+                                                mr: open ? 3 : 'auto',
+                                                justifyContent: 'center',
+                                            }}
+                                        >
+                                            {gettingIcon(item)}
+                                        </ListItemIcon>
+                                        <ListItemText primary={item.name} sx={{ opacity: open ? 1 : 0 }} />
+                                    </ListItemButton>
+                                </ListItem>
+                            </Tooltip>
                         ))}
                     </List>
                 </Drawer>
@@ -274,3 +280,5 @@ function gettingIcon(item) {
         return <ManageAccountsRoundedIcon />
     }
 }
+
+

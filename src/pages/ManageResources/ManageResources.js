@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Grid, Box, Skeleton, IconButton, TextField, Fab } from '@mui/material'
+import { Grid, Box, Skeleton, IconButton, TextField, Fab, Checkbox } from '@mui/material'
 import { useContext } from 'react'
 import { ResourceContext } from '../Dashboard/Sidebar'
 import { statusIndicator } from '../../utils/status/statusIndicator'
@@ -110,13 +110,6 @@ function ManageResources() {
 
                 getmanageResource()
             }
-
-            console.log("==============================================")
-            console.log(res)
-            console.log(res.data)
-            console.log(res.pushResponse)
-            console.log("==============================================")
-
             setSnack({
                 Open: true,
                 message: res.data.pushResponse,
@@ -131,11 +124,22 @@ function ManageResources() {
             console.log(error)
         }
     }
+
+    const [checked, setChecked] = React.useState(true);
+
+    const handlecheckChange = (event) => {
+        setChecked(event.target.checked);
+    };
     return (
         <>
             <Box className="tableHeaderContainer">
                 <Grid container columnSpacing={4}>
-                    <Grid item xs={3}><span className="tableHeader">Friendly Name</span></Grid>
+                    <Grid item xs={1}><Checkbox
+                        checked={checked}
+                        onChange={handlecheckChange}
+                        inputProps={{ 'aria-label': 'controlled' }}
+                    /></Grid>
+                    <Grid item xs={2}><span className="tableHeader">Friendly Name</span></Grid>
                     <Grid item xs={6}><span className="tableHeader">Resource Name</span></Grid>
                     <Grid item xs={2}><span className="tableHeader">Action</span></Grid>
                 </Grid>
@@ -146,7 +150,15 @@ function ManageResources() {
                 manageResources.map((item, index) => (
                     <Box className="tableRow">
                         <Grid container columnSpacing={4}>
-                            <Grid item xs={3}>{item.friendlyName}</Grid>
+                            <Grid item xs={1}>
+                                <Checkbox
+                                    checked={checked}
+                                    onChange={handlecheckChange}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+
+                            </Grid>
+                            <Grid item xs={2}>{item.friendlyName}</Grid>
                             <Grid item xs={6}><span>{item.resourceName}</span></Grid>
                             <Grid item xs={2}><span>
                                 <IconButton onClick={() => handleEdit(item)} color="primary" aria-label="add to shopping cart">
