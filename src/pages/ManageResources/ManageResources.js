@@ -48,7 +48,7 @@ function ManageResources() {
         message: "",
         severity: ""
     });
-    const [pullLoader,setpull] = useState(false)
+    const [pullLoader, setpull] = useState(false)
     const { Open, message, severity } = snack
     const handlesnackClose = () => {
         setSnack(initialSnack)
@@ -57,7 +57,7 @@ function ManageResources() {
 
 
 
-    const { health, loader, fetchloader, receivingID, manageResources, loaderMR, dummyFunction,dummystate , getmanageResource} = useContext(ResourceContext)
+    const { health, loader, fetchloader, receivingID, manageResources, loaderMR, dummyFunction, dummystate, getmanageResource } = useContext(ResourceContext)
 
     const [resourceId, setresourceId] = useState(0)
     const [updatePayload, setupdatePayload] = useState({
@@ -68,7 +68,7 @@ function ManageResources() {
     })
 
     const handleEdit = (item) => {
-       
+
         setresourceId(item.resourceAutoId)
         setOpen(true)
         setupdatePayload({
@@ -107,10 +107,10 @@ function ManageResources() {
             let res = await axios.get(parentUrl.url + endPoints.pushNewResources)
             setpull(false)
             if (res.updatedCount != 0) {
-            
+
                 getmanageResource()
             }
-            
+
             console.log("==============================================")
             console.log(res)
             console.log(res.data)
@@ -128,7 +128,7 @@ function ManageResources() {
                 message: "Error while Pulling Resources",
                 severity: "warning"
             })
-            console.log(error) 
+            console.log(error)
         }
     }
     return (
@@ -168,7 +168,7 @@ function ManageResources() {
                 }
 
             } variant="extended" size="medium" color="primary" aria-label="add">
-                {loaderMR || pullLoader? <> <CircularProgress sx={{ color: '#ffffff', scale: '0.6' }} />Fetching...</> : <><CompareArrowsIcon sx={{ mr: 1 }} />
+                {loaderMR || pullLoader ? <> <CircularProgress sx={{ color: '#ffffff', scale: '0.6' }} />Fetching...</> : <><CompareArrowsIcon sx={{ mr: 1 }} />
                     Pull Resources</>}
             </Fab>
             <div>
