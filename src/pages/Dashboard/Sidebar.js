@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { Avatar, Box } from '@mui/material';
-import Drawer from '@mui/material/Drawer';
-import AppBar from '@mui/material/AppBar';
+import { Avatar, Box, IconButton, Divider, getIconButtonUtilityClass } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import MuiDrawer from '@mui/material/Drawer';
+import MuiAppBar from '@mui/material/AppBar';
+import { styled, useTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
@@ -19,193 +21,256 @@ import { endPoints } from '../../api/apiEndpoints/endPoints';
 import { parentUrl } from '../../api/parentUrl/parentUrl';
 import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
 import CISnackbar from '../../components/SnackBar/SnackBar';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 import "./Dashboard.css";
 import UserProfile from './UserProfile';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { getApi } from '../../api/apiMethods/apiMethods';
+import { sidebarlist } from '../../layouts/sidebarlist'
 
-const drawerWidth = 170;
 let activeStyle = {
-  color: "black",
-  textDecoration: "none",
+    color: "black",
+    textDecoration: "none",
 };
 let inactiveStyle = {
-  color: "grey",
-  textDecoration: "none"
+    color: "grey",
+    textDecoration: "none"
 };
 
+const drawerWidth = 240;
+
+const openedMixin = (theme) => ({
+    width: drawerWidth,
+    transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.enteringScreen,
+    }),
+    overflowX: 'hidden',
+});
+
+const closedMixin = (theme) => ({
+    transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflowX: 'hidden',
+    width: `calc(${theme.spacing(7)} + 1px)`,
+    [theme.breakpoints.up('sm')]: {
+        width: `calc(${theme.spacing(8)} + 1px)`,
+    },
+});
+
+const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+}));
+
+const AppBar = styled(MuiAppBar, {
+    shouldForwardProp: (prop) => prop !== 'open',
+})(({ theme, open }) => ({
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+    ...(open && {
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    }),
+}));
+
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+    ({ theme, open }) => ({
+        width: drawerWidth,
+        flexShrink: 0,
+        whiteSpace: 'nowrap',
+        boxSizing: 'border-box',
+        ...(open && {
+            ...openedMixin(theme),
+            '& .MuiDrawer-paper': openedMixin(theme),
+        }),
+        ...(!open && {
+            ...closedMixin(theme),
+            '& .MuiDrawer-paper': closedMixin(theme),
+        }),
+    }),
+);
 
 export const ResourceContext = createContext()
 
 export default function Sidebar({ Children }) {
-  // const [healthIDs, sethealthIDs] = useState([])
-  const [health, setHealth] = useState([])
-  const [loader, setLoader] = useState(false)
-  const [fetchloader, setfetchLoader] = useState(false)
-  const [manageResources, setmanageResources] = useState([])
-  const [loaderMR, setloaderMr] = useState(false)
+
+    const theme = useTheme();
+    const [open, setOpen] = React.useState(false);
+
+    const handleDrawerOpen = () => {
+        setOpen(true);
+    };
+
+    const handleDrawerClose = () => {
+        setOpen(false);
+    };
 
 
-  var healthIDs = []
-  console.log("my", healthIDs)
+    const [friendlyValue, setfriendlyValue] = useState([])
+    const [health, setHealth] = useState([])
+    const [loader, setLoader] = useState(false)
+    const [fetchloader, setfetchLoader] = useState(false)
+    const [manageResources, setmanageResources] = useState([])
+    const [loaderMR, setloaderMr] = useState(false)
 
-  // const receivingID = (id) => {
-  //   sethealthIDs(id)
-  // }
-  useEffect(() => {
-    getmanageResources()
-  }, [])
-  const getmanageResources = async () => {
-    healthIDs = []
 
-    setloaderMr(true)
-    try {
-      let res = await getApi(`${parentUrl.url}${endPoints.getResourceId}`)
-      console.log(res.data)
-      if (res) {
-        for (let i = 0; i < res.data.length; i++) {
-          if (res.data[i].friendlyName != "") {
-            console.log("RES", res.data[i])
-            healthIDs.push(res.data[i])
-            // sethealthIDs(prev => [...prev, res.data[i]])
-            console.log(res.data[i].resourceId)
-          }
-        }
-        setloaderMr(false)
-        setmanageResources(res.data)
-        getResources()
-      }
-
-    } catch (error) {
-      console.log(error)
+    const [dummystate, setdummystate] = useState(false)
+    const dummyFunction = (id) => {
+        setdummystate(id)
     }
-  }
-  console.log(healthIDs)
+    useEffect(() => {
+        getmanageResource();
+    }, [dummystate])
+    async function getmanageResource() {
+        setloaderMr(true)
+        try {
+            let res = await getApi(`${parentUrl.url}${endPoints.getResourceId}`)
+            const tempFriendlyValue = [];
+            setfriendlyValue([]);
+            if (res) {
+                for (let i = 0; i < res.data.length; i++) {
+                    if (res.data[i].friendlyName != "") {
+                        tempFriendlyValue.push(res.data[i]);
+                    }
+                }
+                setloaderMr(false)
+                setmanageResources(res.data)
+            }
+            setfriendlyValue(tempFriendlyValue);
+            getResources(tempFriendlyValue);
+            tempFriendlyValue = [];
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    console.log(friendlyValue)
+    useEffect(() => {
+        console.log('test')
+    }, [friendlyValue])
+
+    const getResources = async (friendlyData) => {
+        setLoader(true)
+        try {
+            let res = await getApi(`${parentUrl.url}${endPoints.generateToken}`)
+            localStorage.setItem('token', res.data);
+            if (res) {
+                proceedAzureApi(friendlyData);
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
 
-  // const getResources = async () => {
-  //   setLoader(true)
-  //   // const api1 = `${parentUrl.url}${endPoints.generateToken}`;
-  //   // const api2 = `${parentUrl.url}${endPoints.getResourceId}`
-  //   // axios.all([axios(api1), axios(api2)
-  //   // ]).then(res => {
-  //   //   localStorage.setItem('token', res[0].data);
-  //   //   console.log(res[1])
-  //   //   for (let i = 0; i < res[1].data.length; i++) {
-  //   //     console.log(res[1].data[i].friendlyName)
-  //   //     axios.get(`https://management.azure.com${res[1].data[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then(response => {
-  //   //       setHealth(previousState => [...previousState, { ...response, friendlyname: res[1].data[i].friendlyName, autoid: res[1].data[i].resourceAutoId }])
-  //   //       setLoader(false)
-  //   //     }).catch(e => {
-  //   //       console.log(e)
-  //   //     })
-  //   //   }
-  //   // })
-  // }
-
-  const getResources = async () => {
-    debugger;
-    setLoader(true)
-    try {
-      let res = await getApi(`${parentUrl.url}${endPoints.generateToken}`)
-      localStorage.setItem('token', res.data);
-
-      if (res) {
-        console.log(res)
+    const proceedAzureApi = async (friendlyData) => {
+        setHealth([]);
+        for (let i = 0; i < friendlyData.length; i++) {
+            axios(`https://management.azure.com${friendlyData[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then((res) => {
+                setHealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
+            })
+        }
         setLoader(false)
-
-        for (let i = 0; i < healthIDs.length; i++) {
-          console.log(healthIDs[i])
-          axios(`https://management.azure.com${healthIDs[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then((res) => {
-            console.log(res)
-            setHealth(previousState => [...previousState, { ...res, friendlyname: healthIDs[i].friendlyName }])
-          })
-          // console.log(response)
-
-
-        }
-
-        // healthIDs.map(async (item, i) => {
-        //   console.log("res", item)
-        //   try {
-        //     let response = await getApi(`https://management.azure.com${item.resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`)
-        //     console.log(response)
-        //     // setHealth(previousState => [...previousState, { ...response, friendlyname: item.friendlyName }])
-        //   } catch (error) {
-        //     console.log(error)
-        //   }
-        // })
-      }
-
-    } catch (error) {
-      setLoader(false)
     }
-  }
 
 
+    return (
+        <ResourceContext.Provider value={{ health, loader, setHealth, getResources, fetchloader, manageResources, loaderMR, dummyFunction, dummystate, getmanageResource }}>
 
-  return (
-    <ResourceContext.Provider value={{ health, loader, setHealth, getResources, fetchloader, manageResources, loaderMR, getmanageResources }}>
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, }} >
-          <Box className="appBar_userprofile">
-            <Toolbar>
-              <Avatar src="https://pbs.twimg.com/profile_images/1057293119090233344/EEs06nhL_400x400.jpg" sx={{ width: '35px', height: '35px' }} /> &emsp;
-              <Typography variant="body" noWrap component="div">
-                CI Health Dashboard
-              </Typography>
-            </Toolbar>
-            <UserProfile />
-          </Box>
-        </AppBar>
-        <Drawer
-          variant="permanent"
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-          }}
-        >
-          <Toolbar />
-          <Box sx={{ overflow: 'auto' }}>
-            <List>
-              <NavLink style={({ isActive }) => isActive ? activeStyle : inactiveStyle} to="health">
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    {<LocalHospitalIcon sx={{ color: 'green', marginRight: '10px' }} />}
-                    <ListItemText primary="Health Status" />
-                  </ListItemButton>
-                </ListItem>
-              </NavLink>
-              <NavLink style={({ isActive }) => isActive ? activeStyle : inactiveStyle} to="insights">
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    {<InsightsIcon sx={{ color: '#6495ED', marginRight: '10px' }} />}
-                    <ListItemText primary="Insights" />
-                  </ListItemButton>
-                </ListItem>
-              </NavLink>
-              <NavLink style={({ isActive }) => isActive ? activeStyle : inactiveStyle} to="manage-resources">
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    {<ManageAccountsRoundedIcon sx={{ color: 'grey', marginRight: '10px' }} />}
-                    <ListItemText primary="Manage Resources" />
-                  </ListItemButton>
-                </ListItem>
-              </NavLink>
+            <Box sx={{ display: 'flex' }} >
+                <CssBaseline />
+                <AppBar sx={{ background: '#0a0a0a' }} position="fixed" open={open}>
 
-            </List>
-          </Box>
-        </Drawer>
+                    <Toolbar>
+                        <IconButton
+                            color="inherit"
+                            aria-label="open drawer"
+                            onClick={handleDrawerOpen}
+                            edge="start"
+                            sx={{
+                                marginRight: 5,
+                                ...(open && { display: 'none' }),
+                            }}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                        <Box className="appBar_userprofile">
+                            <Typography variant="h6" noWrap component="div">
+                                CI Health Dashboard
+                            </Typography>
+                            <UserProfile />
+                        </Box>
+                    </Toolbar>
 
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <Toolbar />
-          <PageRoutes />
-        </Box>
-      </Box >
+                </AppBar>
+                <Drawer variant="permanent" open={open} >
+                    <DrawerHeader>
+                        <IconButton onClick={handleDrawerClose}>
+                            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                        </IconButton>
+                    </DrawerHeader>
+                    <Divider />
+                    <List>
+                        {sidebarlist.map((item, index) => (
+                            <ListItem key={item.name} disablePadding sx={{ display: 'block' }}>
+                                <ListItemButton
+                                    sx={{
+                                        minHeight: 48,
+                                        justifyContent: open ? 'initial' : 'center',
+                                        px: 2.5,
+                                    }}
+                                >
+                                    <ListItemIcon
+                                        sx={{
+                                            minWidth: 0,
+                                            mr: open ? 3 : 'auto',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        {gettingIcon(item)}
+                                    </ListItemIcon>
+                                    <ListItemText primary={item.name} sx={{ opacity: open ? 1 : 0 }} />
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
+                    </List>
+                </Drawer>
+                <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                    <Toolbar />
+                    <PageRoutes />
+                </Box>
+            </Box >
 
-    </ResourceContext.Provider>
-  );
+        </ResourceContext.Provider >
+    );
+}
+
+
+function gettingIcon(item) {
+    if (item.icon === "health") {
+        return <LocalHospitalIcon />
+    }
+    if (item.icon === "insights") {
+        return <InsightsIcon />
+    }
+    if (item.icon === "manageResources") {
+        return <ManageAccountsRoundedIcon />
+    }
 }

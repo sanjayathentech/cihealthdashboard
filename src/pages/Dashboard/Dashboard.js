@@ -1,24 +1,24 @@
-import React,{useEffect,useState} from "react";
-import Sidebar from '../../pages/Dashboard/Sidebar';
+import React, { useEffect, useState } from "react";
+import Sidebar from '../Dashboard/Sidebar';
 
 function Dashboard() {
-  const [proceedDash,setproceedDash] = useState(false)
+  const [proceedDash, setproceedDash] = useState(false)
 
   useEffect(() => {
-    if(localStorage.getItem('loginToken')){
+    if (localStorage.getItem('loginToken')) {
       setproceedDash(true)
-    }else{
+    } else {
       setproceedDash(false)
-      window.location.href="/login"
+      window.location.href = "/login"
     }
-  },[])
+  }, [])
 
   return (
     <div>
       {
         proceedDash ? <Sidebar /> : null
       }
-      
+
     </div>
   );
 }
