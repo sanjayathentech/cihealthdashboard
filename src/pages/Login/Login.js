@@ -82,15 +82,15 @@ function Login() {
                 </Grid>
                 <Grid item lg={6} md={6} xs={12}>
                     <div className='login_button_container'>
-                        <Button onClick={() => handleLogin()} variant="text" sx={{ border: '2px solid black',borderRadius:0, fontSize: '18px', fontWeight: '100' }}>
+                        <Button onClick={() => handleLogin()} variant="text" sx={{ border: '1px solid #8C8C8C', borderRadius: 0, fontSize: '15px', fontWeight: '600', padding: "8px 18px 8px 18px" }}>
                             <Box sx={{
                                 display: "flex",
                                 flexDirection: "row",
                                 alignItems: "center",
                                 gap: "10px",
-                                textTransform:'none',
-                                borderRadius:0,
-                                color:'black'
+                                textTransform: 'none',
+                                borderRadius: 0,
+                                color: '#5E5E5E'
                             }}>
                                 <img width="30px" height="30px" style={{ objectFit: 'cover', }} src={MSlogo}></img>
                                 Sign in with Microsoft

@@ -132,82 +132,80 @@ function ManageResources() {
     };
     return (
         <>
-            <Box className="tableHeaderContainer">
-                <Grid container columnSpacing={4}>
-                    <Grid item xs={1}><Checkbox
-                        checked={checked}
-                        onChange={handlecheckChange}
-                        inputProps={{ 'aria-label': 'controlled' }}
-                    /></Grid>
-                    <Grid item xs={2}><span className="tableHeader">Friendly Name</span></Grid>
-                    <Grid item xs={6}><span className="tableHeader">Resource Name</span></Grid>
-                    <Grid item xs={2}><span className="tableHeader">Action</span></Grid>
-                </Grid>
-            </Box>
-            {loaderMR || pullLoader ? [1, 2, 3, 4, 5].map(() => (
-                <SkeletonLoading />
-            )) :
-                manageResources.map((item, index) => (
-                    <Box className="tableRow">
-                        <Grid container columnSpacing={4}>
-                            <Grid item xs={1}>
-                                <Checkbox
-                                    checked={checked}
-                                    onChange={handlecheckChange}
-                                    inputProps={{ 'aria-label': 'controlled' }}
-                                />
+            <Box className="mr-table">
+                <Box className="tableHeaderContainer">
+                    <Grid container columnSpacing={4}>
+                        <Grid item xs={1}></Grid>
+                        <Grid item xs={2}><span className="tableHeader">Friendly Name</span></Grid>
+                        <Grid item xs={6}><span className="tableHeader">Resource Name</span></Grid>
+                        <Grid item xs={2}><span className="tableHeader">Action</span></Grid>
+                    </Grid>
+                </Box>
+                {loaderMR || pullLoader ? [1, 2, 3, 4, 5].map(() => (
+                    <SkeletonLoading />
+                )) :
+                    manageResources.map((item, index) => (
+                        <Box className="mr-tableRow">
+                            <Grid container columnSpacing={4}>
+                                <Grid item xs={1}>
+                                    <Checkbox
+                                        checked={checked}
+                                        onChange={handlecheckChange}
+                                        inputProps={{ 'aria-label': 'controlled' }}
+                                    />
 
+                                </Grid>
+                                <Grid item xs={2}>{item.friendlyName}</Grid>
+                                <Grid item xs={6}><span>{item.resourceName}</span></Grid>
+                                <Grid item xs={2}><span>
+                                    <IconButton onClick={() => handleEdit(item)} color="primary" aria-label="add to shopping cart">
+                                        <EditIcon />
+                                    </IconButton>
+                                </span></Grid>
                             </Grid>
-                            <Grid item xs={2}>{item.friendlyName}</Grid>
-                            <Grid item xs={6}><span>{item.resourceName}</span></Grid>
-                            <Grid item xs={2}><span>
-                                <IconButton onClick={() => handleEdit(item)} color="primary" aria-label="add to shopping cart">
-                                    <EditIcon />
-                                </IconButton>
-                            </span></Grid>
-                        </Grid>
-                    </Box>
-                ))
-            }
-            <Fab onClick={pullResources} sx={
-                {
-                    margin: 0,
-                    top: 'auto',
-                    right: 20,
-                    bottom: 20,
-                    left: 'auto',
-                    position: 'fixed',
+                        </Box>
+                    ))
                 }
+                <Fab onClick={pullResources} sx={
+                    {
+                        margin: 0,
+                        top: 'auto',
+                        right: 20,
+                        bottom: 20,
+                        left: 'auto',
+                        position: 'fixed',
+                    }
 
-            } variant="extended" size="medium" color="primary" aria-label="add">
-                {loaderMR || pullLoader ? <> <CircularProgress sx={{ color: '#ffffff', scale: '0.6' }} />Fetching...</> : <><CompareArrowsIcon sx={{ mr: 1 }} />
-                    Pull Resources</>}
-            </Fab>
-            <div>
-                <Dialog
-                    sx={{ padding: "0px 10px 0px 10px" }}
-                    open={open}
-                    TransitionComponent={Transition}
-                    keepMounted
-                    onClose={handleClose}
-                    aria-describedby="alert-dialog-slide-description"
-                >
-                    <DialogTitle>{"Update Friendly name"}</DialogTitle>
-                    <DialogContent>
-                        <TextField value={updatePayload.FriendlyName}
-                            fullWidth
-                            label="Friendly Name"
-                            variant='standard'
-                            name="friendlyname"
-                            onChange={handleChange}
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose}>Close</Button>
-                        <Button onClick={UpdateFriendlyName}>Save</Button>
-                    </DialogActions>
-                </Dialog>
-            </div>
+                } variant="extended" size="medium" color="primary" aria-label="add">
+                    {loaderMR || pullLoader ? <> <CircularProgress sx={{ color: '#ffffff', scale: '0.6' }} />Fetching...</> : <><CompareArrowsIcon sx={{ mr: 1 }} />
+                        Pull Resources</>}
+                </Fab>
+                <div>
+                    <Dialog
+                        sx={{ padding: "0px 10px 0px 10px" }}
+                        open={open}
+                        TransitionComponent={Transition}
+                        keepMounted
+                        onClose={handleClose}
+                        aria-describedby="alert-dialog-slide-description"
+                    >
+                        <DialogTitle>{"Update Friendly name"}</DialogTitle>
+                        <DialogContent>
+                            <TextField value={updatePayload.FriendlyName}
+                                fullWidth
+                                label="Friendly Name"
+                                variant='standard'
+                                name="friendlyname"
+                                onChange={handleChange}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Close</Button>
+                            <Button onClick={UpdateFriendlyName}>Save</Button>
+                        </DialogActions>
+                    </Dialog>
+                </div>
+            </Box>
             <CISnackbar snackOpen={Open} onClose={handlesnackClose} message={message} position1={'top'} position2={'right'} severity={severity} />
         </>
     )

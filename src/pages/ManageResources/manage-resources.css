@@ -1,5 +1,12 @@
-.tableRow {
+.mr-tableRow {
     padding: 10px;
-    border-top: solid 1px #E8E8E8;
-    font-size: 12px;
+    font-size: 13px;
+
+}
+
+.mr-table {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    padding: 20px
 }

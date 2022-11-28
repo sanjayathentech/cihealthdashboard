@@ -31,6 +31,7 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { getApi } from '../../api/apiMethods/apiMethods';
 import { sidebarlist } from '../../layouts/sidebarlist'
 
+
 let activeStyle = {
     color: "black",
     textDecoration: "none",
@@ -98,11 +99,12 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
         boxSizing: 'border-box',
         ...(open && {
             ...openedMixin(theme),
-            '& .MuiDrawer-paper': openedMixin(theme),
+            '& .MuiDrawer-paper': openedMixin(theme)
         }),
         ...(!open && {
             ...closedMixin(theme),
             '& .MuiDrawer-paper': closedMixin(theme),
+
         }),
     }),
 );
@@ -110,6 +112,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export const ResourceContext = createContext()
 
 export default function Sidebar({ Children }) {
+
+
     const location = useLocation()
     const navigate = useNavigate()
     const activeRoute = (routeName) => {
@@ -197,28 +201,27 @@ export default function Sidebar({ Children }) {
 
 
     return (
-        <ResourceContext.Provider value={{ health, loader, setHealth, getResources, fetchloader, manageResources, loaderMR, dummyFunction, dummystate, getmanageResource }}>
 
-            <Box sx={{ display: 'flex' }} >
-                <CssBaseline />
-                <AppBar elevation={0} sx={{ height: "50px", justifyContent: "center", backgroundColor: "black" }} position="fixed" open={open}>
-                    <Toolbar>
-                        <Avatar alt="Remy Sharp" src={AltigenLogo} sx={{ width: 28, height: 28, marginRight: "10px" }}
-                        />
-                        <Box className="appBar_userprofile">
-                            <Typography variant="h6" noWrap component="div">
-                                {!open && 'CI Health Dashboard'}
-                            </Typography>
-                            <UserProfile />
-                        </Box>
-                    </Toolbar>
 
-                </AppBar>
-                <Drawer variant="permanent" open={open} sx={{
-                    paper: {
-                        backgroundColor: "#4ab7fc"
-                    }
-                }} >
+        <Box sx={{ display: 'flex' }} >
+            <CssBaseline />
+            <AppBar elevation={0} sx={{ height: "50px", justifyContent: "center", backgroundColor: "black" }} position="fixed" open={open}>
+                <Toolbar>
+                    <Avatar alt="Remy Sharp" src={AltigenLogo} sx={{ width: 28, height: 28, marginRight: "10px" }}
+                    />
+                    <Box className="appBar_userprofile">
+                        <Typography variant="span" noWrap component="div" sx={{ fontSize: "16px" }}>
+                            {!open && 'CI Health Dashboard'}
+                        </Typography>
+                        <UserProfile />
+                    </Box>
+                </Toolbar>
+
+            </AppBar>
+            <Drawer variant="permanent"
+
+                open={open}>
+                <div style={{ background: '#f6f6f5', height: '100vh' }}>
                     <DrawerHeader sx={{ minHeight: "50px !important", alignItems: "center", }}>
                         {open && "CI Health Dashboard"}
                         <IconButton onClick={handleDrawerClose}>
@@ -236,7 +239,7 @@ export default function Sidebar({ Children }) {
                                             minHeight: 48,
                                             justifyContent: open ? 'initial' : 'center',
                                             px: 2.5,
-                                            "&selected": {
+                                            '&.Mui-selected': {
                                                 backgroundColor: "beige",
                                                 border: "2px solid blue"
                                             }
@@ -257,14 +260,16 @@ export default function Sidebar({ Children }) {
                             </Tooltip>
                         ))}
                     </List>
-                </Drawer>
+                </div>
+            </Drawer>
+            <ResourceContext.Provider value={{ health, loader, setHealth, getResources, fetchloader, manageResources, loaderMR, dummyFunction, dummystate, getmanageResource }}>
                 <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                     <Toolbar />
                     <PageRoutes />
                 </Box>
-            </Box >
+            </ResourceContext.Provider >
+        </Box >
 
-        </ResourceContext.Provider >
     );
 }
 

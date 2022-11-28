@@ -7,30 +7,30 @@ import HelpIcon from '@mui/icons-material/Help';
 import './statusIndicator.css';
 
 export const statusIndicator = (status) => {
-    if(status == "Available"){
+    if (status == "Available") {
         return (<div className='status_alignment'>
-            <CheckCircleIcon sx={{color:'green'}}/> &nbsp;
-            <span> {status}</span>
-        </div> )
-    }else if(status == "Unknown"){
-        return (
-        <div className='status_alignment'>
-            <HelpIcon sx={{color:'#a4a7ab'}} /> &nbsp;
-            <span> {status}</span>
+            <CheckCircleIcon sx={{ color: 'green' }} /> &nbsp;
+            <span className="avalilable"> {status}</span>
         </div>)
-    }else if(status == "Degraded"){
+    } else if (status == "Unknown") {
         return (
-        <div className='status_alignment'>
-            <CircleIcon sx={{color:'#FFBF00'}}/> &nbsp;
-            <span> {status}</span>
-        </div>
+            <div className='status_alignment'>
+                <HelpIcon sx={{ color: '#a4a7ab' }} /> &nbsp;
+                <span className="Unknown"> {status}</span>
+            </div>)
+    } else if (status == "Degraded") {
+        return (
+            <div className='status_alignment'>
+                <CircleIcon sx={{ color: '#FFBF00' }} /> &nbsp;
+                <span className="Degraded"> {status}</span>
+            </div>
         )
-    }else if(status == "Unavailable"){
-        return(
-        <div className='status_alignment'>
-            <CancelIcon sx={{color:'red'}} /> &nbsp;
-            <span> {status}</span>
-        </div>
+    } else if (status == "Unavailable") {
+        return (
+            <div className='status_alignment'>
+                <CancelIcon sx={{ color: 'red' }} /> &nbsp;
+                <span className="Unavailable"> {status}</span>
+            </div>
         )
     }
 }
