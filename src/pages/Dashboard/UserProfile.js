@@ -22,7 +22,7 @@ function UserProfile() {
     const logOut = () => {
         localStorage.clear()
         sessionStorage.clear()
-        window.location.href="/login"
+        window.location.href="/"
     }
 
     return (
@@ -30,7 +30,6 @@ function UserProfile() {
             <PersonIcon onClick={handleClick}
                 sx={{ width: '28px', height: '28px' }}
                 className="pointer" />
-            
             <Menu
                 anchorEl={anchorEl}
                 open={open}

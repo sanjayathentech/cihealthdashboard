@@ -39,114 +39,78 @@ let inactiveStyle = {
 export const ResourceContext = createContext()
 
 export default function Sidebar({ Children }) {
-  // const [healthIDs, sethealthIDs] = useState([])
+  const [friendlyValue, setfriendlyValue] = useState([])
   const [health, setHealth] = useState([])
   const [loader, setLoader] = useState(false)
   const [fetchloader, setfetchLoader] = useState(false)
   const [manageResources, setmanageResources] = useState([])
   const [loaderMR, setloaderMr] = useState(false)
+ 
 
-
-  var healthIDs = []
-  console.log("my", healthIDs)
-
-  // const receivingID = (id) => {
-  //   sethealthIDs(id)
-  // }
+const [dummystate,setdummystate] = useState(false)
+const dummyFunction = (id) => {
+  setdummystate(id)
+}
   useEffect(() => {
-    getmanageResources()
-  }, [])
-  const getmanageResources = async () => {
-    healthIDs = []
-
+    getmanageResource();
+  }, [dummystate])
+  async function getmanageResource() {
     setloaderMr(true)
     try {
       let res = await getApi(`${parentUrl.url}${endPoints.getResourceId}`)
-      console.log(res.data)
+      const tempFriendlyValue = [];
+      setfriendlyValue([]);
       if (res) {
         for (let i = 0; i < res.data.length; i++) {
           if (res.data[i].friendlyName != "") {
-            console.log("RES", res.data[i])
-            healthIDs.push(res.data[i])
-            // sethealthIDs(prev => [...prev, res.data[i]])
-            console.log(res.data[i].resourceId)
+            tempFriendlyValue.push(res.data[i]);
           }
         }
         setloaderMr(false)
         setmanageResources(res.data)
-        getResources()
+      }
+      setfriendlyValue(tempFriendlyValue);
+      getResources(tempFriendlyValue);
+      tempFriendlyValue=[];
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  console.log(friendlyValue)
+useEffect(() => {
+  console.log('test')
+},[friendlyValue])
+  
+  const getResources = async (friendlyData) => {
+    setLoader(true)
+    try {
+      let res = await getApi(`${parentUrl.url}${endPoints.generateToken}`)
+      localStorage.setItem('token', res.data);
+      if (res) {
+        proceedAzureApi(friendlyData);
       }
 
     } catch (error) {
       console.log(error)
     }
   }
-  console.log(healthIDs)
 
 
-  // const getResources = async () => {
-  //   setLoader(true)
-  //   // const api1 = `${parentUrl.url}${endPoints.generateToken}`;
-  //   // const api2 = `${parentUrl.url}${endPoints.getResourceId}`
-  //   // axios.all([axios(api1), axios(api2)
-  //   // ]).then(res => {
-  //   //   localStorage.setItem('token', res[0].data);
-  //   //   console.log(res[1])
-  //   //   for (let i = 0; i < res[1].data.length; i++) {
-  //   //     console.log(res[1].data[i].friendlyName)
-  //   //     axios.get(`https://management.azure.com${res[1].data[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then(response => {
-  //   //       setHealth(previousState => [...previousState, { ...response, friendlyname: res[1].data[i].friendlyName, autoid: res[1].data[i].resourceAutoId }])
-  //   //       setLoader(false)
-  //   //     }).catch(e => {
-  //   //       console.log(e)
-  //   //     })
-  //   //   }
-  //   // })
-  // }
-
-  const getResources = async () => {
-    debugger;
-    setLoader(true)
-    try {
-      let res = await getApi(`${parentUrl.url}${endPoints.generateToken}`)
-      localStorage.setItem('token', res.data);
-
-      if (res) {
-        console.log(res)
-        setLoader(false)
-
-        for (let i = 0; i < healthIDs.length; i++) {
-          console.log(healthIDs[i])
-          axios(`https://management.azure.com${healthIDs[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then((res) => {
-            console.log(res)
-            setHealth(previousState => [...previousState, { ...res, friendlyname: healthIDs[i].friendlyName }])
-          })
-          // console.log(response)
-
-
-        }
-
-        // healthIDs.map(async (item, i) => {
-        //   console.log("res", item)
-        //   try {
-        //     let response = await getApi(`https://management.azure.com${item.resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`)
-        //     console.log(response)
-        //     // setHealth(previousState => [...previousState, { ...response, friendlyname: item.friendlyName }])
-        //   } catch (error) {
-        //     console.log(error)
-        //   }
-        // })
-      }
-
-    } catch (error) {
-      setLoader(false)
+  const proceedAzureApi = async (friendlyData) => {
+    setHealth([]);
+    for (let i = 0; i < friendlyData.length; i++) {
+      axios(`https://management.azure.com${friendlyData[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then((res) => {
+        setHealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
+      })
     }
+    setLoader(false)
   }
 
 
-
   return (
-    <ResourceContext.Provider value={{ health, loader, setHealth, getResources, fetchloader, manageResources, loaderMR, getmanageResources }}>
+    <ResourceContext.Provider value={{ health, loader, setHealth, getResources, fetchloader, manageResources, loaderMR, dummyFunction,dummystate , getmanageResource}}>
+   
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, }} >
@@ -154,7 +118,7 @@ export default function Sidebar({ Children }) {
             <Toolbar>
               <Avatar src="https://pbs.twimg.com/profile_images/1057293119090233344/EEs06nhL_400x400.jpg" sx={{ width: '35px', height: '35px' }} /> &emsp;
               <Typography variant="body" noWrap component="div">
-                CI Health Dashboard
+                CI Health Dashboard    
               </Typography>
             </Toolbar>
             <UserProfile />

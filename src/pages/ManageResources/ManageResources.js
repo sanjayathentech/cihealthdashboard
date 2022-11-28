@@ -48,6 +48,7 @@ function ManageResources() {
         message: "",
         severity: ""
     });
+    const [pullLoader,setpull] = useState(false)
     const { Open, message, severity } = snack
     const handlesnackClose = () => {
         setSnack(initialSnack)
@@ -56,12 +57,7 @@ function ManageResources() {
 
 
 
-    const { health, loader, setHealth, fetchloader, receivingID, manageResources, loaderMR, getmanageResources } = useContext(ResourceContext)
-
-
-
-
-
+    const { health, loader, fetchloader, receivingID, manageResources, loaderMR, dummyFunction,dummystate , getmanageResource} = useContext(ResourceContext)
 
     const [resourceId, setresourceId] = useState(0)
     const [updatePayload, setupdatePayload] = useState({
@@ -72,7 +68,7 @@ function ManageResources() {
     })
 
     const handleEdit = (item) => {
-        console.log(item)
+       
         setresourceId(item.resourceAutoId)
         setOpen(true)
         setupdatePayload({
@@ -96,9 +92,9 @@ function ManageResources() {
         try {
             let res = await axios.put(parentUrl.url + endPoints.updateFriendlyname(resourceId), updatePayload)
             if (res) {
-                getmanageResources()
                 setupdatePayload(initialUpdateState)
                 setOpen(false)
+                dummyFunction(!dummystate)
             }
         } catch (error) {
             console.log(error)
@@ -106,23 +102,33 @@ function ManageResources() {
     }
 
     const pullResources = async () => {
+        setpull(true)
         try {
             let res = await axios.get(parentUrl.url + endPoints.pushNewResources)
+            setpull(false)
             if (res.updatedCount != 0) {
-                getmanageResources()
+            
+                getmanageResource()
             }
+            
+            console.log("==============================================")
+            console.log(res)
+            console.log(res.data)
+            console.log(res.pushResponse)
+            console.log("==============================================")
+
             setSnack({
                 Open: true,
-                message: res.pushResponse,
+                message: res.data.pushResponse,
                 severity: "warning"
             })
         } catch (error) {
             setSnack({
                 Open: true,
-                message: "Error while Fetching ",
+                message: "Error while Pulling Resources",
                 severity: "warning"
             })
-            console.log(error)
+            console.log(error) 
         }
     }
     return (
@@ -130,18 +136,18 @@ function ManageResources() {
             <Box className="tableHeaderContainer">
                 <Grid container columnSpacing={4}>
                     <Grid item xs={3}><span className="tableHeader">Friendly Name</span></Grid>
-                    <Grid item xs={6}><span className="tableHeader">Resource ID</span></Grid>
+                    <Grid item xs={6}><span className="tableHeader">Resource Name</span></Grid>
                     <Grid item xs={2}><span className="tableHeader">Action</span></Grid>
                 </Grid>
             </Box>
-            {loaderMR ? [1, 2, 3, 4, 5].map(() => (
+            {loaderMR || pullLoader ? [1, 2, 3, 4, 5].map(() => (
                 <SkeletonLoading />
             )) :
                 manageResources.map((item, index) => (
                     <Box className="tableRow">
                         <Grid container columnSpacing={4}>
                             <Grid item xs={3}>{item.friendlyName}</Grid>
-                            <Grid item xs={6}><span>{item.resourceId}</span></Grid>
+                            <Grid item xs={6}><span>{item.resourceName}</span></Grid>
                             <Grid item xs={2}><span>
                                 <IconButton onClick={() => handleEdit(item)} color="primary" aria-label="add to shopping cart">
                                     <EditIcon />
@@ -162,7 +168,7 @@ function ManageResources() {
                 }
 
             } variant="extended" size="medium" color="primary" aria-label="add">
-                {loaderMR ? <> <CircularProgress sx={{ color: '#ffffff', scale: '0.6' }} />Fetching...</> : <><CompareArrowsIcon sx={{ mr: 1 }} />
+                {loaderMR || pullLoader? <> <CircularProgress sx={{ color: '#ffffff', scale: '0.6' }} />Fetching...</> : <><CompareArrowsIcon sx={{ mr: 1 }} />
                     Pull Resources</>}
             </Fab>
             <div>
@@ -202,15 +208,15 @@ export default ManageResources
 function SkeletonLoading() {
     return (
         <Box className='loader_spacing'>
-            <Grid container rowSpacing={0} columnSpacing={10}>
-                <Grid item xs={1}>
+            <Grid container rowSpacing={0} columnSpacing={4}>
+                <Grid item xs={3}>
                     <Box>
                         <Skeleton sx={skeletonStyle} />
                     </Box>
                 </Grid>
 
-                <Grid item xs={3}><Skeleton sx={skeletonStyle} /></Grid>
-                <Grid item xs={7}><Skeleton sx={skeletonStyle} /></Grid>
+                <Grid item xs={6}><Skeleton sx={skeletonStyle} /></Grid>
+                <Grid item xs={2}><Skeleton sx={skeletonStyle} /></Grid>
             </Grid>
         </Box>
     )

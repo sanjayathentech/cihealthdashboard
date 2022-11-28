@@ -49,7 +49,7 @@ function Health() {
                         </Grid>
                     </Box>
                 ))
-                    : health.filter(x => x.friendlyname != "")?.map((item, index) => (
+                    : health.map((item, index) => (
                         <Box className="tableRow" onClick={() => navigate('/insights')}>
                             <Grid container direction="row"
                                 justifyContent="flex-start"
