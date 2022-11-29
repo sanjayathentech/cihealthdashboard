@@ -8,6 +8,7 @@ import {
     Fab,
     Checkbox,
     Paper,
+    Pagination
 } from "@mui/material";
 import { useContext } from "react";
 import { ResourceContext } from "../Dashboard/Sidebar";
@@ -28,7 +29,10 @@ import { parentUrl } from "../../api/parentUrl/parentUrl";
 import { endPoints } from "../../api/apiEndpoints/endPoints";
 import { getApi } from "../../api/apiMethods/apiMethods";
 import CISnackbar from "../../components/SnackBar/SnackBar";
+import { Update } from "../../api/apiMethods/apiMethods";
+import CachedIcon from '@mui/icons-material/Cached';
 
+const countperpage = 10;
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -48,7 +52,13 @@ let initialUpdateState = {
     HealthStatus: "",
 };
 
+
+
 function ManageResources() {
+
+    let userName = sessionStorage.getItem('userEmail');
+    console.log(userName)
+
     const [snack, setSnack] = useState({
         Open: false,
         message: "",
@@ -79,6 +89,8 @@ function ManageResources() {
         FriendlyName: "",
         HealthStatus: "",
     });
+    const [page, setPage] = useState(1);
+    const [filteredval, setFilteredval] = useState([]);
 
     const handleEdit = (item) => {
         setresourceId(item.resourceAutoId);
@@ -144,6 +156,7 @@ function ManageResources() {
 
     const checkedchange = (e, ind) => {
         setChecked((state) => ({ ...state, [ind]: e.target.checked }));
+
     };
 
     const handletextchange = (e, ind) => {
@@ -152,7 +165,6 @@ function ManageResources() {
         });
 
         let changedvaluetemp = [...changedvalue];
-        console.log(findind);
         if (findind != -1) {
             changedvalue[findind].friendlyName = e.target.value;
         } else {
@@ -161,45 +173,111 @@ function ManageResources() {
                 {
                     ...manageResources[ind],
                     friendlyName: e.target.value,
-                },
+                    lastModifiedBy: userName,
+                    createdBy: userName
+                }
             ];
         }
         setChangedvalue(changedvaluetemp);
     };
 
+
+    useEffect(() => {
+        getpage();
+    }, [page])
+
+    useEffect(() => {
+        getpage();
+    }, [manageResources])
+
+    const getpage = () => {
+        if (manageResources.length != 0) {
+            let startind = (page - 1) * countperpage;
+            let endindex = startind + countperpage
+            setFilteredval(manageResources.slice(startind, endindex));
+            console.log({ startind, endindex, page });
+        }
+    }
+    const handlechangepage = (e, value) => {
+        setPage(value);
+    }
+
+    const bulkSaveFriendlyName = async () => {
+        try {
+            let res = await Update(endPoints.bulkUpdateFriednlyname, changedvalue)
+            console.log(res)
+            setChangedvalue([])
+            setChecked([])
+            dummyFunction(!dummystate);
+            setSnack({
+                Open: true,
+                message: res.data.pushResponse,
+                severity: "success",
+            });
+        } catch (error) {
+            console.log(error)
+            setSnack({
+                Open: true,
+                message: "Error While Updating Friendly name",
+                severity: "success",
+            });
+        }
+    }
+
+
     return (
         <>
+            {checked.length != 0 && <Box sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginBottom: "10px"
+            }}>
+                <Button onClick={bulkSaveFriendlyName} sx={{
+                    padding: "2px 20px 2px 20px"
+                }} variant='contained'>Save</Button>
+            </Box>}
+
             <Box className="mr-table">
                 <Box className="tableHeaderContainer">
-                    <Grid container columnSpacing={4}>
+                    <Grid container columnSpacing={4}
+                        direction="row"
+                        justifyContent="flex-start"
+                        alignItems="center"
+                    >
                         <Grid item xs={1}>
-                            <Checkbox inputProps={{ "aria-label": "controlled" }} />
                         </Grid>
                         <Grid item xs={2}>
                             <span className="tableHeader">Friendly Name</span>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={8}>
                             <span className="tableHeader">Resource Name</span>
                         </Grid>
-                        <Grid item xs={2}>
+                        {/* <Grid item xs={2}>
                             <span className="tableHeader">Action</span>
-                        </Grid>
+                        </Grid> */}
                     </Grid>
                 </Box>
                 {loaderMR || pullLoader
                     ? [1, 2, 3, 4, 5].map(() => <SkeletonLoading />)
-                    : manageResources.map((item, index) => (
+                    : filteredval.map((item, index) => (
                         <Box className="tableRow">
-                            <Grid container columnSpacing={4}>
+                            <Grid
+                                direction="row"
+                                justifyContent="flex-start"
+                                alignItems="center"
+                                container columnSpacing={4}>
                                 <Grid item xs={1}>
                                     <Checkbox
                                         inputProps={{ "aria-label": "controlled" }}
                                         onChange={(e) => checkedchange(e, index)}
+                                        checked={checked[index] ?? false}
                                     />
                                 </Grid>
                                 <Grid item xs={2}>
                                     {checked[index] ? (
                                         <TextField
+                                            InputProps={{ style: { height: "30px", fontSize: "13px" } }}
+                                            variant="standard"
                                             defaultValue={item.friendlyName}
                                             size="small"
                                             placeholder="Friendly Name"
@@ -209,19 +287,8 @@ function ManageResources() {
                                         <>{item.friendlyName}</>
                                     )}
                                 </Grid>
-                                <Grid item xs={6}>
+                                <Grid item xs={8}>
                                     <span>{item.resourceName}</span>
-                                </Grid>
-                                <Grid item xs={2}>
-                                    <span>
-                                        <IconButton
-                                            onClick={() => handleEdit(item)}
-                                            color="primary"
-                                            aria-label="add to shopping cart"
-                                        >
-                                            <EditIcon />
-                                        </IconButton>
-                                    </span>
                                 </Grid>
                             </Grid>
                         </Box>
@@ -249,8 +316,7 @@ function ManageResources() {
                         </>
                     ) : (
                         <>
-                            <CompareArrowsIcon sx={{ mr: 1 }} />
-                            Pull Resources
+                            <CachedIcon sx={{ mr: 1 }} />Fetch
                         </>
                     )}
                 </Fab>
@@ -281,6 +347,10 @@ function ManageResources() {
                     </Dialog>
                 </div>
             </Box>
+            <Box sx={{ margin: '20px', float: "center" }}>  <Pagination count={Math.ceil(manageResources.length / countperpage)} shape="rounded" onChange={handlechangepage} />
+
+            </Box>
+
             <CISnackbar
                 snackOpen={Open}
                 onClose={handlesnackClose}
@@ -294,22 +364,24 @@ function ManageResources() {
     );
 
 }
-export default ManageResources;
+
+
+export default React.memo(ManageResources);
 
 function SkeletonLoading() {
     return (
         <Box className="loader_spacing">
             <Grid container rowSpacing={0} columnSpacing={4}>
-                <Grid item xs={3}>
+                <Grid item xs={1}>
                     <Box>
                         <Skeleton sx={skeletonStyle} />
                     </Box>
                 </Grid>
 
-                <Grid item xs={6}>
+                <Grid item xs={2}>
                     <Skeleton sx={skeletonStyle} />
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={8}>
                     <Skeleton sx={skeletonStyle} />
                 </Grid>
             </Grid>

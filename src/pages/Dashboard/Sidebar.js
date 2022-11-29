@@ -30,7 +30,7 @@ import UserProfile from './UserProfile';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { getApi } from '../../api/apiMethods/apiMethods';
 import { sidebarlist } from '../../layouts/sidebarlist'
-
+import { GetMethod } from '../../api/apiMethods/apiMethods'
 
 let activeStyle = {
     color: "black",
@@ -130,14 +130,12 @@ export default function Sidebar({ Children }) {
         setOpen(false);
     };
 
-
     const [friendlyValue, setfriendlyValue] = useState([])
     const [health, setHealth] = useState([])
     const [loader, setLoader] = useState(false)
     const [fetchloader, setfetchLoader] = useState(false)
     const [manageResources, setmanageResources] = useState([])
     const [loaderMR, setloaderMr] = useState(false)
-
 
     const [dummystate, setdummystate] = useState(false)
     const dummyFunction = (id) => {
@@ -149,7 +147,7 @@ export default function Sidebar({ Children }) {
     async function getmanageResource() {
         setloaderMr(true)
         try {
-            let res = await getApi(`${parentUrl.url}${endPoints.getResourceId}`)
+            let res = await GetMethod(endPoints.getResourceId)
             const tempFriendlyValue = [];
             setfriendlyValue([]);
             if (res) {
@@ -177,7 +175,7 @@ export default function Sidebar({ Children }) {
     const getResources = async (friendlyData) => {
         setLoader(true)
         try {
-            let res = await getApi(`${parentUrl.url}${endPoints.generateToken}`)
+            let res = await GetMethod(endPoints.generateToken)
             localStorage.setItem('token', res.data);
             if (res) {
                 proceedAzureApi(friendlyData);
@@ -188,24 +186,24 @@ export default function Sidebar({ Children }) {
         }
     }
 
-
     const proceedAzureApi = async (friendlyData) => {
+        console.log(friendlyData)
+
         setHealth([]);
         for (let i = 0; i < friendlyData.length; i++) {
-            axios(`https://management.azure.com${friendlyData[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then((res) => {
+            GetMethod(`https://management.azure.com${friendlyData[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then((res) => {
                 setHealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
             })
         }
         setLoader(false)
     }
 
-
     return (
 
 
         <Box sx={{ display: 'flex' }} >
             <CssBaseline />
-            <AppBar elevation={0} sx={{ height: "50px", justifyContent: "center", backgroundColor: "black" }} position="fixed" open={open}>
+            <AppBar elevation={0} sx={{ height: "50px", justifyContent: "center", backgroundColor: "#0a0a0a" }} position="fixed" open={open}>
                 <Toolbar>
                     <Avatar alt="Remy Sharp" src={AltigenLogo} sx={{ border: '1px solid #fff', width: 28, height: 28, marginRight: "10px" }}
                     />

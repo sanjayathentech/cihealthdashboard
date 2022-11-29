@@ -45,7 +45,7 @@ function Health() {
                     {loader ? dummyArray.map((item, index) => (
                         <Box className='loader_spacing'>
                             <Grid container rowSpacing={0} columnSpacing={10}>
-                                <Grid item xs={1}><Skeleton sx={skeletonStyle} /></Grid>
+
                                 <Grid item xs={3}>
                                     <Box>
                                         <Skeleton sx={skeletonStyle} />
