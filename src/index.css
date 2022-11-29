@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f6f6f5 !important;
+  background-color: #fff !important;
+  font-family: 'Poppins', sans-serif !important;
 }
+
 
 .pointer {
   cursor: pointer;

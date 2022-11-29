@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Box, Button, Grid, Skeleton, Stack, Tooltip, Fab, Checkbox } from '@mui/material';
+import { Box, Button, Grid, Skeleton, Stack, Tooltip, Fab, Checkbox, Paper } from '@mui/material';
 import './Health.css';
 import { statusIndicator } from '../../utils/status/statusIndicator';
 import { useNavigate } from "react-router-dom";
@@ -29,21 +29,15 @@ function Health() {
 
     return (
         <>
-            <Box className="table">
+            {/* <Paper elevation={1}> */}
+            <Box className="health-table">
                 <Box className="tableHeaderContainer">
                     <Grid container direction="row"
                         justifyContent="flex-start"
                         alignItems="center" rowSpacing={0} columnSpacing={10}>
-                        <Grid item xs={1}>
-                            <Checkbox
-                                checked={checked}
-                                onChange={handleChange}
-                                inputProps={{ 'aria-label': 'controlled' }}
-                            />
-                        </Grid>
-                        <Grid item xs={1}><span className="tableHeader">Status</span></Grid>
+                        <Grid item xs={3}><span className="tableHeader">Status</span></Grid>
                         <Grid item xs={2}><span className="tableHeader">Friendly Name</span></Grid>
-                        <Grid item xs={7}><span className="tableHeader">Status Overview</span></Grid>
+                        <Grid item xs={5}><span className="tableHeader">Status Overview</span></Grid>
                     </Grid>
                 </Box>
                 <Box>
@@ -51,14 +45,15 @@ function Health() {
                     {loader ? dummyArray.map((item, index) => (
                         <Box className='loader_spacing'>
                             <Grid container rowSpacing={0} columnSpacing={10}>
-                                <Grid item xs={1}>
+
+                                <Grid item xs={3}>
                                     <Box>
                                         <Skeleton sx={skeletonStyle} />
                                     </Box>
                                 </Grid>
 
-                                <Grid item xs={3}><Skeleton sx={skeletonStyle} /></Grid>
-                                <Grid item xs={7}><Skeleton sx={skeletonStyle} /></Grid>
+                                <Grid item xs={2}><Skeleton sx={skeletonStyle} /></Grid>
+                                <Grid item xs={5}><Skeleton sx={skeletonStyle} /></Grid>
                             </Grid>
                         </Box>
                     ))
@@ -68,29 +63,22 @@ function Health() {
                                     justifyContent="flex-start"
                                     alignItems="center"
                                     rowSpacing={0} columnSpacing={10}>
-                                    <Grid item xs={1}>
-                                        <Checkbox
-                                            checked={checked}
-                                            onChange={handleChange}
-                                            inputProps={{ 'aria-label': 'controlled' }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={1}>
-                                        <Box>
+                                    <Grid item xs={3}>
+                                        <span>
                                             {
                                                 statusIndicator(item.data.properties.availabilityState)
                                             }
-                                        </Box>
+                                        </span>
                                     </Grid>
                                     <Grid item xs={2}>
-                                        <Box className="data">
+                                        <span>
                                             {item.friendlyname}
-                                        </Box>
+                                        </span>
                                     </Grid>
-                                    <Grid item xs={7}>
-                                        <Box className="health_data">
+                                    <Grid item xs={5}>
+                                        <span >
                                             {item.data.properties.summary}
-                                        </Box>
+                                        </span>
                                     </Grid>
                                 </Grid>
                             </Box>
@@ -98,6 +86,7 @@ function Health() {
                     }
                 </Box>
             </Box>
+            {/* </Paper> */}
         </>
     )
 }
