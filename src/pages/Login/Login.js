@@ -50,10 +50,11 @@ function Login() {
 
             // Silently acquires an access token which is then attached to a request for Microsoft Graph data
             instance.acquireTokenSilent(request).then((response) => {
-
+                debugger;
                 if (response) {
                     localStorage.setItem('loginToken', response.accessToken)
                     sessionStorage.setItem('userEmail', response.account.username)
+                    sessionStorage.setItem('userName', response.account.name)
                     navigate('/health')
                 }
             }).catch((e) => {

@@ -20,7 +20,7 @@
 }
 
 .tableRow {
-    padding: 2px;
+    padding: 0px 10px 0px 10px;
     border-top: solid 1px #E8E8E8;
     font-size: 13px;
     font-weight: 400;
@@ -30,7 +30,7 @@
 .tableHeaderContainer {
     padding: 0px 10px 0px 10px;
     margin-bottom: 10px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
 
 }
@@ -61,5 +61,5 @@
 .health-table {
     background-color: #ffffff;
     border-radius: 5px;
-    padding: 20px
+    padding: 10px 20px 20px 20px
 }
