@@ -31,6 +31,7 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { getApi } from '../../api/apiMethods/apiMethods';
 import { sidebarlist } from '../../layouts/sidebarlist'
 import { GetMethod } from '../../api/apiMethods/apiMethods'
+import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 
 let activeStyle = {
     color: "black",
@@ -137,6 +138,8 @@ export default function Sidebar({ Children }) {
     const [manageResources, setmanageResources] = useState([])
     const [loaderMR, setloaderMr] = useState(false)
 
+    const [filteredhealth, setfilteredhealth] = useState([])
+
     const [dummystate, setdummystate] = useState(false)
     const dummyFunction = (id) => {
         setdummystate(id)
@@ -186,6 +189,8 @@ export default function Sidebar({ Children }) {
         }
     }
 
+
+
     const proceedAzureApi = async (friendlyData) => {
         console.log(friendlyData)
 
@@ -193,6 +198,7 @@ export default function Sidebar({ Children }) {
         for (let i = 0; i < friendlyData.length; i++) {
             GetMethod(`https://management.azure.com${friendlyData[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then((res) => {
                 setHealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
+                setfilteredhealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
             })
         }
         setLoader(false)
@@ -203,28 +209,23 @@ export default function Sidebar({ Children }) {
 
         <Box sx={{ display: 'flex' }} >
             <CssBaseline />
-            <AppBar elevation={0} sx={{ height: "50px", justifyContent: "center", backgroundColor: "#0a0a0a" }} position="fixed" open={open}>
+            <AppBar elevation={0} sx={{ justifyContent: "flex-end", backgroundColor: "#ffffff", zIndex: 1 }} position="fixed" open={open}>
                 <Toolbar>
-                    <Avatar alt="Remy Sharp" src={AltigenLogo} sx={{ border: '1px solid #fff', width: 28, height: 28, marginRight: "10px" }}
-                    />
-                    <Box className="appBar_userprofile">
-                        <Typography variant="span" noWrap component="div" sx={{ fontSize: "16px" }}>
-                            {!open && 'CI Health dashboard'}
-                        </Typography>
+                    <Box sx={{ width: '100%', marginLeft: "60px", display: 'flex', justifyContent: "space-between", alignItems: "center", color: "grey" }}>
+                        <span>CI Health Dashboard</span>
                         <UserProfile />
                     </Box>
                 </Toolbar>
-
             </AppBar>
-            <Drawer variant="permanent"
-
+            <Drawer sx={{ zIndex: 2 }} variant="permanent"
                 open={open}>
-                <div style={{ background: '#f6f6f5', height: '100vh' }}>
-                    <DrawerHeader sx={{ minHeight: "50px !important", alignItems: "center", }}>
-                        {open && "CI Health dashboard"}
-                        <IconButton onClick={handleDrawerClose}>
-                            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                        </IconButton>
+                <div style={{ background: '#0078d4', height: '100vh' }}>
+                    <DrawerHeader sx={{ minHeight: "50px !important", alignItems: "center", color: 'white', justifyContent: "center" }}>
+                        <Avatar alt="Altigen" src={AltigenLogo} sx={{
+                            marginTop: "8px",
+                            width: "30px",
+                            height: "30px",
+                        }} />
                     </DrawerHeader>
                     <List>
                         {sidebarlist.map((item, index) => (
@@ -245,9 +246,11 @@ export default function Sidebar({ Children }) {
                                     >
                                         <ListItemIcon
                                             sx={{
+
                                                 minWidth: 0,
                                                 mr: open ? 3 : 'auto',
                                                 justifyContent: 'center',
+                                                color: "#ffffff"
                                             }}
                                         >
                                             {gettingIcon(item)}
@@ -260,7 +263,7 @@ export default function Sidebar({ Children }) {
                     </List>
                 </div>
             </Drawer>
-            <ResourceContext.Provider value={{ health, loader, setHealth, getResources, fetchloader, manageResources, loaderMR, dummyFunction, dummystate, getmanageResource }}>
+            <ResourceContext.Provider value={{ health, loader, filteredhealth, setfilteredhealth, setHealth, getResources, fetchloader, manageResources, loaderMR, dummyFunction, dummystate, getmanageResource }}>
                 <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                     <Toolbar />
                     <PageRoutes />
@@ -274,7 +277,7 @@ export default function Sidebar({ Children }) {
 
 function gettingIcon(item) {
     if (item.icon === "health") {
-        return <LocalHospitalIcon />
+        return <MonitorHeartOutlinedIcon />
     }
     if (item.icon === "insights") {
         return <InsightsIcon />

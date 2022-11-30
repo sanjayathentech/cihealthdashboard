@@ -6,7 +6,7 @@ axiosClient.defaults.baseURL = `${parentUrl.url}`;
 
 axiosClient.defaults.headers = {
     'Content-Type': 'application/json',
-    Accept: 'application/json; charset=utf-8'
+    Accept: 'application/json'
 };
 axiosClient.interceptors.request.use(function (config) {
     // Do something before request is sent

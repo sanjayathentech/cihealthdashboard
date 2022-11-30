@@ -8,7 +8,8 @@ import {
     Fab,
     Checkbox,
     Paper,
-    Pagination
+    Pagination,
+    Typography
 } from "@mui/material";
 import { useContext } from "react";
 import { ResourceContext } from "../Dashboard/Sidebar";
@@ -31,8 +32,19 @@ import { getApi } from "../../api/apiMethods/apiMethods";
 import CISnackbar from "../../components/SnackBar/SnackBar";
 import { Update } from "../../api/apiMethods/apiMethods";
 import CachedIcon from '@mui/icons-material/Cached';
+import InlineText from "../../components/inlinetext/InlineText";
+
+
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+
 
 const countperpage = 10;
+let SelectConstant = ['Available', 'Unknown', 'Degraded', 'Unavailable']
+
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -53,8 +65,14 @@ let initialUpdateState = {
 };
 
 
-
 function ManageResources() {
+    let UserEmail = sessionStorage.getItem('userEmail')
+
+    const [age, setAge] = React.useState('');
+    const handleSelectChange = (event) => {
+        setAge(event.target.value);
+    };
+
 
     let userName = sessionStorage.getItem('userEmail');
     console.log(userName)
@@ -114,7 +132,7 @@ function ManageResources() {
     };
     const UpdateFriendlyName = async () => {
         try {
-            let res = await axios.put(
+            let res = await axios.Update(
                 parentUrl.url + endPoints.updateFriendlyname(resourceId),
                 updatePayload
             );
@@ -131,7 +149,7 @@ function ManageResources() {
     const pullResources = async () => {
         setpull(true);
         try {
-            let res = await axios.get(parentUrl.url + endPoints.pushNewResources);
+            let res = await axios.get(parentUrl.url + endPoints.pushNewResources + '/' + UserEmail);
             setpull(false);
             if (res.updatedCount != 0) {
                 getmanageResource();
@@ -142,6 +160,7 @@ function ManageResources() {
                 severity: "warning",
             });
         } catch (error) {
+            setpull(false);
             setSnack({
                 Open: true,
                 message: "Error while Pulling Resources",
@@ -153,26 +172,26 @@ function ManageResources() {
 
     const [changedvalue, setChangedvalue] = React.useState([]);
     const [checked, setChecked] = React.useState([]);
-
     const checkedchange = (e, ind) => {
         setChecked((state) => ({ ...state, [ind]: e.target.checked }));
 
     };
 
-    const handletextchange = (e, ind) => {
+    const handletextchange = (value, ind) => {
+        console.log(value)
         const findind = changedvalue.findIndex((item) => {
             return item.resourceAutoId === manageResources[ind].resourceAutoId;
         });
 
         let changedvaluetemp = [...changedvalue];
         if (findind != -1) {
-            changedvalue[findind].friendlyName = e.target.value;
+            changedvalue[findind].friendlyName = value;
         } else {
             changedvaluetemp = [
                 ...changedvaluetemp,
                 {
                     ...manageResources[ind],
-                    friendlyName: e.target.value,
+                    friendlyName: value,
                     lastModifiedBy: userName,
                     createdBy: userName
                 }
@@ -223,7 +242,45 @@ function ManageResources() {
             });
         }
     }
+    const [showEdit, setshowEdit] = useState(false)
+    const handleChangeTEXT = async (value, openField, index, item) => {
+        setshowEdit(openField)
+        const data = {
+            ...item,
+            friendlyName: value,
+            lastModifiedBy: userName,
+            createdBy: userName
+        }
 
+        try {
+            let res = await Update(endPoints.updateFriendlyname(item.resourceAutoId), data);
+            if (res) {
+                setupdatePayload(initialUpdateState);
+                setOpen(false);
+                dummyFunction(!dummystate);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const [hoverIndex, sethoverIndex] = useState(null)
+
+
+    console.log("test", showEdit)
+
+    const onMouseHover = (i) => {
+        if (!showEdit) {
+            sethoverIndex(i)
+        }
+    }
+    const onMousehoverleave = () => {
+        // if (!showEdit) {
+        sethoverIndex(null)
+        // }
+    }
+    const handleshowEdit = (value) => {
+        setshowEdit(value)
+    }
 
     return (
         <>
@@ -238,60 +295,88 @@ function ManageResources() {
             </Box>}
 
             <Box className="mr-table">
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: "20px"
+                    }}
+                >
+                    <span style={{ fontWeight: 600, fontSize: "18px" }}>Resources</span>
+                    {/* <FormControl size="small" variant="outlined" sx={{ minWidth: 120 }}>
+                        <InputLabel id="demo-simple-select-label" sx={{ fontFamily: "Poppins, sans-serif !important", fontSize: '14px', fontWeight: 500, display: "flex", alignItems: 'center', justifyContent: "center" }}>By status</InputLabel>
+                        <Select
+                            sx={{
+                                fontFamily: "Poppins, sans-serif !important", fontSize: '1rem', backgroundColor: "#ECEDEF",
+                                boxShadow: 'none', '.MuiOutlinedInput-notchedOutline': { border: 0 },
+                                "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                    border: "1px solid #484850",
+                                    borderRadius: "5px 5px 0 0"
+                                },
+                                fontSize: '14px', fontWeight: 600
+                            }}
+                            labelId="demo-simple-select-standard-label"
+                            id="demo-simple-select-standard"
+                            value={age}
+                            onChange={handleSelectChange}
+                            label="Status"
+                            InputLabelProps={{ shrink: true }}
+                        >
+                            {SelectConstant.map((item, index) => (
+                                <MenuItem value={item} sx={{ fontFamily: "Poppins, sans-serif !important", fontSize: '14px', fontWeight: 600, }}>{item}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl> */}
+                </Box>
+
                 <Box className="tableHeaderContainer">
                     <Grid container columnSpacing={4}
                         direction="row"
                         justifyContent="flex-start"
                         alignItems="center"
                     >
-                        <Grid item xs={1}>
-                        </Grid>
-                        <Grid item xs={2}>
+                        {/* <Grid item xs={1}>
+                            No
+                        </Grid> */}
+                        <Grid item xs={3}>
                             <span className="tableHeader">Friendly Name</span>
                         </Grid>
-                        <Grid item xs={8}>
+                        <Grid item xs={5}>
                             <span className="tableHeader">Resource Name</span>
                         </Grid>
-                        {/* <Grid item xs={2}>
-                            <span className="tableHeader">Action</span>
-                        </Grid> */}
+                        <Grid item xs={4}>
+                            <span className="tableHeader">Resource Type</span>
+                        </Grid>
                     </Grid>
                 </Box>
-                {loaderMR || pullLoader
+                {false && loaderMR && pullLoader
                     ? [1, 2, 3, 4, 5].map(() => <SkeletonLoading />)
                     : filteredval.map((item, index) => (
-                        <Box className="tableRow">
+                        <div className="mr-tableRow" onMouseEnter={() => onMouseHover(index)} onMouseLeave={() => showEdit ? null : onMousehoverleave()} >
                             <Grid
                                 direction="row"
                                 justifyContent="flex-start"
                                 alignItems="center"
                                 container columnSpacing={4}>
-                                <Grid item xs={1}>
-                                    <Checkbox
-                                        inputProps={{ "aria-label": "controlled" }}
-                                        onChange={(e) => checkedchange(e, index)}
-                                        checked={checked[index] ?? false}
-                                    />
+                                {/* <Grid item xs={1}>
+                                    <span>{index + 1}</span>
+                                </Grid> */}
+                                <Grid item xs={3}>
+                                    <Box>
+                                        {hoverIndex === index ? <InlineText text={item.friendlyName} handlechange={(value, openField) => handleChangeTEXT(value, openField, index, item)} showEdit={showEdit} handleEdit={(value) => handleshowEdit(value)} /> :
+                                            <Typography className="inlinetext-text" sx={{ fontFamily: "Poppins, sans-serif", fontSize: "13px" }}>{item.friendlyName}</Typography>
+                                        }
+                                    </Box>
                                 </Grid>
-                                <Grid item xs={2}>
-                                    {checked[index] ? (
-                                        <TextField
-                                            InputProps={{ style: { height: "30px", fontSize: "13px" } }}
-                                            variant="standard"
-                                            defaultValue={item.friendlyName}
-                                            size="small"
-                                            placeholder="Friendly Name"
-                                            onChange={(e) => handletextchange(e, index)}
-                                        />
-                                    ) : (
-                                        <>{item.friendlyName}</>
-                                    )}
-                                </Grid>
-                                <Grid item xs={8}>
+                                <Grid item xs={5}>
                                     <span>{item.resourceName}</span>
                                 </Grid>
+                                <Grid item xs={4}>
+                                    <span>{item.resourceType}</span>
+                                </Grid>
                             </Grid>
-                        </Box>
+                        </div>
                     ))}
                 <Fab
                     onClick={pullResources}
@@ -302,10 +387,17 @@ function ManageResources() {
                         bottom: 20,
                         left: "auto",
                         position: "fixed",
+                        fontFamily: "Poppins, sans-serif",
+                        textTransform: "capitalize",
+                        backgroundColor: '#808080',
+                        boxShadow: 'none',
+                        color: "#ffffff",
+                        '&:hover': {
+                            backgroundColor: 'rgb(154, 154, 154)',
+                        }
                     }}
                     variant="extended"
                     size="medium"
-                    color="primary"
                     aria-label="add"
                 >
                     {loaderMR || pullLoader ? (
@@ -320,34 +412,12 @@ function ManageResources() {
                         </>
                     )}
                 </Fab>
-                <div>
-                    <Dialog
-                        sx={{ padding: "0px 10px 0px 10px" }}
-                        open={open}
-                        TransitionComponent={Transition}
-                        keepMounted
-                        onClose={handleClose}
-                        aria-describedby="alert-dialog-slide-description"
-                    >
-                        <DialogTitle>{"Update Friendly name"}</DialogTitle>
-                        <DialogContent>
-                            <TextField
-                                value={updatePayload.FriendlyName}
-                                fullWidth
-                                label="Friendly Name"
-                                variant="standard"
-                                name="friendlyname"
-                                onChange={handleChange}
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleClose}>Close</Button>
-                            <Button onClick={UpdateFriendlyName}>Save</Button>
-                        </DialogActions>
-                    </Dialog>
-                </div>
             </Box>
-            <Box sx={{ margin: '20px', float: "center" }}>  <Pagination count={Math.ceil(manageResources.length / countperpage)} shape="rounded" onChange={handlechangepage} />
+            <Box sx={{ margin: '20px', float: "center" }}>  <Pagination sx={{
+                '& .MuiPagination-root': {
+                    fontFamily: "Poppins, sans-serif !important"
+                }
+            }} count={Math.ceil(manageResources.length / countperpage)} shape="rounded" onChange={handlechangepage} />
 
             </Box>
 
@@ -372,16 +442,19 @@ function SkeletonLoading() {
     return (
         <Box className="loader_spacing">
             <Grid container rowSpacing={0} columnSpacing={4}>
-                <Grid item xs={1}>
+                {/* <Grid item xs={1}>
                     <Box>
                         <Skeleton sx={skeletonStyle} />
                     </Box>
-                </Grid>
+                </Grid> */}
 
-                <Grid item xs={2}>
+                <Grid item xs={3}>
                     <Skeleton sx={skeletonStyle} />
                 </Grid>
-                <Grid item xs={8}>
+                <Grid item xs={5}>
+                    <Skeleton sx={skeletonStyle} />
+                </Grid>
+                <Grid item xs={4}>
                     <Skeleton sx={skeletonStyle} />
                 </Grid>
             </Grid>
