@@ -1,221 +1,11 @@
-import React from 'react'
-import { Grid, Box, Paper, Badge, Avatar } from '@mui/material'
+import React from 'react';
+import { Grid, Box, Paper, Badge, Avatar } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import './insights.css'
+import './insights.css';
+import FormSelect from '../../components/Forms/FormSelect';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserPresence, setSelectedTenant } from '../../Redux/InsightSlice/InsightSlice';
 
-
-const workgroupStats = [
-    {
-        count: 2,
-        name: "Total Agents"
-    },
-    {
-        count: 5,
-        name: "Available"
-    },
-    {
-        count: 10,
-        name: "Away"
-    },
-    {
-        count: 11,
-        name: "Busy"
-    },
-    {
-        count: 5,
-        name: "Busy"
-    },
-
-]
-const workgroupStatsCards = [
-    {
-        count: 2,
-        name: "Total Agents",
-        status: "red"
-    },
-    {
-        count: 5,
-        name: "Available",
-        status: "blue"
-    },
-    {
-        count: 10,
-        name: "Away",
-        status: "green"
-    },
-    {
-        count: 11,
-        name: "Busy",
-        status: "blue"
-    },
-    {
-        count: 5,
-        name: "Busy",
-        status: "green"
-    },
-    {
-        count: 5,
-        name: "Busy",
-        status: "blue"
-    },
-    {
-        count: 5,
-        name: "Busy",
-        status: "red"
-    },
-    {
-        count: 5,
-        name: "Busy",
-        status: "green"
-    },
-    {
-        count: 5,
-        name: "Busy",
-        status: "blue"
-    },
-    {
-        count: 5,
-        name: "Busy",
-        status: "green"
-    },
-    {
-        count: 5,
-        name: "Busy",
-        status: "green"
-    },
-
-]
-
-const workgroupteamstats = [
-    {
-        name: "Chris Rock",
-        status: "Active",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-    {
-        name: "Lewis",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-    {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-    {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-    {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-    {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-    {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-    {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-    {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-    {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-    {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-    {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-    {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-    {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    }, {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    }, {
-        name: "Joe Rogan",
-        status: "Offline",
-        completedConvo: 2,
-        ActiveConversations: "02: 00",
-        AverageConversationTime: "10 Min",
-        TotalConversationTime: "1 hr",
-    },
-
-
-]
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -247,21 +37,42 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 function Insights() {
+
+    const dispatch = useDispatch()
+    let sum = 0
+
+    const { insightsArray, AgentArray, selectedTenant } = useSelector((state) => state.Insight)
+    console.log(AgentArray)
     return (
         <Box>
             <Grid container spacing={2}>
 
                 <Grid item xs={5} md={12}>
+                    <Box sx={{
+                        marginBottom: "10px",
+                        display: 'flex',
+                        justifyContent: "flex-start",
+                        alignItems: 'center'
+                    }} >
+                        <span style={{ fontWeight: 500, fontSize: "14px" }}>Select Tenant</span>
+                        &emsp;
+                        <FormSelect menuItems={insightsArray} labelVisible={false} backGroundColor="#ffffff" selectOption={selectedTenant}
+                            handleSelectChange={(e) => {
+                                dispatch(getUserPresence(e.target.value))
+                                dispatch(setSelectedTenant(e.target.value))
+
+                            }} />
+                    </Box>
+
                     <Box className="workgroup-container" >
-                        {workgroupStats.map((item, index) => (
+                        {AgentArray?.map((item, index) => (
                             <Box className="workgroup-stat">
                                 <span className="count-text">{item.count}</span>
-                                <span className="name-text">{item.name}</span>
+                                <span className="name-text">{item.status ?? "test"}</span>
                             </Box>
                         ))}
-
                     </Box>
-                    <Box>
+                    {/* <Box>
                         <Grid container spacing={2}>
                             {workgroupStatsCards.map((item, index) => (
                                 <Grid item xs={4} md={2}>
@@ -274,7 +85,7 @@ function Insights() {
                                 </Grid>
                             ))}
                         </Grid>
-                    </Box>
+                    </Box> */}
                 </Grid>
 
             </Grid >

@@ -33,6 +33,9 @@ import { sidebarlist } from '../../layouts/sidebarlist'
 import { GetMethod } from '../../api/apiMethods/apiMethods'
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { GetAllTenant } from '../../Redux/InsightSlice/InsightSlice';
+
 let activeStyle = {
     color: "black",
     textDecoration: "none",
@@ -114,7 +117,12 @@ export const ResourceContext = createContext()
 
 export default function Sidebar({ Children }) {
 
+    const dispatch = useDispatch()
 
+    useEffect(() => {
+        dispatch(GetAllTenant())
+
+    }, [])
     const location = useLocation()
     const navigate = useNavigate()
     const activeRoute = (routeName) => {
@@ -190,11 +198,10 @@ export default function Sidebar({ Children }) {
     }
 
 
-
     const proceedAzureApi = async (friendlyData) => {
-        console.log(friendlyData)
 
         setHealth([]);
+        setfilteredhealth([])
         for (let i = 0; i < friendlyData.length; i++) {
             GetMethod(`https://management.azure.com${friendlyData[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then((res) => {
                 setHealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])

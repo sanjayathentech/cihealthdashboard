@@ -219,6 +219,8 @@ function ManageResources() {
     }
     const handlechangepage = (e, value) => {
         setPage(value);
+        sethoverIndex(null)
+        setshowEdit(false)
     }
 
     const bulkSaveFriendlyName = async () => {
@@ -284,15 +286,6 @@ function ManageResources() {
 
     return (
         <>
-            {checked.length != 0 && <Box sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginBottom: "10px"
-            }}>
-                <Button onClick={bulkSaveFriendlyName} sx={{
-                    padding: "2px 20px 2px 20px"
-                }} variant='contained'>Save</Button>
-            </Box>}
 
             <Box className="mr-table">
                 <Box
@@ -304,30 +297,29 @@ function ManageResources() {
                     }}
                 >
                     <span style={{ fontWeight: 600, fontSize: "18px" }}>Resources</span>
-                    {/* <FormControl size="small" variant="outlined" sx={{ minWidth: 120 }}>
-                        <InputLabel id="demo-simple-select-label" sx={{ fontFamily: "Poppins, sans-serif !important", fontSize: '14px', fontWeight: 500, display: "flex", alignItems: 'center', justifyContent: "center" }}>By status</InputLabel>
-                        <Select
-                            sx={{
-                                fontFamily: "Poppins, sans-serif !important", fontSize: '1rem', backgroundColor: "#ECEDEF",
-                                boxShadow: 'none', '.MuiOutlinedInput-notchedOutline': { border: 0 },
-                                "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                    border: "1px solid #484850",
-                                    borderRadius: "5px 5px 0 0"
-                                },
-                                fontSize: '14px', fontWeight: 600
-                            }}
-                            labelId="demo-simple-select-standard-label"
-                            id="demo-simple-select-standard"
-                            value={age}
-                            onChange={handleSelectChange}
-                            label="Status"
-                            InputLabelProps={{ shrink: true }}
-                        >
-                            {SelectConstant.map((item, index) => (
-                                <MenuItem value={item} sx={{ fontFamily: "Poppins, sans-serif !important", fontSize: '14px', fontWeight: 600, }}>{item}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl> */}
+                    <Button onClick={pullResources} variant="contained" sx={{
+                        fontFamily: [
+                            '-apple-system',
+                            'BlinkMacSystemFont',
+                            '"Segoe UI"',
+                            'system-ui',
+                            '"Apple Color Emoji"',
+                            '"Segoe UI Emoji"',
+                            '"Segoe UI Web"',
+                            'sans-serif',
+                        ].join(','),
+                        height: "40px",
+                        textTransform: "capitalize",
+                        backgroundColor: '#808080',
+                        boxShadow: 'none',
+                        color: "#ffffff",
+                        '&:hover': {
+                            backgroundColor: 'rgb(154, 154, 154)',
+                        }
+                    }}>
+                        {loaderMR || pullLoader ? (<><CircularProgress sx={{ color: "#ffffff", scale: "0.4", padding: 0, margin: 0 }} /> &emsp; Fetching...</>) : <><CachedIcon sx={{ marginRight: "10px" }} />  Fetch</>}
+                    </Button>
+
                 </Box>
 
                 <Box className="tableHeaderContainer">
@@ -365,12 +357,23 @@ function ManageResources() {
                                 <Grid item xs={3}>
                                     <Box>
                                         {hoverIndex === index ? <InlineText text={item.friendlyName} handlechange={(value, openField) => handleChangeTEXT(value, openField, index, item)} showEdit={showEdit} handleEdit={(value) => handleshowEdit(value)} /> :
-                                            <Typography className="inlinetext-text" sx={{ fontFamily: "Poppins, sans-serif", fontSize: "13px" }}>{item.friendlyName}</Typography>
+                                            <Typography className="inlinetext-text" sx={{
+                                                fontFamily: [
+                                                    '-apple-system',
+                                                    'BlinkMacSystemFont',
+                                                    '"Segoe UI"',
+                                                    'system-ui',
+                                                    '"Apple Color Emoji"',
+                                                    '"Segoe UI Emoji"',
+                                                    '"Segoe UI Web"',
+                                                    'sans-serif',
+                                                ].join(','), fontSize: "13px"
+                                            }}>{item.friendlyName}</Typography>
                                         }
                                     </Box>
                                 </Grid>
                                 <Grid item xs={5}>
-                                    <span>{item.resourceName}</span>
+                                    <span style={{ wordWrap: "break-word" }}>{item.resourceName}</span>
                                 </Grid>
                                 <Grid item xs={4}>
                                     <span>{item.resourceType}</span>
@@ -378,7 +381,7 @@ function ManageResources() {
                             </Grid>
                         </div>
                     ))}
-                <Fab
+                {/* <Fab
                     onClick={pullResources}
                     sx={{
                         margin: 0,
@@ -387,7 +390,16 @@ function ManageResources() {
                         bottom: 20,
                         left: "auto",
                         position: "fixed",
-                        fontFamily: "Poppins, sans-serif",
+                        fontFamily: [
+                            '-apple-system',
+                            'BlinkMacSystemFont',
+                            '"Segoe UI"',
+                            'system-ui',
+                            '"Apple Color Emoji"',
+                            '"Segoe UI Emoji"',
+                            '"Segoe UI Web"',
+                            'sans-serif',
+                        ].join(','),
                         textTransform: "capitalize",
                         backgroundColor: '#808080',
                         boxShadow: 'none',
@@ -411,11 +423,20 @@ function ManageResources() {
                             <CachedIcon sx={{ mr: 1 }} />Fetch
                         </>
                     )}
-                </Fab>
+                </Fab> */}
             </Box>
             <Box sx={{ margin: '20px', float: "center" }}>  <Pagination sx={{
                 '& .MuiPagination-root': {
-                    fontFamily: "Poppins, sans-serif !important"
+                    fontFamily: [
+                        '-apple-system',
+                        'BlinkMacSystemFont',
+                        '"Segoe UI"',
+                        'system-ui',
+                        '"Apple Color Emoji"',
+                        '"Segoe UI Emoji"',
+                        '"Segoe UI Web"',
+                        'sans-serif',
+                    ].join(','),
                 }
             }} count={Math.ceil(manageResources.length / countperpage)} shape="rounded" onChange={handlechangepage} />
 

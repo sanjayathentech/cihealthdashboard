@@ -117,11 +117,32 @@ function Health() {
                             color: "#0A0A0A"
                         },
                     }}>
-                        {/* <InputLabel id="demo-simple-select-label" sx={{ fontFamily: "Poppins, sans-serif !important", fontSize: '14px', fontWeight: 500, display: "flex", alignItems: 'center', justifyContent: "center" }}>By status</InputLabel> */}
+                        {/* <InputLabel id="demo-simple-select-label" sx={{ 
+                             fontFamily: [
+                                    '-apple-system',
+                                    'BlinkMacSystemFont',
+                                    '"Segoe UI"',
+                                    'system-ui',
+                                    '"Apple Color Emoji"',
+                                    '"Segoe UI Emoji"',
+                                    '"Segoe UI Web"',
+                                    'sans-serif',
+                                ].join(','),
+                            , fontSize: '14px', fontWeight: 500, display: "flex", alignItems: 'center', justifyContent: "center" }}>By status</InputLabel> */}
 
                         <Select
                             sx={{
-                                fontFamily: "Poppins, sans-serif !important", fontSize: '14px', fontWeight: 600, backgroundColor: "#ECEDEF",
+                                fontFamily: [
+                                    '-apple-system',
+                                    'BlinkMacSystemFont',
+                                    '"Segoe UI"',
+                                    'system-ui',
+                                    '"Apple Color Emoji"',
+                                    '"Segoe UI Emoji"',
+                                    '"Segoe UI Web"',
+                                    'sans-serif',
+                                ].join(','),
+                                fontSize: '14px', fontWeight: 600, backgroundColor: "#ECEDEF",
                                 boxShadow: 'none', '.MuiOutlinedInput-notchedOutline': { border: 0 },
                             }}
                             labelId="demo-simple-select-standard-label"
@@ -131,7 +152,18 @@ function Health() {
                             label="Status"
                         >
                             {SelectConstant.map((item, index) => (
-                                <MenuItem value={item} sx={{ fontFamily: "Poppins, sans-serif !important", fontSize: '14px', fontWeight: 500 }}>{item}</MenuItem>
+                                <MenuItem value={item} sx={{
+                                    fontFamily: [
+                                        '-apple-system',
+                                        'BlinkMacSystemFont',
+                                        '"Segoe UI"',
+                                        'system-ui',
+                                        '"Apple Color Emoji"',
+                                        '"Segoe UI Emoji"',
+                                        '"Segoe UI Web"',
+                                        'sans-serif',
+                                    ].join(','), fontSize: '14px', fontWeight: 500
+                                }}>{item}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
