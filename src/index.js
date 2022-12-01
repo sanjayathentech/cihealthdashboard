@@ -6,16 +6,21 @@ import reportWebVitals from './reportWebVitals';
 import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider } from "@azure/msal-react";
 import { msalConfig } from "../src/utils/SSO/authConfig";
+import { Provider } from 'react-redux';
+import { store } from '../src/Redux/store'
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
- 
-    <MsalProvider instance={msalInstance}>
+
+  <MsalProvider instance={msalInstance}>
+    <Provider store={store}>
+
       <App />
-    </MsalProvider>
-  
+    </Provider>
+  </MsalProvider>
+
 );
 
 // If you want to start measuring performance in your app, pass a function

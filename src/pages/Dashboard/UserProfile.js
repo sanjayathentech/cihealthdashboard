@@ -48,12 +48,30 @@ function UserProfile() {
                 open={open}
                 onClose={handleClose}
                 sx={{
-                    fontFamily: "Poppins, sans-serif !important"
+                    fontFamily: [
+                        '-apple-system',
+                        'BlinkMacSystemFont',
+                        '"Segoe UI"',
+                        'system-ui',
+                        '"Apple Color Emoji"',
+                        '"Segoe UI Emoji"',
+                        '"Segoe UI Web"',
+                        'sans-serif',
+                    ].join(','),
                 }}
             >
                 <Box sx={{ width: '200px' }}>
                     <MenuItem sx={{
-                        fontFamily: "Poppins, sans-serif !important"
+                        fontFamily: [
+                            '-apple-system',
+                            'BlinkMacSystemFont',
+                            '"Segoe UI"',
+                            'system-ui',
+                            '"Apple Color Emoji"',
+                            '"Segoe UI Emoji"',
+                            '"Segoe UI Web"',
+                            'sans-serif',
+                        ].join(','),
                     }} className="pointer">
                         <ListItemIcon>
                             <Settings fontSize="small" />
@@ -61,7 +79,16 @@ function UserProfile() {
                         Settings
                     </MenuItem>
                     <MenuItem sx={{
-                        fontFamily: "Poppins, sans-serif !important"
+                        fontFamily: [
+                            '-apple-system',
+                            'BlinkMacSystemFont',
+                            '"Segoe UI"',
+                            'system-ui',
+                            '"Apple Color Emoji"',
+                            '"Segoe UI Emoji"',
+                            '"Segoe UI Web"',
+                            'sans-serif',
+                        ].join(','),
                     }} className="pointer" onClick={logOut}>
                         <ListItemIcon>
                             <Logout fontSize="small" />

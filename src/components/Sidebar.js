@@ -20,6 +20,7 @@ import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import { useNavigate } from "react-router-dom";
 
+
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -92,6 +93,7 @@ export default function Sidebar({ menus }) {
   const [open, setOpen] = React.useState(false);
   // const []
   const navigate = useNavigate();
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
