@@ -39,10 +39,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 function Insights() {
 
     const dispatch = useDispatch()
-    let sum = 0
-
     const { insightsArray, AgentArray, selectedTenant } = useSelector((state) => state.Insight)
-    console.log(AgentArray)
+
     return (
         <Box>
             <Grid container spacing={2}>

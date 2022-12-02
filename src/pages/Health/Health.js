@@ -162,7 +162,7 @@ function Health() {
                                         '"Segoe UI Emoji"',
                                         '"Segoe UI Web"',
                                         'sans-serif',
-                                    ].join(','), fontSize: '14px', fontWeight: 500
+                                    ].join(','), fontSize: '14px', fontWeight: 400
                                 }}>{item}</MenuItem>
                             ))}
                         </Select>

@@ -56,7 +56,7 @@ export default function FormSelect({ labelName, labelVisible, menuItems, selectO
                             '"Segoe UI Emoji"',
                             '"Segoe UI Web"',
                             'sans-serif',
-                        ].join(','), fontSize: '14px', fontWeight: 500
+                        ].join(','), fontSize: '14px', fontWeight: 400
                     }} value={menuItem.id}>{menuItem.name}</MenuItem>
                 ))
                 }
