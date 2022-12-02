@@ -245,7 +245,18 @@ function Sidebar({ Children }) {
                     </DrawerHeader>
                     <List>
                         {sidebarlist.map((item, index) => (
-                            <Tooltip title={item.name} placement="right">
+                            <Tooltip sx={{
+                                fontFamily: [
+                                    '-apple-system',
+                                    'BlinkMacSystemFont',
+                                    '"Segoe UI"',
+                                    'system-ui',
+                                    '"Apple Color Emoji"',
+                                    '"Segoe UI Emoji"',
+                                    '"Segoe UI Web"',
+                                    'sans-serif',
+                                ].join(',')
+                            }} title={item.name} placement="right">
                                 <ListItem key={item.name} disablePadding sx={{
                                     display: 'block',
 
