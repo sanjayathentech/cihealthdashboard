@@ -310,11 +310,11 @@ function ManageResources() {
                         ].join(','),
                         height: "40px",
                         textTransform: "capitalize",
-                        backgroundColor: '#808080',
+                        backgroundColor: loaderMR || pullLoader ? '#808080' : '#0078d4',
                         boxShadow: 'none',
                         color: "#ffffff",
                         '&:hover': {
-                            backgroundColor: 'rgb(154, 154, 154)',
+                            backgroundColor: loaderMR || pullLoader ? 'rgb(154, 154, 154)' : '#0078d4',
                         }
                     }}>
                         {loaderMR || pullLoader ? (<><CircularProgress sx={{ color: "#ffffff", scale: "0.4", padding: 0, margin: 0 }} /> &emsp; Fetching...</>) : <><CachedIcon sx={{ marginRight: "10px" }} />  Fetch</>}

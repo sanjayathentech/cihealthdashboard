@@ -115,7 +115,14 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export const ResourceContext = createContext()
 
-export default function Sidebar({ Children }) {
+
+const styles = {
+    root: {
+        backgroundColor: 'red',
+    }
+}
+
+function Sidebar({ Children }) {
 
     const dispatch = useDispatch()
 
@@ -125,7 +132,9 @@ export default function Sidebar({ Children }) {
     }, [])
     const location = useLocation()
     const navigate = useNavigate()
+    console.log(location.pathname)
     const activeRoute = (routeName) => {
+        console.log(routeName)
         return location.pathname === routeName ? true : false;
     }
     const theme = useTheme();
@@ -236,19 +245,33 @@ export default function Sidebar({ Children }) {
                     </DrawerHeader>
                     <List>
                         {sidebarlist.map((item, index) => (
-                            <Tooltip title={item.name} placement="right">
-                                <ListItem key={item.name} disablePadding sx={{ display: 'block' }}>
+                            <Tooltip sx={{
+                                fontFamily: [
+                                    '-apple-system',
+                                    'BlinkMacSystemFont',
+                                    '"Segoe UI"',
+                                    'system-ui',
+                                    '"Apple Color Emoji"',
+                                    '"Segoe UI Emoji"',
+                                    '"Segoe UI Web"',
+                                    'sans-serif',
+                                ].join(',')
+                            }} title={item.name} placement="right">
+                                <ListItem key={item.name} disablePadding sx={{
+                                    display: 'block',
+
+                                }}>
                                     <ListItemButton
                                         onClick={() => navigate(item.path)}
-                                        selected={activeRoute(item.path)}
+                                        selected={activeRoute(`/${item.path}`)}
                                         sx={{
                                             minHeight: 48,
                                             justifyContent: open ? 'initial' : 'center',
                                             px: 2.5,
-                                            '&.Mui-selected': {
-                                                backgroundColor: "beige",
-                                                border: "2px solid blue"
-                                            }
+                                            "&.Mui-selected": {
+                                                borderLeft: '2px solid #ffffff',
+                                            },
+
                                         }}
                                     >
                                         <ListItemIcon
@@ -280,7 +303,8 @@ export default function Sidebar({ Children }) {
 
     );
 }
-
+// export default withStyles(styles)(Sidebar);
+export default Sidebar;
 
 function gettingIcon(item) {
     if (item.icon === "health") {
