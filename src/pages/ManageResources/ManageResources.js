@@ -317,7 +317,7 @@ function ManageResources() {
                             backgroundColor: loaderMR || pullLoader ? 'rgb(154, 154, 154)' : '#0078d4',
                         }
                     }}>
-                        {loaderMR || pullLoader ? (<><CircularProgress sx={{ color: "#ffffff", scale: "0.4", padding: 0, margin: 0 }} /> &emsp; Fetching...</>) : <><CachedIcon sx={{ marginRight: "10px" }} />  Fetch</>}
+                        {pullLoader ? (<><CircularProgress sx={{ color: "#ffffff", scale: "0.4", padding: 0, margin: 0 }} /> &emsp; Fetching...</>) : <><CachedIcon sx={{ marginRight: "10px" }} />  Fetch</>}
                     </Button>
 
                 </Box>

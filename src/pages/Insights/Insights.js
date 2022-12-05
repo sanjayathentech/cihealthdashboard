@@ -39,8 +39,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 function Insights() {
 
     const dispatch = useDispatch()
-    const { insightsArray, AgentArray, selectedTenant } = useSelector((state) => state.Insight)
-
+    const { insightsArray, AgentPresence, selectedTenant } = useSelector((state) => state.Insight)
+    let sum = AgentPresence?.ready + AgentPresence?.offline + AgentPresence?.notReady + AgentPresence?.busy
     return (
         <Box>
             <Grid container spacing={2}>
@@ -63,15 +63,35 @@ function Insights() {
                     </Box>
 
                     <Box className="workgroup-container" >
-                        {AgentArray?.map((item, index) => (
-                            <Box className="workgroup-stat">
-                                <span className="count-text">{item.count}</span>
-                                <span className="name-text">{item.status ?? "test"}</span>
-                            </Box>
-                        ))}
+
+                        <Box className="workgroup-stat">
+                            <span className="count-text">{sum}</span>
+                            <span className="name-text">Total Agents</span>
+
+                        </Box>
+                        <Box className="workgroup-stat">
+                            <span className="count-text">{AgentPresence.ready}</span>
+                            <span className="name-text">Available</span>
+
+                        </Box>
+                        <Box className="workgroup-stat">
+                            <span className="count-text">{AgentPresence.offline}</span>
+                            <span className="name-text">Offline</span>
+
+                        </Box>
+                        <Box className="workgroup-stat">
+                            <span className="count-text">{AgentPresence.notReady}</span>
+                            <span className="name-text">Away</span>
+
+                        </Box>
+                        <Box className="workgroup-stat">
+                            <span className="count-text">{AgentPresence.busy}</span>
+                            <span className="name-text">Busy</span>
+
+                        </Box>
                     </Box>
-                    {/* <Box>
-                        <Grid container spacing={2}>
+                    <Box>
+                        {/* <Grid container spacing={2}>
                             {workgroupStatsCards.map((item, index) => (
                                 <Grid item xs={4} md={2}>
                                     <Box className="workgroup-stat-cards" sx={{
@@ -82,8 +102,8 @@ function Insights() {
                                     </Box>
                                 </Grid>
                             ))}
-                        </Grid>
-                    </Box> */}
+                        </Grid> */}
+                    </Box>
                 </Grid>
 
             </Grid >
