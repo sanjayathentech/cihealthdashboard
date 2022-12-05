@@ -132,9 +132,7 @@ function Sidebar({ Children }) {
     }, [])
     const location = useLocation()
     const navigate = useNavigate()
-    console.log(location.pathname)
     const activeRoute = (routeName) => {
-        console.log(routeName)
         return location.pathname === routeName ? true : false;
     }
     const theme = useTheme();
@@ -168,7 +166,7 @@ function Sidebar({ Children }) {
         setloaderMr(true)
         try {
             let res = await GetMethod(endPoints.getResourceId)
-            const tempFriendlyValue = [];
+            let tempFriendlyValue = [];
             setfriendlyValue([]);
             if (res) {
                 for (let i = 0; i < res.data.length; i++) {
@@ -186,11 +184,6 @@ function Sidebar({ Children }) {
             console.log(error)
         }
     }
-
-    console.log(friendlyValue)
-    useEffect(() => {
-        console.log('test')
-    }, [friendlyValue])
 
     const getResources = async (friendlyData) => {
         setLoader(true)
@@ -259,7 +252,6 @@ function Sidebar({ Children }) {
                             }} title={item.name} placement="right">
                                 <ListItem key={item.name} disablePadding sx={{
                                     display: 'block',
-
                                 }}>
                                     <ListItemButton
                                         onClick={() => navigate(item.path)}
@@ -271,7 +263,6 @@ function Sidebar({ Children }) {
                                             "&.Mui-selected": {
                                                 borderLeft: '2px solid #ffffff',
                                             },
-
                                         }}
                                     >
                                         <ListItemIcon
