@@ -9,5 +9,6 @@ export const endPoints = {
     getTenantDetails: "getalltenantdetails",
     getUserPresence: (id) => `getuserpresence/${id}`,
 
-    getAllresourcesandResourcetype: "getallresourcesandresourcetype"
+    getAllresourcesandResourcetype: "getallresourcesandresourcetype",
+    getWorkflowStatus: (id) => `getworkflowstatus?resourceId=${id}`
 }
