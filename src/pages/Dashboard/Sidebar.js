@@ -123,7 +123,7 @@ function Sidebar({ Children }) {
 
     useEffect(() => {
         dispatch(GetAllTenant())
-        dispatch(GetAllresourcesandResourcetype())
+
     }, [])
     const location = useLocation()
     const navigate = useNavigate()

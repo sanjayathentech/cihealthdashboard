@@ -4,15 +4,46 @@ import './reports.css';
 import FormSelect from '../../components/Forms/FormSelect';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAllresourcesandResourcetype, setSelectedResourceType, setSelectedResources } from "../../Redux/ReportsSlice/ReportSlice"
-
+import { GetMethod } from '../../api/apiMethods/apiMethods';
+import { endPoints } from '../../api/apiEndpoints/endPoints';
+import BarChart from './Charts/BarChart';
 
 function Reports() {
     const dispatch = useDispatch()
+
+    const [SelectedResource1, setSelectedResource] = useState("")
+    const [WorkflowStatus, setWorkflowStatus] = useState([])
+
+
     const { ResourceTypes, Resources, SelectedResourceType, SelectedResource } = useSelector((state) => state.Reports)
+
+    useEffect(() => {
+        dispatch(GetAllresourcesandResourcetype())
+    }, [])
+    useEffect(() => {
+        if (SelectedResource) {
+            getWorkFlowStatus()
+        }
+
+    }, [SelectedResource])
+
+
     console.log(Resources)
     const handleSelect = (e) => {
         dispatch(setSelectedResourceType(e.target.value))
     }
+
+    const getWorkFlowStatus = async () => {
+        try {
+            let res = await GetMethod(endPoints.getWorkflowStatus(SelectedResource))
+            setWorkflowStatus(res.data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    let WorkFlows = WorkflowStatus.map((x) => (x.workFlows))
 
     return (
         <>
@@ -49,7 +80,7 @@ function Reports() {
 
                 {SelectedResource &&
                     {
-                        'LogicApp': <LogicApp />,
+                        'LogicApp': <BarChart YAxis={WorkflowStatus.map(x => x.date)} Succeeded={WorkFlows.map((x) => (x.filter((item, index) => item.status == "Succeeded").length))} Failed={WorkFlows.map((x) => (x.filter((j, index) => j.status != "Succeeded").length))} />,
                         'AppService': <AppService />,
                         'SQLDataBase': <SQLDatabase />
                     }[SelectedResourceType]

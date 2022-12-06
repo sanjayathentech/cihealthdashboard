@@ -20,12 +20,9 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Navigate } from 'react-router-dom';
 import { toastMessage } from '../../components/toaster/toast'
 
-
-
 // css
 import './login.css';
 import { getApi } from '../../api/apiMethods/apiMethods';
-
 
 
 function Login() {
@@ -56,7 +53,6 @@ function Login() {
                     localStorage.setItem('loginToken', response.accessToken)
                     sessionStorage.setItem('userEmail', response.account.username)
                     sessionStorage.setItem('userName', response.account.name)
-                    toastMessage('success', "successfully logged in ")
                     navigate('/health')
                 }
             }).catch((e) => {
