@@ -18,6 +18,9 @@ import { endPoints } from '../../api/apiEndpoints/endPoints';
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Navigate } from 'react-router-dom';
+import { toastMessage } from '../../components/toaster/toast'
+
+
 
 // css
 import './login.css';
@@ -47,14 +50,13 @@ function Login() {
                 ...loginRequest,
                 account: accounts[0]
             };
-
             // Silently acquires an access token which is then attached to a request for Microsoft Graph data
             instance.acquireTokenSilent(request).then((response) => {
-                debugger;
                 if (response) {
                     localStorage.setItem('loginToken', response.accessToken)
                     sessionStorage.setItem('userEmail', response.account.username)
                     sessionStorage.setItem('userName', response.account.name)
+                    toastMessage('success', "successfully logged in ")
                     navigate('/health')
                 }
             }).catch((e) => {
@@ -70,6 +72,7 @@ function Login() {
     const handleLogin = () => {
         instance.loginPopup(loginRequest).catch(e => {
             console.log(e);
+            toastMessage('error', "successfully logged in ")
         });
 
     }

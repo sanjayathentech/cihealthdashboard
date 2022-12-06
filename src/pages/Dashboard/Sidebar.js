@@ -19,6 +19,9 @@ import { endPoints } from '../../api/apiEndpoints/endPoints';
 import { parentUrl } from '../../api/parentUrl/parentUrl';
 import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
 import AltigenLogo from '../../assets/logo.jpg'
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
+import DisplaySettingsOutlinedIcon from '@mui/icons-material/DisplaySettingsOutlined';
+import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 
 import "./Dashboard.css";
 import UserProfile from './UserProfile';
@@ -30,6 +33,9 @@ import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAllTenant } from '../../Redux/InsightSlice/InsightSlice';
+import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
+
+import { GetAllresourcesandResourcetype } from "../../Redux/ReportsSlice/ReportSlice"
 
 let activeStyle = {
     color: "black",
@@ -111,19 +117,13 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export const ResourceContext = createContext()
 
 
-const styles = {
-    root: {
-        backgroundColor: 'red',
-    }
-}
-
 function Sidebar({ Children }) {
 
     const dispatch = useDispatch()
 
     useEffect(() => {
         dispatch(GetAllTenant())
-
+        dispatch(GetAllresourcesandResourcetype())
     }, [])
     const location = useLocation()
     const navigate = useNavigate()
@@ -205,7 +205,7 @@ function Sidebar({ Children }) {
                 setfilteredhealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
             })
         }
-      
+
     }
 
     return (
@@ -293,14 +293,12 @@ function Sidebar({ Children }) {
 export default Sidebar;
 
 function gettingIcon(item) {
-    if (item.icon === "health") {
-        return <MonitorHeartOutlinedIcon />
-    }
-    if (item.icon === "insights") {
-        return <InsightsIcon />
-    }
-    if (item.icon === "manageResources") {
-        return <ManageAccountsRoundedIcon />
+
+    switch (item.icon) {
+        case "health": return <MonitorHeartOutlinedIcon />
+        case "insights": return <InsightsOutlinedIcon />
+        case "manageResources": return <DisplaySettingsOutlinedIcon />
+        case "reports": return <AssessmentOutlinedIcon />
     }
 }
 
