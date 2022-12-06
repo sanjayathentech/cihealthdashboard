@@ -33,12 +33,8 @@ import CISnackbar from "../../components/SnackBar/SnackBar";
 import { Update } from "../../api/apiMethods/apiMethods";
 import CachedIcon from '@mui/icons-material/Cached';
 import InlineText from "../../components/inlinetext/InlineText";
-
-
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import MyToast, { toastMessage } from "../../components/toaster/toast";
+import { toast } from "react-toastify";
 
 
 const countperpage = 10;
@@ -223,27 +219,6 @@ function ManageResources() {
         setshowEdit(false)
     }
 
-    const bulkSaveFriendlyName = async () => {
-        try {
-            let res = await Update(endPoints.bulkUpdateFriednlyname, changedvalue)
-            console.log(res)
-            setChangedvalue([])
-            setChecked([])
-            dummyFunction(!dummystate);
-            setSnack({
-                Open: true,
-                message: res.data.pushResponse,
-                severity: "success",
-            });
-        } catch (error) {
-            console.log(error)
-            setSnack({
-                Open: true,
-                message: "Error While Updating Friendly name",
-                severity: "success",
-            });
-        }
-    }
     const [showEdit, setshowEdit] = useState(false)
     const handleChangeTEXT = async (value, openField, index, item) => {
         setshowEdit(openField)
@@ -260,33 +235,31 @@ function ManageResources() {
                 setupdatePayload(initialUpdateState);
                 setOpen(false);
                 dummyFunction(!dummystate);
+                toastMessage('success','Friendly name updated successfully')
             }
         } catch (error) {
             console.log(error);
+            toastMessage('error','cannot update please try later')
         }
     }
     const [hoverIndex, sethoverIndex] = useState(null)
-
-
-    console.log("test", showEdit)
-
     const onMouseHover = (i) => {
         if (!showEdit) {
             sethoverIndex(i)
         }
     }
     const onMousehoverleave = () => {
-        // if (!showEdit) {
         sethoverIndex(null)
-        // }
     }
     const handleshowEdit = (value) => {
         setshowEdit(value)
     }
 
+       
+    
+
     return (
         <>
-
             <Box className="mr-table">
                 <Box
                     sx={{

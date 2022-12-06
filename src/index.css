@@ -1,17 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
-
-
 body {
   margin: 0;
   background-color: #ECEDEF !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Web", sans-serif !important;
 }
-
-
 .pointer {
   cursor: pointer;
 }
-
 ::-webkit-scrollbar {
   width: 8px;
 }
