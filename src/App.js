@@ -7,6 +7,9 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import Login from "./pages/Login/Login";
 import { TextField, Box } from "@mui/material";
 
+// toaster
+import MyToast from "./components/toaster/toast";
+
 function App() {
 
 
@@ -18,6 +21,7 @@ function App() {
         <Route path="/*" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
       </Routes>
+      <MyToast /> 
     </BrowserRouter>
   );
 }

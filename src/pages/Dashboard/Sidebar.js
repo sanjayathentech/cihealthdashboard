@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { Avatar, Box, IconButton, Divider, getIconButtonUtilityClass, Tooltip } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import { styled, useTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -20,10 +18,10 @@ import axios from 'axios';
 import { endPoints } from '../../api/apiEndpoints/endPoints';
 import { parentUrl } from '../../api/parentUrl/parentUrl';
 import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
-import CISnackbar from '../../components/SnackBar/SnackBar';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AltigenLogo from '../../assets/logo.jpg'
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
+import DisplaySettingsOutlinedIcon from '@mui/icons-material/DisplaySettingsOutlined';
+import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 
 import "./Dashboard.css";
 import UserProfile from './UserProfile';
@@ -35,6 +33,9 @@ import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAllTenant } from '../../Redux/InsightSlice/InsightSlice';
+import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
+
+import { GetAllresourcesandResourcetype } from "../../Redux/ReportsSlice/ReportSlice"
 
 let activeStyle = {
     color: "black",
@@ -116,19 +117,13 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export const ResourceContext = createContext()
 
 
-const styles = {
-    root: {
-        backgroundColor: 'red',
-    }
-}
-
 function Sidebar({ Children }) {
 
     const dispatch = useDispatch()
 
     useEffect(() => {
         dispatch(GetAllTenant())
-
+        dispatch(GetAllresourcesandResourcetype())
     }, [])
     const location = useLocation()
     const navigate = useNavigate()
@@ -201,7 +196,7 @@ function Sidebar({ Children }) {
 
 
     const proceedAzureApi = async (friendlyData) => {
-
+        setLoader(false)
         setHealth([]);
         setfilteredhealth([])
         for (let i = 0; i < friendlyData.length; i++) {
@@ -210,7 +205,7 @@ function Sidebar({ Children }) {
                 setfilteredhealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
             })
         }
-        setLoader(false)
+
     }
 
     return (
@@ -298,14 +293,12 @@ function Sidebar({ Children }) {
 export default Sidebar;
 
 function gettingIcon(item) {
-    if (item.icon === "health") {
-        return <MonitorHeartOutlinedIcon />
-    }
-    if (item.icon === "insights") {
-        return <InsightsIcon />
-    }
-    if (item.icon === "manageResources") {
-        return <ManageAccountsRoundedIcon />
+
+    switch (item.icon) {
+        case "health": return <MonitorHeartOutlinedIcon />
+        case "insights": return <InsightsOutlinedIcon />
+        case "manageResources": return <DisplaySettingsOutlinedIcon />
+        case "reports": return <AssessmentOutlinedIcon />
     }
 }
 

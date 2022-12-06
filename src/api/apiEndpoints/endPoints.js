@@ -7,5 +7,7 @@ export const endPoints = {
     bulkUpdateFriednlyname: 'bulkupdate',
 
     getTenantDetails: "getalltenantdetails",
-    getUserPresence: (id) => `getuserpresence/${id}`
+    getUserPresence: (id) => `getuserpresence/${id}`,
+
+    getAllresourcesandResourcetype: "getallresourcesandresourcetype"
 }
