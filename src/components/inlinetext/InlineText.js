@@ -31,10 +31,10 @@ function InlineText({ text, handlechange, saveName, showEdit, handleEdit }) {
 
           >
             <TextField
+              autoFocus
               defaultValue={text}
               size="small"
               ref={ref}
-              autoFocus
               variant="standard"
               onChange={(e) => setTextfieldvalue(e.target.value)}
               InputProps={{

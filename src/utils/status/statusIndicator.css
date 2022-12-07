@@ -6,10 +6,10 @@
 }
 
 .avalilable {
-    background: #d8f8c9;
+    background: #b6ff94;
     border-radius: 4px;
     padding: 4px 8px 4px 8px;
-    color: #52C41A;
+    color: green;
 }
 
 .Unknown {
@@ -30,5 +30,5 @@
     background: #ffbfc2;
     border-radius: 4px;
     padding: 4px 8px 4px 8px;
-    color: #F5222D;
+    color: red;
 }

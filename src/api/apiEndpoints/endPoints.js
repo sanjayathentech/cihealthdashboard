@@ -10,5 +10,6 @@ export const endPoints = {
     getUserPresence: (id) => `getuserpresence/${id}`,
 
     getAllresourcesandResourcetype: "getallresourcesandresourcetype",
-    getWorkflowStatus: (id) => `getworkflowstatus?resourceId=${id}`
+    getWorkflowStatus: (id) => `getworkflowstatus?resourceId=${id}`,
+    getDeploymentslotsstatus: (id) => `getdeploymentslotsstatus?resourceId=${id}`
 }

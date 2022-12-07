@@ -25,16 +25,7 @@ export default function FormSelect({ labelName, labelVisible, menuItems, selectO
             {labelVisible ? <InputLabel id="demo-simple-select-standard-label">{labelName}</InputLabel> : null}
             <Select
                 sx={{
-                    fontFamily: [
-                        '-apple-system',
-                        'BlinkMacSystemFont',
-                        '"Segoe UI"',
-                        'system-ui',
-                        '"Apple Color Emoji"',
-                        '"Segoe UI Emoji"',
-                        '"Segoe UI Web"',
-                        'sans-serif',
-                    ].join(','), fontSize: '14px', fontWeight: 600, backgroundColor: backGroundColor,
+                    fontSize: '14px', fontWeight: 600, backgroundColor: backGroundColor,
                     boxShadow: 'none', '.MuiOutlinedInput-notchedOutline': { border: 0 },
                 }}
 
@@ -47,16 +38,7 @@ export default function FormSelect({ labelName, labelVisible, menuItems, selectO
                 {/* <MenuItem value=""><em>None</em></MenuItem> */}
                 {menuItems?.map((menuItem, key) => (
                     <MenuItem sx={{
-                        fontFamily: [
-                            '-apple-system',
-                            'BlinkMacSystemFont',
-                            '"Segoe UI"',
-                            'system-ui',
-                            '"Apple Color Emoji"',
-                            '"Segoe UI Emoji"',
-                            '"Segoe UI Web"',
-                            'sans-serif',
-                        ].join(','), fontSize: '14px', fontWeight: 400
+                        fontSize: '14px', fontWeight: 400
                     }} value={menuItem.id}>{menuItem.name}</MenuItem>
                 ))
                 }

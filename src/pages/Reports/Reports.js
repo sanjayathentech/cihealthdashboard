@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Box } from '@mui/material';
+import { Grid, Box, ListItem, List, ListItemText, ListItemButton } from '@mui/material';
 import './reports.css';
 import FormSelect from '../../components/Forms/FormSelect';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,6 +7,7 @@ import { GetAllresourcesandResourcetype, setSelectedResourceType, setSelectedRes
 import { GetMethod } from '../../api/apiMethods/apiMethods';
 import { endPoints } from '../../api/apiEndpoints/endPoints';
 import BarChart from './Charts/BarChart';
+import DeploymentChart from './Charts/DeploymentChart';
 
 function Reports() {
     const dispatch = useDispatch()
@@ -27,66 +28,89 @@ function Reports() {
 
     }, [SelectedResource])
 
-
-    console.log(Resources)
-    const handleSelect = (e) => {
-        dispatch(setSelectedResourceType(e.target.value))
-    }
-
     const getWorkFlowStatus = async () => {
         try {
-            let res = await GetMethod(endPoints.getWorkflowStatus(SelectedResource))
-            setWorkflowStatus(res.data)
+            let res = await GetMethod(gettingEndpoints(SelectedResource))
+            setWorkflowStatus(res.data ?? [])
         } catch (error) {
             console.log(error)
         }
     }
 
+    function gettingEndpoints(id) {
+        switch (SelectedResourceType) {
+            case 'LogicApp': return endPoints.getWorkflowStatus(id);
+            case 'AppServiceSite': return endPoints.getDeploymentslotsstatus(id);
+            case 'AppServiceSiteSlot': return endPoints.getDeploymentslotsstatus(id);
+        }
+    }
 
-    let WorkFlows = WorkflowStatus.map((x) => (x.workFlows))
 
     return (
         <>
             <Box>
-                <Grid container spacing={2} mb={4}>
-                    <Grid item xs={5} md={12}>
-                        <Box sx={{
-                            marginBottom: "10px",
-                            display: 'flex',
-                            justifyContent: "flex-start",
-                            alignItems: 'center',
-                            gap: "20px"
-                        }} >
-                            <FormSelect menuItems={ResourceTypes.map((x) => ({ name: x.resourceTypeFriendlyName, id: x.resourceTypeFriendlyName }))}
-                                labelVisible={false}
-                                backGroundColor="#ffffff"
-                                selectOption={SelectedResourceType}
-                                handleSelectChange={handleSelect}
-                            />
-                            <FormSelect
-                                menuItems={Resources.map((x) => ({ name: x.friendlyName ? x.friendlyName : x.resourceName, id: x.resourceId }))}
-                                labelVisible={false}
-                                backGroundColor="#ffffff"
-                                selectOption={SelectedResource}
-                                handleSelectChange={({ target }) => {
-                                    dispatch(setSelectedResources(target.value))
-                                }}
-                            />
-                        </Box>
-                        <Box>
-                        </Box>
+                <Box className="ReportGridContainer">
+                    <span style={{ fontWeight: 600, fontSize: "18px" }}>Resource Types</span>
+                    <Grid container spacing={2} mt={2} mb={2} mr={2}>
+                        <Grid item xs={5} md={2} justifyContent={"flex-start"} sx={{ height: "70vh", overflowY: "scroll" }}>
+                            <List dense={true}>
+                                {ResourceTypes.map((item, index) => (
+                                    <ListItem>
+                                        <ListItemButton
+                                            onClick={(e) => {
+                                                e.preventDefault()
+                                                dispatch(setSelectedResourceType(item.resourceTypeFriendlyName))
+                                            }}
+                                            selected={item.resourceTypeFriendlyName == SelectedResourceType}
+                                            sx={{
+                                                "&.Mui-selected": {
+                                                    backgroundColor: "#ECEDEF",
+                                                    color: "#1E1E1E",
+                                                    fontWeight: 600
+                                                },
+                                            }}
+                                        >
+                                            <ListItemText sx={{
+                                                overflow: "hidden", textOverflow: "ellipsis", color: "#141414"
+                                            }} primary={item.resourceTypeFriendlyName} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </Grid>
+                        <Grid item xs={5} md={10}>
+                            <Box className='reportTable'>
+                                <Box className='reportHeader'>
+                                    <Grid container>
+                                        <Grid item xs={3}>
+                                            <span>No</span>
+                                        </Grid>
+                                        <Grid item xs={5}>
+                                            <span>Test Details</span>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <span>Test Details</span>
+                                        </Grid>
+                                    </Grid>
+                                </Box>
+                                <Box className='reportRow'>
+                                    <Grid container>
+                                        <Grid item xs={3}>
+                                            <span>1</span>
+                                        </Grid>
+                                        <Grid item xs={5}>
+                                            <span>Test</span>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <span>Test</span>
+                                        </Grid>
+                                    </Grid>
+                                </Box>
+                            </Box>
+                        </Grid>
                     </Grid>
-                </Grid>
-
-                {SelectedResource &&
-                    {
-                        'LogicApp': <BarChart YAxis={WorkflowStatus.map(x => x.date)} Succeeded={WorkFlows.map((x) => (x.filter((item, index) => item.status == "Succeeded").length))} Failed={WorkFlows.map((x) => (x.filter((j, index) => j.status != "Succeeded").length))} />,
-                        'AppService': <AppService />,
-                        'SQLDataBase': <SQLDatabase />
-                    }[SelectedResourceType]
-                }
-            </Box >
-
+                </Box>
+            </Box>
         </>
     )
 }
@@ -95,44 +119,4 @@ export default Reports
 
 
 
-function LogicApp() {
-    return (
-        <>
-            {/* <Box className="reportTable">
-                <Box className="reportHeader">
-                    <Grid container direction="row"
-                        justifyContent="flex-start"
-                        alignItems="center" rowSpacing={0} columnSpacing={10}>
-                        <Grid item xs={1}><span>No</span></Grid>
-                        <Grid item xs={3}><span>Status</span></Grid>
-                        <Grid item xs={3}><span>Overview</span></Grid>
-                        <Grid item xs={3}><span>Usage</span></Grid>
-                    </Grid>
-                </Box>
-                <Box className="reportRow">
-                    <Grid container direction="row"
-                        justifyContent="flex-start"
-                        alignItems="center" rowSpacing={0} columnSpacing={10}>
-                        <Grid item xs={1}><span>1</span></Grid>
-                        <Grid item xs={3}><span>Test</span></Grid>
-                        <Grid item xs={3}><span>Test</span></Grid>
-                        <Grid item xs={3}><span> Test Detials</span></Grid>
-                    </Grid>
-                </Box>
-            </Box> */}
 
-        </>
-    )
-}
-
-function AppService() {
-    return (
-        <div>AppService</div>
-    )
-}
-
-function SQLDatabase() {
-    return (
-        <div>SQLDatabase</div>
-    )
-}
