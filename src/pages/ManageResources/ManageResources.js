@@ -150,18 +150,11 @@ function ManageResources() {
             if (res.updatedCount != 0) {
                 getmanageResource();
             }
-            setSnack({
-                Open: true,
-                message: res.data.pushResponse,
-                severity: "warning",
-            });
+
+            toastMessage('warning', res.data.pushResponse)
         } catch (error) {
             setpull(false);
-            setSnack({
-                Open: true,
-                message: "Error while Pulling Resources",
-                severity: "warning",
-            });
+            toastMessage('error', "Error while Pulling Resources")
             console.log(error);
         }
     };
@@ -235,11 +228,11 @@ function ManageResources() {
                 setupdatePayload(initialUpdateState);
                 setOpen(false);
                 dummyFunction(!dummystate);
-                toastMessage('success', 'Friendly name updated successfully')
+                toastMessage('success', 'Successfully Updated')
             }
         } catch (error) {
             console.log(error);
-            toastMessage('error', 'cannot update please try later')
+            toastMessage('error', 'Error While Updating Friendly Name')
         }
     }
     const [hoverIndex, sethoverIndex] = useState(null)

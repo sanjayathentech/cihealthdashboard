@@ -17,7 +17,7 @@ export default function MyToast({ postion, theme }) {
                 theme={theme}
             />
             {/* Same as */}
-            <ToastContainer />
+
         </>
     )
 }
