@@ -27,6 +27,7 @@ export default function FormSelect({ labelName, labelVisible, menuItems, selectO
                 sx={{
                     fontSize: '14px', fontWeight: 600, backgroundColor: backGroundColor,
                     boxShadow: 'none', '.MuiOutlinedInput-notchedOutline': { border: 0 },
+                    textTransform: "capitalize"
                 }}
 
                 labelId="select-label-id"
@@ -35,10 +36,10 @@ export default function FormSelect({ labelName, labelVisible, menuItems, selectO
                 onChange={handleSelectChange}
                 label={labelName}
             >
-                {/* <MenuItem value=""><em>None</em></MenuItem> */}
                 {menuItems?.map((menuItem, key) => (
                     <MenuItem sx={{
-                        fontSize: '14px', fontWeight: 400
+                        fontSize: '14px', fontWeight: 400,
+                        textTransform: "capitalize"
                     }} value={menuItem.id}>{menuItem.name}</MenuItem>
                 ))
                 }
