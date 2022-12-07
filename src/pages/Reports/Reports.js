@@ -11,9 +11,7 @@ import DeploymentChart from './Charts/DeploymentChart';
 
 function Reports() {
     const dispatch = useDispatch()
-
-    const [SelectedResource1, setSelectedResource] = useState("")
-    const [WorkflowStatus, setWorkflowStatus] = useState([])
+    // const [WorkflowStatus, setWorkflowStatus] = useState([])
 
 
     const { ResourceTypes, Resources, SelectedResourceType, SelectedResource } = useSelector((state) => state.Reports)
@@ -21,29 +19,29 @@ function Reports() {
     useEffect(() => {
         dispatch(GetAllresourcesandResourcetype())
     }, [])
-    useEffect(() => {
-        if (SelectedResource) {
-            getWorkFlowStatus()
-        }
+    // useEffect(() => {
+    //     if (SelectedResource) {
+    //         getWorkFlowStatus()
+    //     }
 
-    }, [SelectedResource])
+    // }, [SelectedResource])
 
-    const getWorkFlowStatus = async () => {
-        try {
-            let res = await GetMethod(gettingEndpoints(SelectedResource))
-            setWorkflowStatus(res.data ?? [])
-        } catch (error) {
-            console.log(error)
-        }
-    }
+    // const getWorkFlowStatus = async () => {
+    //     try {
+    //         let res = await GetMethod(gettingEndpoints(SelectedResource))
+    //         setWorkflowStatus(res.data ?? [])
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
 
-    function gettingEndpoints(id) {
-        switch (SelectedResourceType) {
-            case 'LogicApp': return endPoints.getWorkflowStatus(id);
-            case 'AppServiceSite': return endPoints.getDeploymentslotsstatus(id);
-            case 'AppServiceSiteSlot': return endPoints.getDeploymentslotsstatus(id);
-        }
-    }
+    // function gettingEndpoints(id) {
+    //     switch (SelectedResourceType) {
+    //         case 'LogicApp': return endPoints.getWorkflowStatus(id);
+    //         case 'AppServiceSite': return endPoints.getDeploymentslotsstatus(id);
+    //         case 'AppServiceSiteSlot': return endPoints.getDeploymentslotsstatus(id);
+    //     }
+    // }
 
 
     return (

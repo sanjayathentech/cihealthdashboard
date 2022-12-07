@@ -24,12 +24,7 @@ export const ReportSlice = createSlice({
     initialState,
     reducers: {
         setSelectedResourceType: (state, action) => {
-            let currentResources = state.ResourceTypes.find((x) => x.resourceTypeFriendlyName === action.payload).resources ?? []
-            let [FirstResource] = currentResources
-
             state.SelectedResourceType = action.payload
-            state.SelectedResource = FirstResource.resourceId
-            state.Resources = currentResources
         },
         setSelectedResources: (state, action) => {
             state.SelectedResource = action.payload
@@ -38,13 +33,8 @@ export const ReportSlice = createSlice({
     extraReducers(builder) {
         builder
             .addCase(GetAllresourcesandResourcetype.fulfilled, (state, { payload }) => {
-
-                let currentResources = payload.data.find((x) => x.resourceTypeFriendlyName === payload.selectId).resources ?? []
-                let [FirstResource] = currentResources
                 state.ResourceTypes = payload.data
                 state.SelectedResourceType = payload.selectId
-                state.SelectedResource = FirstResource.resourceId
-                state.Resources = currentResources
             })
             .addCase(GetAllresourcesandResourcetype.rejected, (state, action) => {
 
