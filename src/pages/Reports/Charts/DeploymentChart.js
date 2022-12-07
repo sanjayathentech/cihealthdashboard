@@ -2,7 +2,7 @@ import React from 'react'
 import ReactEcharts from 'echarts-for-react'
 
 
-function BarChart({ YAxis = [], Succeeded = [], Failed = [], Running = [] }) {
+function DeploymentChart({ YAxis = [], Active = [], InActive = [] }) {
 
     const option = {
         title: {
@@ -30,23 +30,17 @@ function BarChart({ YAxis = [], Succeeded = [], Failed = [], Running = [] }) {
         },
         series: [
             {
-                name: 'Succeeded',
+                name: 'Active',
                 itemStyle: { normal: { color: '#50C878' } },
                 type: 'bar',
-                data: Succeeded
+                data: Active
             },
             {
-                name: 'Running',
+                name: 'InActive',
                 type: 'bar',
                 itemStyle: { normal: { color: '#0078d4' } },
-                data: Running
+                data: InActive
             },
-            {
-                name: 'Failed',
-                itemStyle: { normal: { color: '#FF5733' } },
-                type: 'bar',
-                data: Failed
-            }
         ]
     };
 
@@ -59,4 +53,4 @@ function BarChart({ YAxis = [], Succeeded = [], Failed = [], Running = [] }) {
     )
 }
 
-export default BarChart
+export default DeploymentChart

@@ -40,7 +40,7 @@ const successToast = (message) => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "dark",
+        theme: "light",
     })
 }
 
@@ -54,7 +54,7 @@ const warningToast = (message) => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "dark",
+        theme: "light",
     })
 }
 
@@ -68,6 +68,6 @@ const errorToast = (message) => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "dark",
+        theme: "light",
     })
 }

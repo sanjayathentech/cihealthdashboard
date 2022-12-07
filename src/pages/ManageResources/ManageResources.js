@@ -235,11 +235,11 @@ function ManageResources() {
                 setupdatePayload(initialUpdateState);
                 setOpen(false);
                 dummyFunction(!dummystate);
-                toastMessage('success','Friendly name updated successfully')
+                toastMessage('success', 'Friendly name updated successfully')
             }
         } catch (error) {
             console.log(error);
-            toastMessage('error','cannot update please try later')
+            toastMessage('error', 'cannot update please try later')
         }
     }
     const [hoverIndex, sethoverIndex] = useState(null)
@@ -255,8 +255,8 @@ function ManageResources() {
         setshowEdit(value)
     }
 
-       
-    
+
+
 
     return (
         <>
@@ -324,23 +324,11 @@ function ManageResources() {
                                 justifyContent="flex-start"
                                 alignItems="center"
                                 container columnSpacing={4}>
-                                {/* <Grid item xs={1}>
-                                    <span>{index + 1}</span>
-                                </Grid> */}
                                 <Grid item xs={3}>
                                     <Box>
                                         {hoverIndex === index ? <InlineText text={item.friendlyName} handlechange={(value, openField) => handleChangeTEXT(value, openField, index, item)} showEdit={showEdit} handleEdit={(value) => handleshowEdit(value)} /> :
                                             <Typography className="inlinetext-text" sx={{
-                                                fontFamily: [
-                                                    '-apple-system',
-                                                    'BlinkMacSystemFont',
-                                                    '"Segoe UI"',
-                                                    'system-ui',
-                                                    '"Apple Color Emoji"',
-                                                    '"Segoe UI Emoji"',
-                                                    '"Segoe UI Web"',
-                                                    'sans-serif',
-                                                ].join(','), fontSize: "13px"
+                                                fontSize: "13px"
                                             }}>{item.friendlyName}</Typography>
                                         }
                                     </Box>
@@ -354,64 +342,8 @@ function ManageResources() {
                             </Grid>
                         </div>
                     ))}
-                {/* <Fab
-                    onClick={pullResources}
-                    sx={{
-                        margin: 0,
-                        top: "auto",
-                        right: 20,
-                        bottom: 20,
-                        left: "auto",
-                        position: "fixed",
-                        fontFamily: [
-                            '-apple-system',
-                            'BlinkMacSystemFont',
-                            '"Segoe UI"',
-                            'system-ui',
-                            '"Apple Color Emoji"',
-                            '"Segoe UI Emoji"',
-                            '"Segoe UI Web"',
-                            'sans-serif',
-                        ].join(','),
-                        textTransform: "capitalize",
-                        backgroundColor: '#808080',
-                        boxShadow: 'none',
-                        color: "#ffffff",
-                        '&:hover': {
-                            backgroundColor: 'rgb(154, 154, 154)',
-                        }
-                    }}
-                    variant="extended"
-                    size="medium"
-                    aria-label="add"
-                >
-                    {loaderMR || pullLoader ? (
-                        <>
-                            {" "}
-                            <CircularProgress sx={{ color: "#ffffff", scale: "0.6" }} />
-                            Fetching...
-                        </>
-                    ) : (
-                        <>
-                            <CachedIcon sx={{ mr: 1 }} />Fetch
-                        </>
-                    )}
-                </Fab> */}
             </Box>
-            <Box sx={{ margin: '20px', float: "center" }}>  <Pagination sx={{
-                '& .MuiPagination-root': {
-                    fontFamily: [
-                        '-apple-system',
-                        'BlinkMacSystemFont',
-                        '"Segoe UI"',
-                        'system-ui',
-                        '"Apple Color Emoji"',
-                        '"Segoe UI Emoji"',
-                        '"Segoe UI Web"',
-                        'sans-serif',
-                    ].join(','),
-                }
-            }} count={Math.ceil(manageResources.length / countperpage)} shape="rounded" onChange={handlechangepage} />
+            <Box sx={{ margin: '20px', float: "center" }}>  <Pagination count={Math.ceil(manageResources.length / countperpage)} shape="rounded" onChange={handlechangepage} />
 
             </Box>
 
@@ -436,12 +368,6 @@ function SkeletonLoading() {
     return (
         <Box className="loader_spacing">
             <Grid container rowSpacing={0} columnSpacing={4}>
-                {/* <Grid item xs={1}>
-                    <Box>
-                        <Skeleton sx={skeletonStyle} />
-                    </Box>
-                </Grid> */}
-
                 <Grid item xs={3}>
                     <Skeleton sx={skeletonStyle} />
                 </Grid>
