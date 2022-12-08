@@ -35,6 +35,7 @@ import CachedIcon from '@mui/icons-material/Cached';
 import InlineText from "../../components/inlinetext/InlineText";
 import MyToast, { toastMessage } from "../../components/toaster/toast";
 import { toast } from "react-toastify";
+import NoRecords from "../../components/noRecords";
 
 
 const countperpage = 10;
@@ -94,6 +95,7 @@ function ManageResources() {
         dummyFunction,
         dummystate,
         getmanageResource,
+        refetchmanageResource
     } = useContext(ResourceContext);
 
     const [resourceId, setresourceId] = useState(0);
@@ -135,7 +137,7 @@ function ManageResources() {
             if (res) {
                 setupdatePayload(initialUpdateState);
                 setOpen(false);
-                dummyFunction(!dummystate);
+                refetchmanageResource()
             }
         } catch (error) {
             console.log(error);
@@ -148,7 +150,7 @@ function ManageResources() {
             let res = await axios.get(parentUrl.url + endPoints.pushNewResources + '/' + UserEmail);
             setpull(false);
             if (res.updatedCount != 0) {
-                getmanageResource();
+                refetchmanageResource()
             }
 
             toastMessage('warning', res.data.pushResponse)
@@ -214,6 +216,8 @@ function ManageResources() {
 
     const [showEdit, setshowEdit] = useState(false)
     const handleChangeTEXT = async (value, openField, index, item) => {
+
+
         setshowEdit(openField)
         const data = {
             ...item,
@@ -225,9 +229,11 @@ function ManageResources() {
         try {
             let res = await Update(endPoints.updateFriendlyname(item.resourceAutoId), data);
             if (res) {
+                item.friendlyName = value
                 setupdatePayload(initialUpdateState);
                 setOpen(false);
                 dummyFunction(!dummystate);
+
                 toastMessage('success', 'Successfully Updated')
             }
         } catch (error) {
@@ -263,7 +269,7 @@ function ManageResources() {
                     }}
                 >
                     <span style={{ fontWeight: 600, fontSize: "18px" }}>Resources</span>
-                    <Button onClick={pullResources} variant="contained" sx={{
+                    <Button onClick={pullResources} variant="contained" disabled={pullLoader} sx={{
                         fontFamily: [
                             '-apple-system',
                             'BlinkMacSystemFont',
@@ -276,14 +282,15 @@ function ManageResources() {
                         ].join(','),
                         height: "40px",
                         textTransform: "capitalize",
-                        backgroundColor: loaderMR || pullLoader ? '#808080' : '#0078d4',
+                        backgroundColor: '#0078d4',
                         boxShadow: 'none',
                         color: "#ffffff",
                         '&:hover': {
-                            backgroundColor: loaderMR || pullLoader ? 'rgb(154, 154, 154)' : '#0078d4',
-                        }
+                            backgroundColor: '#0078d4',
+                        },
+                        padding: "20px"
                     }}>
-                        {pullLoader ? (<><CircularProgress sx={{ color: "#ffffff", scale: "0.4", padding: 0, margin: 0 }} /> &emsp; Fetching...</>) : <><CachedIcon sx={{ marginRight: "10px" }} />  Fetch</>}
+                        {pullLoader ? (<><CircularProgress sx={{ color: "#ffffff", scale: "0.4", padding: 0, margin: 0 }} /> Fetching...</>) : <><CachedIcon sx={{ marginRight: "10px" }} />  Fetch</>}
                     </Button>
 
                 </Box>
@@ -308,9 +315,9 @@ function ManageResources() {
                         </Grid>
                     </Grid>
                 </Box>
-                {false && loaderMR && pullLoader
+                {loaderMR
                     ? [1, 2, 3, 4, 5].map(() => <SkeletonLoading />)
-                    : filteredval.map((item, index) => (
+                    : filteredval.length == 0 ? <NoRecords /> : filteredval.map((item, index) => (
                         <div className="mr-tableRow" onMouseEnter={() => onMouseHover(index)} onMouseLeave={() => showEdit ? null : onMousehoverleave()} >
                             <Grid
                                 direction="row"

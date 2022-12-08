@@ -30,7 +30,7 @@ function Insights() {
                                 }} />
                         </Box>
 
-                        <Box className="workgroup-container" >
+                        <Box className="workgroup-container">
                             <Box className="workgroup-stat">
                                 <span className="count-text">{sum ? sum : 0}</span>
                                 <span className="name-text">Total Agents</span>

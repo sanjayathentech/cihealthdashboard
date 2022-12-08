@@ -9,7 +9,15 @@ export const GetAllTenant = createAsyncThunk("Insight/getAllTenant", async (_, {
         let { data: Agents } = await GetMethod(endPoints.getUserPresence(FirstTenant.id))
 
         return {
-            insights,
+            insights: insights.sort(function (a, b) {
+                if (a.name.toUpperCase() < b.name.toUpperCase()) {
+                    return -1;
+                }
+                if (a.name.toUpperCase() > b.name.toUpperCase()) {
+                    return 1;
+                }
+                return 0;
+            }),
             Agents,
         }
     } catch (error) {
