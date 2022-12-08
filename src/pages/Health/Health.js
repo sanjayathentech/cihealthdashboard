@@ -41,6 +41,10 @@ function Health() {
 
     const [age, setAge] = React.useState('All');
 
+    useEffect(() => {
+        setfilteredhealth(health)
+    }, [])
+
     const handleSelectChange = (event) => {
         setAge(event.target.value);
         setfilteredhealth(health.filter((x, index, arr) =>
@@ -74,6 +78,7 @@ function Health() {
                         },
                     }}>
                         <Select
+                            defaultValue='All'
                             sx={{
                                 fontSize: '14px', fontWeight: 600, backgroundColor: "#ECEDEF",
                                 boxShadow: 'none', '.MuiOutlinedInput-notchedOutline': { border: 0 },
@@ -134,7 +139,7 @@ function Health() {
                             </Grid>
                         </Box>
                     ))
-                        : !loader && filteredhealth.length === 0 ? <NoRecords /> : filteredhealth.map((item, index) => (
+                        : !loader && filteredhealth.length === 0 ? <NoRecords /> : filteredhealth?.map((item, index) => (
                             <>
                                 {item ? <Box className="tableRow">
                                     <Grid container direction="row"
