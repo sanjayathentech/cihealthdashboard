@@ -12,59 +12,15 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import NoRecords from '../../components/noRecords';
 
+import noData from '../../assets/noData.svg'
 
 let skeletonStyle = {
     height: '20px'
 }
 
-let test = [
-    {
-        friendlyname: "test",
-        data: {
-            properties: {
-                availabilityState: "Available",
-                summary: "test"
-            }
-        }
-    },
-    {
-        friendlyname: "test",
-        data: {
-            properties: {
-                availabilityState: "Unknown",
-                summary: "test"
-            }
-        }
-    },
-    {
-        friendlyname: "test",
-        data: {
-            properties: {
-                availabilityState: "Degraded",
-                summary: "test"
-            }
-        }
-    },
-    {
-        friendlyname: "test",
-        data: {
-            properties: {
-                availabilityState: "Unavailable",
-                summary: "test"
-            }
-        }
-    },
-    {
-        friendlyname: "test",
-        data: {
-            properties: {
-                availabilityState: "Available",
-                summary: "test"
-            }
-        }
-    },
-]
+
 let SelectConstant = [
     'All', 'Available', 'Unknown', 'Degraded', 'Unavailable'
 ]
@@ -117,31 +73,8 @@ function Health() {
                             color: "#0A0A0A"
                         },
                     }}>
-                        {/* <InputLabel id="demo-simple-select-label" sx={{ 
-                             fontFamily: [
-                                    '-apple-system',
-                                    'BlinkMacSystemFont',
-                                    '"Segoe UI"',
-                                    'system-ui',
-                                    '"Apple Color Emoji"',
-                                    '"Segoe UI Emoji"',
-                                    '"Segoe UI Web"',
-                                    'sans-serif',
-                                ].join(','),
-                            , fontSize: '14px', fontWeight: 500, display: "flex", alignItems: 'center', justifyContent: "center" }}>By status</InputLabel> */}
-
                         <Select
                             sx={{
-                                fontFamily: [
-                                    '-apple-system',
-                                    'BlinkMacSystemFont',
-                                    '"Segoe UI"',
-                                    'system-ui',
-                                    '"Apple Color Emoji"',
-                                    '"Segoe UI Emoji"',
-                                    '"Segoe UI Web"',
-                                    'sans-serif',
-                                ].join(','),
                                 fontSize: '14px', fontWeight: 600, backgroundColor: "#ECEDEF",
                                 boxShadow: 'none', '.MuiOutlinedInput-notchedOutline': { border: 0 },
                             }}
@@ -182,6 +115,7 @@ function Health() {
                 <Box>
 
                     {loader ? dummyArray.map((item, index) => (
+
                         <Box className='loader_spacing'>
                             <Grid container rowSpacing={0} columnSpacing={10}>
                                 <Grid item xs={1}>
@@ -200,46 +134,52 @@ function Health() {
                             </Grid>
                         </Box>
                     ))
-                        : filteredhealth.map((item, index) => (
-                            <Box className="tableRow">
-                                <Grid container direction="row"
-                                    justifyContent="flex-start"
-                                    alignItems="center"
-                                    rowSpacing={0} columnSpacing={10}>
-                                    <Grid item xs={1}>
-                                        <span>
-                                            {index + 1}
-                                        </span>
+                        : !loader && filteredhealth.length === 0 ? <NoRecords /> : filteredhealth.map((item, index) => (
+                            <>
+                                {item ? <Box className="tableRow">
+                                    <Grid container direction="row"
+                                        justifyContent="flex-start"
+                                        alignItems="center"
+                                        rowSpacing={0} columnSpacing={10}>
+                                        <Grid item xs={1}>
+                                            <span>
+                                                {index + 1}
+                                            </span>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <span>
+                                                {
+                                                    statusIndicator(item.data.properties.availabilityState)
+                                                }
+                                            </span>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <span>
+                                                {item.friendlyname}
+                                            </span>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <span >
+                                                {item.data.properties.summary}
+                                            </span>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item xs={3}>
-                                        <span>
-                                            {
-                                                statusIndicator(item.data.properties.availabilityState)
-                                            }
-                                        </span>
-                                    </Grid>
-                                    <Grid item xs={3}>
-                                        <span>
-                                            {item.friendlyname}
-                                        </span>
-                                    </Grid>
-                                    <Grid item xs={3}>
-                                        <span >
-                                            {item.data.properties.summary}
-                                        </span>
-                                    </Grid>
-                                </Grid>
-                            </Box>
+                                </Box> : <NoRecords />}
+                            </>
                         ))
                     }
                 </Box>
             </Box>
-            {/* </Paper> */}
         </>
     )
 }
 
 
 export default Health
+
+
+const SkeletonLoading = () => {
+
+}
 
 

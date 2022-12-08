@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Box, ListItem, List, ListItemText, ListItemButton } from '@mui/material';
+import { Grid, Box, ListItem, List, ListItemText, ListItemButton, Tooltip } from '@mui/material';
 import './reports.css';
 import FormSelect from '../../components/Forms/FormSelect';
 import { useDispatch, useSelector } from 'react-redux';
@@ -43,7 +43,6 @@ function Reports() {
     //     }
     // }
 
-
     return (
         <>
             <Box>
@@ -53,26 +52,29 @@ function Reports() {
                         <Grid item xs={5} md={2} justifyContent={"flex-start"} sx={{ height: "70vh", overflowY: "scroll" }}>
                             <List dense={true}>
                                 {ResourceTypes.map((item, index) => (
-                                    <ListItem>
-                                        <ListItemButton
-                                            onClick={(e) => {
-                                                e.preventDefault()
-                                                dispatch(setSelectedResourceType(item.resourceTypeFriendlyName))
-                                            }}
-                                            selected={item.resourceTypeFriendlyName == SelectedResourceType}
-                                            sx={{
-                                                "&.Mui-selected": {
-                                                    backgroundColor: "#ECEDEF",
-                                                    color: "#1E1E1E",
-                                                    fontWeight: 600
-                                                },
-                                            }}
-                                        >
-                                            <ListItemText sx={{
-                                                overflow: "hidden", textOverflow: "ellipsis", color: "#141414"
-                                            }} primary={item.resourceTypeFriendlyName} />
-                                        </ListItemButton>
-                                    </ListItem>
+                                    <Tooltip title={item.resourceTypeFriendlyName.length > 20 ? item.resourceTypeFriendlyName : null} placement="top" followCursor>
+                                        <ListItem >
+                                            <ListItemButton
+                                                onClick={(e) => {
+                                                    e.preventDefault()
+                                                    dispatch(setSelectedResourceType(item.resourceTypeFriendlyName))
+                                                }}
+                                                selected={item.resourceTypeFriendlyName == SelectedResourceType}
+                                                sx={{
+                                                    "&.Mui-selected": {
+                                                        backgroundColor: "#ECEDEF",
+                                                        color: "#1E1E1E",
+                                                        fontWeight: 600
+                                                    },
+                                                }}
+                                            >
+                                                <ListItemText
+                                                    sx={{
+                                                        overflow: "hidden", textOverflow: "ellipsis", color: "#141414"
+                                                    }} primary={item.resourceTypeFriendlyName} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    </Tooltip>
                                 ))}
                             </List>
                         </Grid>

@@ -37,15 +37,6 @@ import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 
 import { GetAllresourcesandResourcetype } from "../../Redux/ReportsSlice/ReportSlice"
 
-let activeStyle = {
-    color: "black",
-    textDecoration: "none",
-};
-let inactiveStyle = {
-    color: "grey",
-    textDecoration: "none"
-};
-
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -133,20 +124,12 @@ function Sidebar({ Children }) {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
 
-    const handleDrawerOpen = () => {
-        setOpen(true);
-    };
-
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
-
     const [friendlyValue, setfriendlyValue] = useState([])
     const [health, setHealth] = useState([])
-    const [loader, setLoader] = useState(false)
+    const [loader, setLoader] = useState(true)
     const [fetchloader, setfetchLoader] = useState(false)
     const [manageResources, setmanageResources] = useState([])
-    const [loaderMR, setloaderMr] = useState(false)
+    const [loaderMR, setloaderMr] = useState(true)
 
     const [filteredhealth, setfilteredhealth] = useState([])
 
@@ -155,8 +138,8 @@ function Sidebar({ Children }) {
         setdummystate(id)
     }
     useEffect(() => {
-        getmanageResource();
-    }, [dummystate])
+        getmanageResource()
+    }, [])
     async function getmanageResource() {
         setloaderMr(true)
         try {
@@ -179,9 +162,30 @@ function Sidebar({ Children }) {
             console.log(error)
         }
     }
+    async function refetchmanageResource() {
+
+        try {
+            let res = await GetMethod(endPoints.getResourceId)
+            let tempFriendlyValue = [];
+            setfriendlyValue([]);
+            if (res) {
+                for (let i = 0; i < res.data.length; i++) {
+                    if (res.data[i].friendlyName != "") {
+                        tempFriendlyValue.push(res.data[i]);
+                    }
+                }
+                setmanageResources(res.data)
+            }
+            setfriendlyValue(tempFriendlyValue);
+            getResources(tempFriendlyValue);
+            tempFriendlyValue = [];
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const getResources = async (friendlyData) => {
-        setLoader(true)
+
         try {
             let res = await GetMethod(endPoints.generateToken)
             localStorage.setItem('token', res.data);
@@ -196,13 +200,17 @@ function Sidebar({ Children }) {
 
 
     const proceedAzureApi = async (friendlyData) => {
-        setLoader(false)
+
         setHealth([]);
         setfilteredhealth([])
         for (let i = 0; i < friendlyData.length; i++) {
             GetMethod(`https://management.azure.com${friendlyData[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then((res) => {
                 setHealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
                 setfilteredhealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
+                if (i <= friendlyData.length) {
+                    console.log(i)
+                    setLoader(false)
+                }
             })
         }
 
@@ -233,53 +241,44 @@ function Sidebar({ Children }) {
                     </DrawerHeader>
                     <List>
                         {sidebarlist.map((item, index) => (
-                            <Tooltip sx={{
-                                fontFamily: [
-                                    '-apple-system',
-                                    'BlinkMacSystemFont',
-                                    '"Segoe UI"',
-                                    'system-ui',
-                                    '"Apple Color Emoji"',
-                                    '"Segoe UI Emoji"',
-                                    '"Segoe UI Web"',
-                                    'sans-serif',
-                                ].join(',')
-                            }} title={item.name} placement="right">
+                            <Tooltip title={item.name} placement="right">
                                 <ListItem key={item.name} disablePadding sx={{
                                     display: 'block',
                                 }}>
-                                    <ListItemButton
-                                        onClick={() => navigate(item.path)}
-                                        selected={activeRoute(`/${item.path}`)}
-                                        sx={{
-                                            minHeight: 48,
-                                            justifyContent: open ? 'initial' : 'center',
-                                            px: 2.5,
-                                            "&.Mui-selected": {
-                                                borderLeft: '2px solid #ffffff',
-                                            },
-                                        }}
-                                    >
-                                        <ListItemIcon
+                                    <Box>
+                                        <ListItemButton
+                                            onClick={() => navigate(item.path)}
+                                            selected={activeRoute(`/${item.path}`)}
                                             sx={{
-
-                                                minWidth: 0,
-                                                mr: open ? 3 : 'auto',
-                                                justifyContent: 'center',
-                                                color: "#ffffff"
+                                                minHeight: 48,
+                                                justifyContent: open ? 'initial' : 'center',
+                                                px: 2.5,
+                                                "&.Mui-selected": {
+                                                    borderLeft: '2px solid #ffffff',
+                                                },
                                             }}
                                         >
-                                            {gettingIcon(item)}
-                                        </ListItemIcon>
-                                        <ListItemText primary={item.name} sx={{ opacity: open ? 1 : 0 }} />
-                                    </ListItemButton>
+                                            <ListItemIcon
+                                                sx={{
+
+                                                    minWidth: 0,
+                                                    mr: open ? 3 : 'auto',
+                                                    justifyContent: 'center',
+                                                    color: "#ffffff"
+                                                }}
+                                            >
+                                                {gettingIcon(item)}
+                                            </ListItemIcon>
+                                            <ListItemText primary={item.name} sx={{ opacity: open ? 1 : 0 }} />
+                                        </ListItemButton>
+                                    </Box>
                                 </ListItem>
                             </Tooltip>
                         ))}
                     </List>
                 </div>
             </Drawer>
-            <ResourceContext.Provider value={{ health, loader, filteredhealth, setfilteredhealth, setHealth, getResources, fetchloader, manageResources, loaderMR, dummyFunction, dummystate, getmanageResource }}>
+            <ResourceContext.Provider value={{ health, loader, filteredhealth, setfilteredhealth, setHealth, getResources, fetchloader, manageResources, loaderMR, dummyFunction, dummystate, getmanageResource, refetchmanageResource }}>
                 <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                     <Toolbar />
                     <PageRoutes />
@@ -289,11 +288,10 @@ function Sidebar({ Children }) {
 
     );
 }
-// export default withStyles(styles)(Sidebar);
+
 export default Sidebar;
 
 function gettingIcon(item) {
-
     switch (item.icon) {
         case "health": return <MonitorHeartOutlinedIcon />
         case "insights": return <InsightsOutlinedIcon />
