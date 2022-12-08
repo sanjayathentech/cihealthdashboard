@@ -68,7 +68,6 @@ function Login() {
     const handleLogin = () => {
         instance.loginPopup(loginRequest).catch(e => {
             console.log(e);
-            toastMessage('error', "successfully logged in ")
         });
 
     }
