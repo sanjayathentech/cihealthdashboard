@@ -6,7 +6,11 @@ export const GetAllTenant = createAsyncThunk("Insight/getAllTenant", async (_, {
     try {
         let { data: insights } = await GetMethod(endPoints.getTenantDetails) ?? []
         const [FirstTenant] = insights
-        let { data: Agents } = await GetMethod(endPoints.getUserPresence(FirstTenant.id))
+        // let { data: Agents } = await GetMethod(endPoints.getUserPresence(FirstTenant.id))
+
+        let [Agents, callDetails] = await Promise.all([
+            GetMethod(endPoints.getUserPresence(FirstTenant.id)),
+            GetMethod(endPoints.getCallDetails(FirstTenant.id))])
 
         return {
             insights: insights.sort(function (a, b) {
@@ -17,18 +21,23 @@ export const GetAllTenant = createAsyncThunk("Insight/getAllTenant", async (_, {
                     return 1;
                 }
                 return 0;
-            }),
-            Agents,
+            }) ?? [],
+            Agents: Agents.data,
+            callDetails: callDetails.data
         }
     } catch (error) {
         return rejectWithValue({ error: error });
     }
 });
 
-export const getUserPresence = createAsyncThunk("Insight/GetUserPresence", async (id) => {
+export const getInsightDetails = createAsyncThunk("Insight/getInsightDetails", async (id) => {
     try {
-        let res = await GetMethod(endPoints.getUserPresence(id)) ?? []
-        return res.data
+        let [Agents, callDetails] = await Promise.all([GetMethod(endPoints.getUserPresence(id)), GetMethod(endPoints.getCallDetails(id))])
+
+        return {
+            Agents: Agents.data,
+            callDetails: callDetails.data
+        }
     } catch (error) {
         return error
     }
@@ -37,6 +46,7 @@ export const getUserPresence = createAsyncThunk("Insight/GetUserPresence", async
 const initialState = {
     insightsArray: [],
     AgentPresence: {},
+    callDetails: {},
     selectedTenant: "",
 };
 
@@ -53,7 +63,8 @@ export const InsightSlice = createSlice({
             .addCase(GetAllTenant.fulfilled, (state, { payload }) => {
                 state.insightsArray = payload.insights;
                 const [FirstTenant] = payload.insights;
-                state.AgentPresence = payload.Agents
+                state.AgentPresence = payload.Agents;
+                state.callDetails = payload.callDetails
                 state.selectedTenant = FirstTenant.id;
             })
             .addCase(GetAllTenant.rejected, (state, action) => {
@@ -62,10 +73,11 @@ export const InsightSlice = createSlice({
             .addCase(GetAllTenant.pending, (state) => {
 
             })
-            .addCase(getUserPresence.fulfilled, (state, { payload }) => {
-                state.AgentPresence = payload
+            .addCase(getInsightDetails.fulfilled, (state, { payload }) => {
+                state.AgentPresence = payload.Agents
+                state.callDetails = payload.callDetails
             })
-            .addCase(getUserPresence.pending, (state, { payload }) => {
+            .addCase(getInsightDetails.pending, (state, { payload }) => {
                 state.AgentPresence = {}
             })
     },

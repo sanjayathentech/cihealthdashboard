@@ -3,7 +3,7 @@ import { Grid, Box } from '@mui/material';
 import './insights.css';
 import FormSelect from '../../components/Forms/FormSelect';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUserPresence, setSelectedTenant } from '../../Redux/InsightSlice/InsightSlice';
+import { getInsightDetails, setSelectedTenant } from '../../Redux/InsightSlice/InsightSlice';
 import SupportAgentOutlinedIcon from '@mui/icons-material/SupportAgentOutlined';
 import { fontWeight } from '@mui/system';
 
@@ -20,9 +20,11 @@ let CallsDetails = {
 
 }
 
+
 function Insights() {
     const dispatch = useDispatch()
-    const { insightsArray, AgentPresence, selectedTenant } = useSelector((state) => state.Insight)
+    const { insightsArray, AgentPresence, selectedTenant, callDetails } = useSelector((state) => state.Insight)
+    console.log({ AgentPresence, callDetails })
     let sum = AgentPresence?.ready + AgentPresence?.offline + AgentPresence?.notReady + AgentPresence?.busy
     return (
         <>
@@ -44,7 +46,7 @@ function Insights() {
                             &emsp;
                             <FormSelect menuItems={insightsArray} labelVisible={false} backGroundColor="#ECEDEF" selectOption={selectedTenant}
                                 handleSelectChange={(e) => {
-                                    dispatch(getUserPresence(e.target.value))
+                                    dispatch(getInsightDetails(e.target.value))
                                     dispatch(setSelectedTenant(e.target.value))
                                 }} />
                         </Box>
@@ -120,7 +122,7 @@ function Insights() {
                                         >
                                             <SupportAgentOutlinedIcon sx={{ color: "#f2784b", paddingLeft: "10px", scale: '4' }} />
 
-                                            <span className="count-text" style={{ fontSize: "28px" }} >{CallsDetails.TotalCalls ? CallsDetails.TotalCalls : 0}</span>
+                                            <span className="count-text" style={{ fontSize: "28px" }} >{callDetails.totalCalls ? callDetails.totalCalls : 0}</span>
                                         </Box>
 
                                         <span className="name-text" style={{ fontSize: "18px", fontWeight: 600 }}>Total Calls</span>
@@ -129,38 +131,38 @@ function Insights() {
                                 </Grid>
                                 <Grid item md={6}>
                                     <Box className="workgroup-stat-cards">
-                                        <span className="count-text">{CallsDetails.RejectedCalls ? CallsDetails.RejectedCalls : 0}</span>
+                                        <span className="count-text">{callDetails.rejectedCalls ? callDetails.rejectedCalls : 0}</span>
                                         <span className="name-text">Rejected Calls</span>
                                     </Box>
                                 </Grid>
                                 <Grid item md={6}>
                                     <Box className="workgroup-stat-cards">
-                                        <span className="count-text">{CallsDetails.ClosedCalls ? CallsDetails.ClosedCalls : 0}</span>
+                                        <span className="count-text">{callDetails.closedCalls ? callDetails.closedCalls : 0}</span>
                                         <span className="name-text">Closed Calls </span>
 
                                     </Box>
                                 </Grid>
                                 <Grid item md={6}>
                                     <Box className="workgroup-stat-cards">
-                                        <span className="count-text">{CallsDetails.ActiveCalls ? CallsDetails.ActiveCalls : 0}</span>
+                                        <span className="count-text">{callDetails.activeCalls ? callDetails.activeCalls : 0}</span>
                                         <span className="name-text">Active Calls</span>
                                     </Box>
                                 </Grid>
                                 <Grid item md={6}>
                                     <Box className="workgroup-stat-cards">
-                                        <span className="count-text">{CallsDetails.AnsweredCalls ? CallsDetails.AnsweredCalls : 0}</span>
+                                        <span className="count-text">{callDetails.answeredCalls ? callDetails.answeredCalls : 0}</span>
                                         <span className="name-text">Answered Calls </span>
                                     </Box>
                                 </Grid>
                                 <Grid item md={6}>
                                     <Box className="workgroup-stat-cards">
-                                        <span className="count-text">{CallsDetails.InternalalTransferredCalls ? CallsDetails.InternalalTransferredCalls : 0}</span>
+                                        <span className="count-text">{callDetails.internalalTransferredCalls ? callDetails.internalalTransferredCalls : 0}</span>
                                         <span className="name-text">Internal Transferred Calls </span>
                                     </Box>
                                 </Grid>
                                 <Grid item md={6}>
                                     <Box className="workgroup-stat-cards">
-                                        <span className="count-text">{CallsDetails.ExternalTransferredCalls ? CallsDetails.ExternalTransferredCalls : 0}</span>
+                                        <span className="count-text">{callDetails.externalTransferredCalls ? callDetails.externalTransferredCalls : 0}</span>
                                         <span className="name-text">External Transferred Calls </span>
                                     </Box>
                                 </Grid>
