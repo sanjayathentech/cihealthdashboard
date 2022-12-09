@@ -54,7 +54,7 @@ function Health() {
 
     return (
         <>
-            {/* <Paper elevation={1}> */}
+
             <Box className="health-table">
                 <Box
                     sx={{

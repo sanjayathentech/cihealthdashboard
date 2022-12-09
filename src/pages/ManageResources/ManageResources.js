@@ -233,7 +233,7 @@ function ManageResources() {
                 setupdatePayload(initialUpdateState);
                 setOpen(false);
                 dummyFunction(!dummystate);
-
+                refetchmanageResource()
                 toastMessage('success', 'Successfully Updated')
             }
         } catch (error) {
@@ -269,17 +269,7 @@ function ManageResources() {
                     }}
                 >
                     <span style={{ fontWeight: 600, fontSize: "18px" }}>Resources</span>
-                    <Button onClick={pullResources} variant="contained" disabled={pullLoader} sx={{
-                        fontFamily: [
-                            '-apple-system',
-                            'BlinkMacSystemFont',
-                            '"Segoe UI"',
-                            'system-ui',
-                            '"Apple Color Emoji"',
-                            '"Segoe UI Emoji"',
-                            '"Segoe UI Web"',
-                            'sans-serif',
-                        ].join(','),
+                    <Button disableElevation onClick={pullResources} variant="contained" disabled={pullLoader} sx={{
                         height: "40px",
                         textTransform: "capitalize",
                         backgroundColor: '#0078d4',
@@ -288,9 +278,8 @@ function ManageResources() {
                         '&:hover': {
                             backgroundColor: '#0078d4',
                         },
-                        padding: "20px"
                     }}>
-                        {pullLoader ? (<><CircularProgress sx={{ color: "#ffffff", scale: "0.4", padding: 0, margin: 0 }} /> Fetching...</>) : <><CachedIcon sx={{ marginRight: "10px" }} />  Fetch</>}
+                        {pullLoader ? <><CircularProgress size={20} sx={{ color: "#ffffff", marginRight: "10px" }} />Fetching...</> : <><CachedIcon sx={{ marginRight: "10px" }} />Fetch</>}
                     </Button>
 
                 </Box>

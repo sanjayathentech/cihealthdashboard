@@ -200,7 +200,7 @@ function Sidebar({ Children }) {
 
 
     const proceedAzureApi = async (friendlyData) => {
-
+        setLoader(true)
         setHealth([]);
         setfilteredhealth([])
         for (let i = 0; i < friendlyData.length; i++) {
