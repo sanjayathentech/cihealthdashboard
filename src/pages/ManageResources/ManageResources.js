@@ -72,8 +72,6 @@ function ManageResources() {
 
 
     let userName = sessionStorage.getItem('userEmail');
-    console.log(userName)
-
     const [snack, setSnack] = useState({
         Open: false,
         message: "",
@@ -97,7 +95,7 @@ function ManageResources() {
         getmanageResource,
         refetchmanageResource
     } = useContext(ResourceContext);
-
+    console.log("manageResources", { manageResources })
     const [resourceId, setresourceId] = useState(0);
     const [updatePayload, setupdatePayload] = useState({
         ResourceId: "",
@@ -168,30 +166,6 @@ function ManageResources() {
 
     };
 
-    const handletextchange = (value, ind) => {
-        console.log(value)
-        const findind = changedvalue.findIndex((item) => {
-            return item.resourceAutoId === manageResources[ind].resourceAutoId;
-        });
-
-        let changedvaluetemp = [...changedvalue];
-        if (findind != -1) {
-            changedvalue[findind].friendlyName = value;
-        } else {
-            changedvaluetemp = [
-                ...changedvaluetemp,
-                {
-                    ...manageResources[ind],
-                    friendlyName: value,
-                    lastModifiedBy: userName,
-                    createdBy: userName
-                }
-            ];
-        }
-        setChangedvalue(changedvaluetemp);
-    };
-
-
     useEffect(() => {
         getpage();
     }, [page])
@@ -254,9 +228,6 @@ function ManageResources() {
         setshowEdit(value)
     }
 
-
-
-
     return (
         <>
             <Box className="mr-table">
@@ -268,7 +239,7 @@ function ManageResources() {
                         marginBottom: "20px"
                     }}
                 >
-                    <span style={{ fontWeight: 600, fontSize: "18px" }}>Resources</span>
+                    <span style={{ fontWeight: 600, fontSize: "18px" }}>Manage Resources</span>
                     <Button disableElevation onClick={pullResources} variant="contained" disabled={pullLoader} sx={{
                         height: "40px",
                         textTransform: "capitalize",
@@ -351,7 +322,7 @@ function ManageResources() {
 }
 
 
-export default React.memo(ManageResources);
+export default ManageResources;
 
 function SkeletonLoading() {
     return (

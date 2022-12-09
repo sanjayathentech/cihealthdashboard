@@ -47,7 +47,7 @@ function Reports() {
         <>
             <Box>
                 <Box className="ReportGridContainer">
-                    <span style={{ fontWeight: 600, fontSize: "18px" }}>Resource Types</span>
+                    <span style={{ fontWeight: 600, fontSize: "18px" }}>Resource Health</span>
                     <Grid container spacing={2} mt={2} mb={2} mr={2}>
                         <Grid item xs={5} md={2} justifyContent={"flex-start"} sx={{ height: "70vh", overflowY: "scroll" }}>
                             <List dense={true}>
