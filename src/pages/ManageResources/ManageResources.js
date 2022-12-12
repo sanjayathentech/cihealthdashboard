@@ -72,8 +72,6 @@ function ManageResources() {
 
 
     let userName = sessionStorage.getItem('userEmail');
-    console.log(userName)
-
     const [snack, setSnack] = useState({
         Open: false,
         message: "",
@@ -97,7 +95,7 @@ function ManageResources() {
         getmanageResource,
         refetchmanageResource
     } = useContext(ResourceContext);
-
+    console.log("manageResources", { manageResources })
     const [resourceId, setresourceId] = useState(0);
     const [updatePayload, setupdatePayload] = useState({
         ResourceId: "",
@@ -168,30 +166,6 @@ function ManageResources() {
 
     };
 
-    const handletextchange = (value, ind) => {
-        console.log(value)
-        const findind = changedvalue.findIndex((item) => {
-            return item.resourceAutoId === manageResources[ind].resourceAutoId;
-        });
-
-        let changedvaluetemp = [...changedvalue];
-        if (findind != -1) {
-            changedvalue[findind].friendlyName = value;
-        } else {
-            changedvaluetemp = [
-                ...changedvaluetemp,
-                {
-                    ...manageResources[ind],
-                    friendlyName: value,
-                    lastModifiedBy: userName,
-                    createdBy: userName
-                }
-            ];
-        }
-        setChangedvalue(changedvaluetemp);
-    };
-
-
     useEffect(() => {
         getpage();
     }, [page])
@@ -233,7 +207,7 @@ function ManageResources() {
                 setupdatePayload(initialUpdateState);
                 setOpen(false);
                 dummyFunction(!dummystate);
-
+                refetchmanageResource()
                 toastMessage('success', 'Successfully Updated')
             }
         } catch (error) {
@@ -254,9 +228,6 @@ function ManageResources() {
         setshowEdit(value)
     }
 
-
-
-
     return (
         <>
             <Box className="mr-table">
@@ -268,18 +239,8 @@ function ManageResources() {
                         marginBottom: "20px"
                     }}
                 >
-                    <span style={{ fontWeight: 600, fontSize: "18px" }}>Resources</span>
-                    <Button onClick={pullResources} variant="contained" disabled={pullLoader} sx={{
-                        fontFamily: [
-                            '-apple-system',
-                            'BlinkMacSystemFont',
-                            '"Segoe UI"',
-                            'system-ui',
-                            '"Apple Color Emoji"',
-                            '"Segoe UI Emoji"',
-                            '"Segoe UI Web"',
-                            'sans-serif',
-                        ].join(','),
+                    <span style={{ fontWeight: 600, fontSize: "18px" }}>Manage Resources</span>
+                    <Button disableElevation onClick={pullResources} variant="contained" disabled={pullLoader} sx={{
                         height: "40px",
                         textTransform: "capitalize",
                         backgroundColor: '#0078d4',
@@ -288,9 +249,8 @@ function ManageResources() {
                         '&:hover': {
                             backgroundColor: '#0078d4',
                         },
-                        padding: "20px"
                     }}>
-                        {pullLoader ? (<><CircularProgress sx={{ color: "#ffffff", scale: "0.4", padding: 0, margin: 0 }} /> Fetching...</>) : <><CachedIcon sx={{ marginRight: "10px" }} />  Fetch</>}
+                        {pullLoader ? <><CircularProgress size={20} sx={{ color: "#ffffff", marginRight: "10px" }} />Fetching...</> : <><CachedIcon sx={{ marginRight: "10px" }} />Fetch</>}
                     </Button>
 
                 </Box>
@@ -362,7 +322,7 @@ function ManageResources() {
 }
 
 
-export default React.memo(ManageResources);
+export default ManageResources;
 
 function SkeletonLoading() {
     return (

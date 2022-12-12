@@ -30,57 +30,39 @@ function InlineText({ text, handlechange, saveName, showEdit, handleEdit }) {
           <Box
 
           >
-            <TextField
-              autoFocus
-              defaultValue={text}
-              size="small"
-              ref={ref}
-              variant="standard"
-              onChange={(e) => setTextfieldvalue(e.target.value)}
-              InputProps={{
-                style: {
-                  fontFamily: [
-                    '-apple-system',
-                    'BlinkMacSystemFont',
-                    '"Segoe UI"',
-                    'system-ui',
-                    '"Apple Color Emoji"',
-                    '"Segoe UI Emoji"',
-                    '"Segoe UI Web"',
-                    'sans-serif',
-                  ].join(','), fontSize: "13px"
-                }
-              }}
-            />
-            <IconButton
-              sx={{ height: 20, width: 20, marginLeft: "5px" }}
-              color="success"
-              onClick={onsuccess}
-            >
-              <Check sx={{ height: 20, width: 20 }} />
-            </IconButton>
-            <IconButton
-              sx={{ height: 20, width: 20, marginLeft: "5px" }}
-              color="error"
-              onClick={onclose}
-            >
-              <Clear sx={{ height: 20, width: 20 }} />
-            </IconButton>
+            <form onSubmit={onsuccess}>
+              <TextField
+                autoFocus
+                defaultValue={text}
+                size="small"
+                ref={ref}
+                variant="standard"
+                onChange={(e) => setTextfieldvalue(e.target.value)}
+                InputProps={{
+                  style: {
+                    fontSize: "13px"
+                  }
+                }}
+              />
+              <IconButton
+                type="submit"
+                sx={{ height: 20, width: 20, marginLeft: "5px" }}
+                color="success"
+              >
+                <Check sx={{ height: 20, width: 20 }} />
+              </IconButton>
+              <IconButton
+                sx={{ height: 20, width: 20, marginLeft: "5px" }}
+                color="error"
+                onClick={onclose}
+              >
+                <Clear sx={{ height: 20, width: 20 }} />
+              </IconButton>
+            </form>
           </Box>
         ) : (
           <>
-            <Typography className="inlinetext-text" sx={{
-              fontFamily: [
-                '-apple-system',
-                'BlinkMacSystemFont',
-                '"Segoe UI"',
-                'system-ui',
-                '"Apple Color Emoji"',
-                '"Segoe UI Emoji"',
-                '"Segoe UI Web"',
-                'sans-serif',
-              ].join(','), fontSize: "13px"
-            }}>{text}</Typography>
+            <Typography className="inlinetext-text" sx={{ fontSize: "13px" }}>{text}</Typography>
             <IconButton
               onClick={openedit}
               sx={{
