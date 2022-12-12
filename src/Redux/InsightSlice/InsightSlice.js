@@ -4,10 +4,8 @@ import { GetMethod } from "../../api/apiMethods/apiMethods";
 
 export const GetAllTenant = createAsyncThunk("Insight/getAllTenant", async (_, { rejectWithValue }) => {
     try {
-        let { data: insights } = await GetMethod(endPoints.getTenantDetails) ?? []
+        let { data: insights } = await GetMethod(endPoints.getTenantDetails)
         const [FirstTenant] = insights
-        // let { data: Agents } = await GetMethod(endPoints.getUserPresence(FirstTenant.id))
-
         let [Agents, callDetails] = await Promise.all([
             GetMethod(endPoints.getUserPresence(FirstTenant.id)),
             GetMethod(endPoints.getCallDetails(FirstTenant.id))])

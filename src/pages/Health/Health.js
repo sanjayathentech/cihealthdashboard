@@ -72,7 +72,6 @@ function Health() {
 
     return (
         <>
-
             <Box className="health-table">
                 <Box
                     sx={{
