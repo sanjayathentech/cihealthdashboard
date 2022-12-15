@@ -43,6 +43,9 @@ function Insights() {
     selectedAgent,
     agentcall,
   });
+
+  console.log(users)
+
   let sum =
     AgentPresence?.ready +
     AgentPresence?.offline +
@@ -50,7 +53,10 @@ function Insights() {
     AgentPresence?.busy;
 
   useEffect(() => {
-    dispatch(getAgentDetails(selectedTenant));
+    if (selectedTenant) {
+      dispatch(getAgentDetails(selectedTenant));
+    }
+
   }, [selectedTenant]);
   useEffect(() => {
     dispatch(
