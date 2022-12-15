@@ -120,8 +120,12 @@ export const InsightSlice = createSlice({
       .addCase(getInsightDetails.pending, (state, { payload }) => {
         state.AgentPresence = {};
       })
-      .addCase(getAgentDetails.pending, () => { })
+      .addCase(getAgentDetails.pending, (state) => {
+        state.selectedAgent = ""
+        state.users = []
+      })
       .addCase(getAgentDetails.fulfilled, (state, { payload }) => {
+
         state.users = payload.users;
         state.selectedAgent = payload.users[0].userID;
       })
