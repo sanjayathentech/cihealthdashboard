@@ -111,8 +111,8 @@ export const InsightSlice = createSlice({
         state.callDetails = payload.callDetails;
         state.selectedTenant = FirstTenant.id;
       })
-      .addCase(GetAllTenant.rejected, (state, action) => {})
-      .addCase(GetAllTenant.pending, (state) => {})
+      .addCase(GetAllTenant.rejected, (state, action) => { })
+      .addCase(GetAllTenant.pending, (state) => { })
       .addCase(getInsightDetails.fulfilled, (state, { payload }) => {
         state.AgentPresence = payload.Agents;
         state.callDetails = payload.callDetails;
@@ -120,11 +120,10 @@ export const InsightSlice = createSlice({
       .addCase(getInsightDetails.pending, (state, { payload }) => {
         state.AgentPresence = {};
       })
-      .addCase(getAgentDetails.pending, () => {})
+      .addCase(getAgentDetails.pending, () => { })
       .addCase(getAgentDetails.fulfilled, (state, { payload }) => {
         state.users = payload.users;
         state.selectedAgent = payload.users[0].userID;
-        console.log(payload.users);
       })
       .addCase(getAgentcall.fulfilled, (state, { payload }) => {
         console.log(payload);

@@ -52,13 +52,14 @@ function Insights() {
   useEffect(() => {
     dispatch(getAgentDetails(selectedTenant));
   }, [selectedTenant]);
+  useEffect(() => {
+    dispatch(
+      getAgentcall({ tenentid: selectedTenant, userid: selectedAgent }));
+  }, [selectedAgent]);
 
   const handleagentselect = (e) => {
     console.log(selectedTenant, e.target.value);
     dispatch(setSelectedAgent(e.target.value));
-    dispatch(
-      getAgentcall({ tenentid: selectedTenant, userid: e.target.value })
-    );
   };
 
   return (
