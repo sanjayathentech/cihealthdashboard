@@ -162,18 +162,18 @@ function Health() {
                                         <Grid item xs={3}>
                                             <span>
                                                 {
-                                                    statusIndicator(item?.data?.properties?.availabilityState)
+                                                    statusIndicator(item?.healthStatus)
                                                 }
                                             </span>
                                         </Grid>
                                         <Grid item xs={3}>
                                             <span>
-                                                {item.friendlyname}
+                                                {item.friendlyName}
                                             </span>
                                         </Grid>
                                         <Grid item xs={3}>
                                             <span>
-                                                {item.data.properties.summary}
+                                                {item.summary}
                                             </span>
                                         </Grid>
                                     </Grid>

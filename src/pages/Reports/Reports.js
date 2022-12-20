@@ -4,44 +4,52 @@ import './reports.css';
 import FormSelect from '../../components/Forms/FormSelect';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAllresourcesandResourcetype, setSelectedResourceType, setSelectedResources } from "../../Redux/ReportsSlice/ReportSlice"
-import { GetMethod } from '../../api/apiMethods/apiMethods';
+import { GetMethod, GetMethodwithTimespan } from '../../api/apiMethods/apiMethods';
 import { endPoints } from '../../api/apiEndpoints/endPoints';
 import BarChart from './Charts/BarChart';
 import DeploymentChart from './Charts/DeploymentChart';
+import LineChart from './Charts/lineChart';
+import dayjs from 'dayjs';
+
 
 function Reports() {
     const dispatch = useDispatch()
-    // const [WorkflowStatus, setWorkflowStatus] = useState([])
-
+    const [ChartData, setChartData] = useState()
 
     const { ResourceTypes, Resources, SelectedResourceType, SelectedResource } = useSelector((state) => state.Reports)
 
     useEffect(() => {
         dispatch(GetAllresourcesandResourcetype())
     }, [])
-    // useEffect(() => {
-    //     if (SelectedResource) {
-    //         getWorkFlowStatus()
-    //     }
 
-    // }, [SelectedResource])
+    console.log(SelectedResourceType)
 
-    // const getWorkFlowStatus = async () => {
-    //     try {
-    //         let res = await GetMethod(gettingEndpoints(SelectedResource))
-    //         setWorkflowStatus(res.data ?? [])
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
+    useEffect(() => {
+        getWorkFlowStatus()
+    }, [SelectedResourceType])
 
-    // function gettingEndpoints(id) {
-    //     switch (SelectedResourceType) {
-    //         case 'LogicApp': return endPoints.getWorkflowStatus(id);
-    //         case 'AppServiceSite': return endPoints.getDeploymentslotsstatus(id);
-    //         case 'AppServiceSiteSlot': return endPoints.getDeploymentslotsstatus(id);
-    //     }
-    // }
+    const getWorkFlowStatus = async () => {
+        if (SelectedResourceType === "APIManagement" || SelectedResourceType === "LogicApp" || SelectedResourceType === "BotServices" || SelectedResourceType === "SQLDataBase") {
+            try {
+                let res = await GetMethodwithTimespan(gettingEndpoints())
+                let [firstItem] = res.data.value
+                setChartData(firstItem)
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            console.log("test")
+        }
+    }
+
+    function gettingEndpoints() {
+        switch (SelectedResourceType) {
+            case 'APIManagement': return endPoints.getMetricsAPIManagement()
+            case 'LogicApp': return endPoints.getMetricsLogicApp
+            case 'BotServices': return endPoints.getMetricsbotServices
+            case 'SQLDataBase': return endPoints.getMetricsSQLDatabase
+        }
+    }
 
     return (
         <>
@@ -57,9 +65,10 @@ function Reports() {
                                             <ListItemButton
                                                 onClick={(e) => {
                                                     e.preventDefault()
+                                                    console.log(item)
                                                     dispatch(setSelectedResourceType(item.resourceTypeFriendlyName))
                                                 }}
-                                                selected={item.resourceTypeFriendlyName == SelectedResourceType}
+                                                selected={ResourceTypes[index]?.resourceTypeFriendlyName == SelectedResourceType}
                                                 sx={{
                                                     "&.Mui-selected": {
                                                         backgroundColor: "#ECEDEF",
@@ -79,7 +88,30 @@ function Reports() {
                             </List>
                         </Grid>
                         <Grid item xs={5} md={10}>
-                            <Box className='reportTable'>
+
+                            {SelectedResourceType &&
+                                {
+                                    'APIManagement': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total)} title="Failed Request" />,
+                                    'LogicApp': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total)} title="Run Failure Percentage" />,
+                                    'BotServices': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.count ? x.count : 0)} title="Request traffic" />,
+                                    'SQLDataBase': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total)} title="Total dead locks" />
+                                }[SelectedResourceType]
+
+                            }
+
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Box>
+        </>
+    )
+}
+
+export default Reports
+
+
+
+{/* <Box className='reportTable'>
                                 <Box className='reportHeader'>
                                     <Grid container>
                                         <Grid item xs={3}>
@@ -106,17 +138,4 @@ function Reports() {
                                         </Grid>
                                     </Grid>
                                 </Box>
-                            </Box>
-                        </Grid>
-                    </Grid>
-                </Box>
-            </Box>
-        </>
-    )
-}
-
-export default Reports
-
-
-
-
+                            </Box> */}

@@ -6,7 +6,7 @@ axiosClient.defaults.baseURL = `${parentUrl.url}`;
 
 axiosClient.defaults.headers = {
     'Content-Type': 'application/json',
-    Accept: 'application/json'
+    Accept: 'application/json',
 };
 axiosClient.interceptors.request.use(function (config) {
     // Do something before request is sent
@@ -23,6 +23,7 @@ axiosClient.interceptors.request.use(function (config) {
 export const Update = (endPoint, data) => axiosClient.put(endPoint, data)
 
 export const GetMethod = (endPoint) => axiosClient.get(endPoint)
+export const GetMethodwithTimespan = (endPoint, header) => axiosClient.get(endPoint, header)
 
 
 export const getApi = (endPoint) => axios(endPoint);

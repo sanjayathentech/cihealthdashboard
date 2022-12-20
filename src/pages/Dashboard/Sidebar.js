@@ -198,27 +198,37 @@ function Sidebar({ Children }) {
         }
     }
 
-
-    const proceedAzureApi = async (friendlyData) => {
+    const proceedAzureApi = async () => {
         setLoader(true)
-        setHealth([]);
-        setfilteredhealth([])
-        for (let i = 0; i < friendlyData.length; i++) {
-            GetMethod(`https://management.azure.com${friendlyData[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then((res) => {
-                setHealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
-                setfilteredhealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
-                if (i <= friendlyData.length) {
-                    console.log(i)
-                    setLoader(false)
-                }
-            })
+        try {
+            let res = await GetMethod(endPoints.getHealthStatus)
+            setLoader(false)
+            setHealth(res.data);
+            setfilteredhealth(res.data)
+        } catch (error) {
+            setLoader(false)
+            console.log(error)
         }
-
     }
 
+    // const proceedAzureApi = async (friendlyData) => {
+    //     setLoader(true)
+    //     setHealth([]);
+    //     setfilteredhealth([])
+    //     for (let i = 0; i < friendlyData.length; i++) {
+    //         GetMethod(`https://management.azure.com${friendlyData[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then((res) => {
+    //             setHealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
+    //             setfilteredhealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
+    //             if (i <= friendlyData.length) {
+    //                 console.log(i)
+    //                 setLoader(false)
+    //             }
+    //         })
+    //     }
+
+    // }
+
     return (
-
-
         <Box sx={{ display: 'flex' }} >
             <CssBaseline />
             <AppBar elevation={0} sx={{ justifyContent: "flex-end", backgroundColor: "#ffffff", zIndex: 1 }} position="fixed" open={open}>
