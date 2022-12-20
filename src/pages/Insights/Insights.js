@@ -154,7 +154,7 @@ function Insights() {
                 <Grid item md={6}>
                   <Box className="workgroup-stat-cards">
                     <span className="count-text">
-                      {AgentPresence.ready ? AgentPresence.ready : 0}
+                      {AgentPresence?.ready ? AgentPresence?.ready : 0}
                     </span>
                     <span className="name-text">Available</span>
                   </Box>
@@ -162,7 +162,7 @@ function Insights() {
                 <Grid item md={6}>
                   <Box className="workgroup-stat-cards">
                     <span className="count-text">
-                      {AgentPresence.offline ? AgentPresence.offline : 0}
+                      {AgentPresence?.offline ? AgentPresence?.offline : 0}
                     </span>
                     <span className="name-text">Offline</span>
                   </Box>
@@ -170,7 +170,7 @@ function Insights() {
                 <Grid item md={6}>
                   <Box className="workgroup-stat-cards">
                     <span className="count-text">
-                      {AgentPresence.notReady ? AgentPresence.notReady : 0}
+                      {AgentPresence?.notReady ? AgentPresence?.notReady : 0}
                     </span>
                     <span className="name-text">Away</span>
                   </Box>
@@ -178,7 +178,7 @@ function Insights() {
                 <Grid item md={6}>
                   <Box className="workgroup-stat-cards">
                     <span className="count-text">
-                      {AgentPresence.busy ? AgentPresence.busy : 0}
+                      {AgentPresence?.busy ? AgentPresence?.busy : 0}
                     </span>
                     <span className="name-text">Busy</span>
                   </Box>
@@ -209,7 +209,7 @@ function Insights() {
                       />
 
                       <span className="count-text" style={{ fontSize: "28px" }}>
-                        {callDetails.totalCalls ? callDetails.totalCalls : 0}
+                        {callDetails?.totalCalls ? callDetails?.totalCalls : 0}
                       </span>
                     </Box>
 
@@ -224,8 +224,8 @@ function Insights() {
                 <Grid item md={6}>
                   <Box className="workgroup-stat-cards">
                     <span className="count-text">
-                      {callDetails.rejectedCalls
-                        ? callDetails.rejectedCalls
+                      {callDetails?.rejectedCalls
+                        ? callDetails?.rejectedCalls
                         : 0}
                     </span>
                     <span className="name-text">Rejected Calls</span>
@@ -234,7 +234,7 @@ function Insights() {
                 <Grid item md={6}>
                   <Box className="workgroup-stat-cards">
                     <span className="count-text">
-                      {callDetails.closedCalls ? callDetails.closedCalls : 0}
+                      {callDetails?.closedCalls ? callDetails?.closedCalls : 0}
                     </span>
                     <span className="name-text">Closed Calls </span>
                   </Box>
@@ -242,7 +242,7 @@ function Insights() {
                 <Grid item md={6}>
                   <Box className="workgroup-stat-cards">
                     <span className="count-text">
-                      {callDetails.activeCalls ? callDetails.activeCalls : 0}
+                      {callDetails?.activeCalls ? callDetails?.activeCalls : 0}
                     </span>
                     <span className="name-text">Active Calls</span>
                   </Box>
@@ -250,8 +250,8 @@ function Insights() {
                 <Grid item md={6}>
                   <Box className="workgroup-stat-cards">
                     <span className="count-text">
-                      {callDetails.answeredCalls
-                        ? callDetails.answeredCalls
+                      {callDetails?.answeredCalls
+                        ? callDetails?.answeredCalls
                         : 0}
                     </span>
                     <span className="name-text">Answered Calls </span>
@@ -260,8 +260,8 @@ function Insights() {
                 <Grid item md={6}>
                   <Box className="workgroup-stat-cards">
                     <span className="count-text">
-                      {callDetails.internalalTransferredCalls
-                        ? callDetails.internalalTransferredCalls
+                      {callDetails?.internalalTransferredCalls
+                        ? callDetails?.internalalTransferredCalls
                         : 0}
                     </span>
                     <span className="name-text">
@@ -272,8 +272,8 @@ function Insights() {
                 <Grid item md={6}>
                   <Box className="workgroup-stat-cards">
                     <span className="count-text">
-                      {callDetails.externalTransferredCalls
-                        ? callDetails.externalTransferredCalls
+                      {callDetails?.externalTransferredCalls
+                        ? callDetails?.externalTransferredCalls
                         : 0}
                     </span>
                     <span className="name-text">
