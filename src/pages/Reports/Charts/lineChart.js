@@ -30,10 +30,6 @@ function LineChart({ xAxis, data, title, xAxisName, yAxisName }) {
             type: 'category',
             data: xAxis,
             boundaryGap: false,
-            lineStyle: {
-                type: 'dashed'
-                // ...
-            },
         },
         yAxis: {
             name: yAxisName,
@@ -44,7 +40,6 @@ function LineChart({ xAxis, data, title, xAxisName, yAxisName }) {
 
         series: [
             {
-                // name: yAxisName,
                 data: data,
                 type: 'line',
                 areaStyle: {},

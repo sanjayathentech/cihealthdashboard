@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useContext } from 'react';
 import { Grid, Box, ListItem, List, ListItemText, ListItemButton, Tooltip } from '@mui/material';
 import './reports.css';
 import FormSelect from '../../components/Forms/FormSelect';
@@ -10,6 +10,7 @@ import BarChart from './Charts/BarChart';
 import DeploymentChart from './Charts/DeploymentChart';
 import LineChart from './Charts/lineChart';
 import dayjs from 'dayjs';
+import { ResourceContext } from '../Dashboard/Sidebar';
 
 const endpointsParams = ["SuccessfulRequests", "FailedRequests", "Capacity", "UnauthorizedRequests"]
 
@@ -28,7 +29,9 @@ function Reports() {
         Capacity: {},
         UnauthorizedRequests: {}
     })
-
+    const {
+        manageResources,
+    } = useContext(ResourceContext);
     console.log(APIManagement)
     const { ResourceTypes, Resources, SelectedResourceType, SelectedResource } = useSelector((state) => state.Reports)
 
@@ -63,6 +66,9 @@ function Reports() {
         }
     }
 
+    let subscriptionSelect = useMemo(() => manageResources.filter(x => x.resourceType == SelectedResourceType).filter(x => x.friendlyName != ""), [SelectedResourceType])
+    console.log(subscriptionSelect)
+
     let successfullRequest = useMemo(() => APIManagement?.SuccessfulRequests?.timeseries ? APIManagement?.SuccessfulRequests?.timeseries[0] : [], [APIManagement])
     let failedRequest = useMemo(() => APIManagement?.FailedRequests?.timeseries ? APIManagement?.FailedRequests?.timeseries[0] : [], [APIManagement])
     let capacity = useMemo(() => APIManagement?.Capacity?.timeseries ? APIManagement?.Capacity?.timeseries[0] : [], [APIManagement])
@@ -71,7 +77,31 @@ function Reports() {
         <>
             <Box>
                 <Box className="ReportGridContainer">
-                    <span style={{ fontWeight: 600, fontSize: "18px" }}>Resource Health</span>
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: "space-between",
+                        alignItems: "center"
+                    }}>
+                        <span style={{ fontWeight: 600, fontSize: "18px" }}>Resource Health</span>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: "center",
+                                alignItems: "center"
+                            }}
+                        >
+                            <span style={{ fontWeight: 500, fontSize: "14px" }}>Subscription</span> &emsp;
+                            <FormSelect
+                                menuItems={subscriptionSelect.map((x) => ({
+                                    name: x.friendlyName, id: x.resourceId
+                                }))}
+                                labelVisible={false}
+                                backGroundColor="#ECEDEF"
+                            />
+
+                        </Box>
+                    </Box>
+
                     <Grid container spacing={2} mt={2} mb={2} mr={2}>
                         <Grid item xs={5} md={2} justifyContent={"flex-start"} sx={{ height: "70vh", overflowY: "scroll" }}>
                             <List dense={true}>
