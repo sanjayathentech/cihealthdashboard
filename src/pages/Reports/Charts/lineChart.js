@@ -6,7 +6,13 @@ import ReactEcharts from 'echarts-for-react'
 function LineChart({ xAxis, data, title, xAxisName, yAxisName }) {
 
     const option = {
-        legend: {},
+        legend: {
+            orient: 'horizontal',
+            x: 'right',
+            top: 'center',
+            rotate: 30,
+            textStyle: { color: 'red' },
+        },
         title: {
             text: title
         },
@@ -16,6 +22,7 @@ function LineChart({ xAxis, data, title, xAxisName, yAxisName }) {
                 type: 'shadow'
             }
         },
+
         xAxis: {
             name: xAxisName,
             nameLocation: "middle",
@@ -23,26 +30,32 @@ function LineChart({ xAxis, data, title, xAxisName, yAxisName }) {
             type: 'category',
             data: xAxis,
             boundaryGap: false,
+            lineStyle: {
+                type: 'dashed'
+                // ...
+            },
         },
         yAxis: {
             name: yAxisName,
-            nameGap: 50,
+            nameGap: 30,
             nameLocation: "middle",
             type: 'value'
         },
+
         series: [
             {
+                // name: yAxisName,
                 data: data,
                 type: 'line',
-                areaStyle: title === "Failed Request" ? {} : null,
+                areaStyle: {},
                 showSymbol: false,
             }
         ]
     };
 
     return (
-        <div style={{ width: '100%' }}>
-            <ReactEcharts option={option} style={{ height: "500px" }} />
+        <div style={{ width: "100%" }}>
+            <ReactEcharts option={option} />
         </div>
     )
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Grid, Box, ListItem, List, ListItemText, ListItemButton, Tooltip } from '@mui/material';
 import './reports.css';
 import FormSelect from '../../components/Forms/FormSelect';
@@ -11,46 +11,62 @@ import DeploymentChart from './Charts/DeploymentChart';
 import LineChart from './Charts/lineChart';
 import dayjs from 'dayjs';
 
+const endpointsParams = ["SuccessfulRequests", "FailedRequests", "Capacity", "UnauthorizedRequests"]
+
+let apiManagementinitialState = {
+    SuccessfulRequests: {},
+    FailedRequests: {},
+    Capacity: {},
+    UnAuthorized: {}
+}
 
 function Reports() {
     const dispatch = useDispatch()
-    const [ChartData, setChartData] = useState()
+    const [APIManagement, setAPIManagement] = useState({
+        SuccessfulRequests: {},
+        FailedRequests: {},
+        Capacity: {},
+        UnauthorizedRequests: {}
+    })
 
+    console.log(APIManagement)
     const { ResourceTypes, Resources, SelectedResourceType, SelectedResource } = useSelector((state) => state.Reports)
 
     useEffect(() => {
         dispatch(GetAllresourcesandResourcetype())
     }, [])
 
-    console.log(SelectedResourceType)
-
     useEffect(() => {
-        getWorkFlowStatus()
+        gettingEndpoints()
     }, [SelectedResourceType])
 
-    const getWorkFlowStatus = async () => {
-        if (SelectedResourceType === "APIManagement" || SelectedResourceType === "LogicApp" || SelectedResourceType === "BotServices" || SelectedResourceType === "SQLDataBase") {
+    const getWorkFlowStatus = () => {
+        endpointsParams.map(async (paramsName, index) => {
             try {
-                let res = await GetMethodwithTimespan(gettingEndpoints())
+                let res = await GetMethod(endPoints.getMetricsAPIManagement(paramsName))
                 let [firstItem] = res.data.value
-                setChartData(firstItem)
+                setAPIManagement(state => ({
+                    ...state, [paramsName]: firstItem
+                }))
             } catch (error) {
                 console.log(error)
             }
-        } else {
-            console.log("test")
-        }
+        })
     }
 
     function gettingEndpoints() {
         switch (SelectedResourceType) {
-            case 'APIManagement': return endPoints.getMetricsAPIManagement()
+            case 'APIManagement': getWorkFlowStatus()
             case 'LogicApp': return endPoints.getMetricsLogicApp
             case 'BotServices': return endPoints.getMetricsbotServices
             case 'SQLDataBase': return endPoints.getMetricsSQLDatabase
         }
     }
 
+    let successfullRequest = useMemo(() => APIManagement?.SuccessfulRequests?.timeseries ? APIManagement?.SuccessfulRequests?.timeseries[0] : [], [APIManagement])
+    let failedRequest = useMemo(() => APIManagement?.FailedRequests?.timeseries ? APIManagement?.FailedRequests?.timeseries[0] : [], [APIManagement])
+    let capacity = useMemo(() => APIManagement?.Capacity?.timeseries ? APIManagement?.Capacity?.timeseries[0] : [], [APIManagement])
+    let UnAuthorized = useMemo(() => APIManagement?.UnauthorizedRequests?.timeseries ? APIManagement?.UnauthorizedRequests?.timeseries[0] : [], [APIManagement])
     return (
         <>
             <Box>
@@ -61,11 +77,10 @@ function Reports() {
                             <List dense={true}>
                                 {ResourceTypes.map((item, index) => (
                                     <Tooltip title={item.resourceTypeFriendlyName.length > 20 ? item.resourceTypeFriendlyName : null} placement="top" followCursor>
-                                        <ListItem >
+                                        <ListItem>
                                             <ListItemButton
                                                 onClick={(e) => {
                                                     e.preventDefault()
-                                                    console.log(item)
                                                     dispatch(setSelectedResourceType(item.resourceTypeFriendlyName))
                                                 }}
                                                 selected={ResourceTypes[index]?.resourceTypeFriendlyName == SelectedResourceType}
@@ -88,17 +103,27 @@ function Reports() {
                             </List>
                         </Grid>
                         <Grid item xs={5} md={10}>
+                            {{
+                                'APIManagement':
+                                    <Grid container >
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={successfullRequest?.data?.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={successfullRequest?.data?.map(x => x.total)} title="Successfull Request" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={failedRequest?.data?.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={failedRequest?.data?.map(x => x.total)} title="Failed Request" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={capacity?.data?.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={capacity?.data?.map(x => x.average)} title="Capacity" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={UnAuthorized?.data?.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={UnAuthorized?.data?.map(x => x.total)} title="UnAuthorized Request" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
 
-                            {SelectedResourceType &&
-                                {
-                                    'APIManagement': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={ChartData?.timeseries[0]?.data.map(x => x.total)} title="Failed Request" xAxisName="Time" yAxisName="Count" />,
-                                    'LogicApp': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total ? x.total : 0)} title="Run Failure Percentage" xAxisName="Date" yAxisName="Percentage" />,
-                                    'BotServices': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={ChartData?.timeseries[0]?.data.map(x => x.count ? x.count : 0)} title="Request traffic" xAxisName="Time" yAxisName="Count" />,
-                                    'SQLDataBase': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total)} title="Total dead locks" xAxisName="Date" yAxisName="Count" />
-                                }[SelectedResourceType]
-
-                            }
-
+                                    </Grid>,
+                                // 'LogicApp': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total ? x.total : 0)} title="Run Failure Percentage" xAxisName="Date" yAxisName="Percentage" />,
+                                // 'BotServices': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={ChartData?.timeseries[0]?.data.map(x => x.count ? x.count : 0)} title="Request traffic" xAxisName="Time" yAxisName="Count" />,
+                                // 'SQLDataBase': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total)} title="Total dead locks" xAxisName="Date" yAxisName="Count" />
+                            }[SelectedResourceType]}
                         </Grid>
                     </Grid>
                 </Box>
