@@ -16,7 +16,8 @@ const initialState = {
     ResourceTypes: [],
     Resources: [],
     SelectedResourceType: "",
-    SelectedResource: ""
+    SelectedResource: "",
+    resourceId: ""
 };
 
 export const ReportSlice = createSlice({
@@ -28,6 +29,9 @@ export const ReportSlice = createSlice({
         },
         setSelectedResources: (state, action) => {
             state.SelectedResource = action.payload
+        },
+        setSelectedResourceId: (state, action) => {
+            state.resourceId = action.payload
         }
     },
     extraReducers(builder) {
@@ -46,6 +50,6 @@ export const ReportSlice = createSlice({
 });
 
 
-export const { setSelectedResourceType, setSelectedResources } = ReportSlice.actions;
+export const { setSelectedResourceType, setSelectedResources, setSelectedResourceId } = ReportSlice.actions;
 
 export default ReportSlice.reducer;

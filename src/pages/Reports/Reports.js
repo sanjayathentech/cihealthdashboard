@@ -3,7 +3,7 @@ import { Grid, Box, ListItem, List, ListItemText, ListItemButton, Tooltip } from
 import './reports.css';
 import FormSelect from '../../components/Forms/FormSelect';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetAllresourcesandResourcetype, setSelectedResourceType, setSelectedResources } from "../../Redux/ReportsSlice/ReportSlice"
+import { GetAllresourcesandResourcetype, setSelectedResourceType, setSelectedResources, setSelectedResourceId } from "../../Redux/ReportsSlice/ReportSlice"
 import { GetMethod, GetMethodwithTimespan } from '../../api/apiMethods/apiMethods';
 import { endPoints } from '../../api/apiEndpoints/endPoints';
 import BarChart from './Charts/BarChart';
@@ -32,21 +32,31 @@ function Reports() {
     const {
         manageResources,
     } = useContext(ResourceContext);
-    console.log(APIManagement)
-    const { ResourceTypes, Resources, SelectedResourceType, SelectedResource } = useSelector((state) => state.Reports)
+    const { ResourceTypes, Resources, SelectedResourceType, SelectedResource, resourceId } = useSelector((state) => state.Reports)
 
+    let subscriptionSelect = useMemo(() => manageResources.filter(x => x.resourceType == SelectedResourceType).filter(x => x.friendlyName != ""), [SelectedResourceType])
+
+    console.log(resourceId)
     useEffect(() => {
         dispatch(GetAllresourcesandResourcetype())
     }, [])
 
     useEffect(() => {
-        gettingEndpoints()
-    }, [SelectedResourceType])
+        BasedonResourceType()
+    }, [SelectedResourceType, resourceId])
+
+    useEffect(() => {
+        if (subscriptionSelect[0]) {
+            dispatch(setSelectedResourceId(subscriptionSelect[0].resourceId))
+        }
+
+
+    }, [SelectedResourceType, subscriptionSelect])
 
     const getWorkFlowStatus = () => {
         endpointsParams.map(async (paramsName, index) => {
             try {
-                let res = await GetMethod(endPoints.getMetricsAPIManagement(paramsName))
+                let res = await GetMethod(endPoints.getMetricsAPIManagement(resourceId, paramsName))
                 let [firstItem] = res.data.value
                 setAPIManagement(state => ({
                     ...state, [paramsName]: firstItem
@@ -57,7 +67,7 @@ function Reports() {
         })
     }
 
-    function gettingEndpoints() {
+    function BasedonResourceType() {
         switch (SelectedResourceType) {
             case 'APIManagement': getWorkFlowStatus()
             case 'LogicApp': return endPoints.getMetricsLogicApp
@@ -66,8 +76,6 @@ function Reports() {
         }
     }
 
-    let subscriptionSelect = useMemo(() => manageResources.filter(x => x.resourceType == SelectedResourceType).filter(x => x.friendlyName != ""), [SelectedResourceType])
-    console.log(subscriptionSelect)
 
     let successfullRequest = useMemo(() => APIManagement?.SuccessfulRequests?.timeseries ? APIManagement?.SuccessfulRequests?.timeseries[0] : [], [APIManagement])
     let failedRequest = useMemo(() => APIManagement?.FailedRequests?.timeseries ? APIManagement?.FailedRequests?.timeseries[0] : [], [APIManagement])
@@ -95,6 +103,10 @@ function Reports() {
                                 menuItems={subscriptionSelect.map((x) => ({
                                     name: x.friendlyName, id: x.resourceId
                                 }))}
+                                handleSelectChange={(e) => {
+                                    dispatch(setSelectedResourceId(e.target.value))
+                                }}
+                                selectOption={resourceId}
                                 labelVisible={false}
                                 backGroundColor="#ECEDEF"
                             />
