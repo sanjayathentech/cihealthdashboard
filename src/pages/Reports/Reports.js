@@ -91,10 +91,10 @@ function Reports() {
 
                             {SelectedResourceType &&
                                 {
-                                    'APIManagement': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total)} title="Failed Request" />,
-                                    'LogicApp': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total)} title="Run Failure Percentage" />,
-                                    'BotServices': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.count ? x.count : 0)} title="Request traffic" />,
-                                    'SQLDataBase': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total)} title="Total dead locks" />
+                                    'APIManagement': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={ChartData?.timeseries[0]?.data.map(x => x.total)} title="Failed Request" xAxisName="Time" yAxisName="Count" />,
+                                    'LogicApp': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total ? x.total : 0)} title="Run Failure Percentage" xAxisName="Date" yAxisName="Percentage" />,
+                                    'BotServices': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={ChartData?.timeseries[0]?.data.map(x => x.count ? x.count : 0)} title="Request traffic" xAxisName="Time" yAxisName="Count" />,
+                                    'SQLDataBase': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total)} title="Total dead locks" xAxisName="Date" yAxisName="Count" />
                                 }[SelectedResourceType]
 
                             }
