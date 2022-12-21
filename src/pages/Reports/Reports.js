@@ -70,6 +70,7 @@ function Reports() {
         }
     }
 
+    console.log(SelectedResourceType)
     return (
         <>
             <Box>
@@ -108,34 +109,31 @@ function Reports() {
                     <Grid container spacing={2} mt={2} mb={2} mr={2}>
                         <Grid item xs={5} md={2} justifyContent={"flex-start"} sx={{ height: "70vh", overflowY: "scroll" }}>
                             <List dense={true}>
-                                {ResourceTypes.filter(x => x.resourceTypeFriendlyName == "APIManagement" ||
-                                    x.resourceTypeFriendlyName == "LogicApp" ||
-                                    x.resourceTypeFriendlyName == "AppServiceSite" ||
-                                    x.resourceTypeFriendlyName == "SQLDataBase").map((item, index) => (
-                                        <Tooltip title={item.resourceTypeFriendlyName.length > 20 ? item.resourceTypeFriendlyName : null} placement="top" followCursor>
-                                            <ListItem>
-                                                <ListItemButton
-                                                    onClick={(e) => {
-                                                        e.preventDefault()
-                                                        dispatch(setSelectedResourceType(item.resourceTypeFriendlyName))
-                                                    }}
-                                                    selected={ResourceTypes[index]?.resourceTypeFriendlyName == SelectedResourceType}
+                                {ResourceTypes.map((item, index) => (
+                                    <Tooltip title={item.resourceTypeFriendlyName.length > 20 ? item.resourceTypeFriendlyName : null} placement="top" followCursor>
+                                        <ListItem>
+                                            <ListItemButton
+                                                onClick={(e) => {
+                                                    e.preventDefault()
+                                                    dispatch(setSelectedResourceType(item.resourceTypeFriendlyName))
+                                                }}
+                                                selected={ResourceTypes[index]?.resourceTypeFriendlyName == SelectedResourceType}
+                                                sx={{
+                                                    "&.Mui-selected": {
+                                                        backgroundColor: "#ECEDEF",
+                                                        color: "#1E1E1E",
+                                                        fontWeight: 600
+                                                    },
+                                                }}
+                                            >
+                                                <ListItemText
                                                     sx={{
-                                                        "&.Mui-selected": {
-                                                            backgroundColor: "#ECEDEF",
-                                                            color: "#1E1E1E",
-                                                            fontWeight: 600
-                                                        },
-                                                    }}
-                                                >
-                                                    <ListItemText
-                                                        sx={{
-                                                            overflow: "hidden", textOverflow: "ellipsis", color: "#141414"
-                                                        }} primary={item.resourceTypeFriendlyName} />
-                                                </ListItemButton>
-                                            </ListItem>
-                                        </Tooltip>
-                                    ))}
+                                                        overflow: "hidden", textOverflow: "ellipsis", color: "#141414"
+                                                    }} primary={item.resourceTypeFriendlyName} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    </Tooltip>
+                                ))}
                             </List>
                         </Grid>
                         <Grid item xs={5} md={10}>

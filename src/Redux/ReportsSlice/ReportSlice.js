@@ -5,9 +5,12 @@ import { GetMethod } from "../../api/apiMethods/apiMethods";
 
 export const GetAllresourcesandResourcetype = createAsyncThunk("Reports/getAllresourcesandResourcetype", async (_, { rejectWithValue }) => {
     try {
-        let res = await GetMethod(endPoints.getAllresourcesandResourcetype) ?? []
-        let [firstType] = res.data
-        return { data: res.data, selectId: firstType.resourceTypeFriendlyName }
+        let res = await GetMethod(endPoints.getAllresourcesandResourcetype)
+        let [firstType] = res.data.filter(x => x.resourceTypeFriendlyName == "APIManagement" ||
+            x.resourceTypeFriendlyName == "LogicApp" ||
+            x.resourceTypeFriendlyName == "AppServiceSite" ||
+            x.resourceTypeFriendlyName == "SQLDataBase")
+        return { data: res.data ?? [], selectId: firstType.resourceTypeFriendlyName }
     } catch (error) {
         return rejectWithValue({ error: error });
     }
@@ -90,7 +93,10 @@ export const ReportSlice = createSlice({
     extraReducers(builder) {
         builder
             .addCase(GetAllresourcesandResourcetype.fulfilled, (state, { payload }) => {
-                state.ResourceTypes = payload.data
+                state.ResourceTypes = payload.data.filter(x => x.resourceTypeFriendlyName == "APIManagement" ||
+                    x.resourceTypeFriendlyName == "LogicApp" ||
+                    x.resourceTypeFriendlyName == "AppServiceSite" ||
+                    x.resourceTypeFriendlyName == "SQLDataBase")
                 state.SelectedResourceType = payload.selectId
             })
             .addCase(GetAllresourcesandResourcetype.rejected, (state, action) => {
