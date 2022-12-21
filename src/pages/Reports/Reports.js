@@ -12,96 +12,88 @@ import LineChart from './Charts/lineChart';
 import dayjs from 'dayjs';
 import { ResourceContext } from '../Dashboard/Sidebar';
 
-const endpointsParams = ["SuccessfulRequests", "FailedRequests", "Capacity", "UnauthorizedRequests"]
+import { GetApiManagement, GetLogicApp, GetSqlDatabase, GetAppServiceSite } from "../../Redux/ReportsSlice/ReportSlice"
+import StackedLineChart from './Charts/StackedLineChart';
+import loaderGIF from '../../assets/loadergif.gif'
+import StackedChart2 from './Charts/StackedChart2';
 
-let apiManagementinitialState = {
-    SuccessfulRequests: {},
-    FailedRequests: {},
-    Capacity: {},
-    UnAuthorized: {}
-}
+const endpointsParams = ["SuccessfulRequests", "FailedRequests", "Capacity", "UnauthorizedRequests"]
 
 function Reports() {
     const dispatch = useDispatch()
-    const [APIManagement, setAPIManagement] = useState({
-        SuccessfulRequests: {},
-        FailedRequests: {},
-        Capacity: {},
-        UnauthorizedRequests: {}
-    })
     const {
         manageResources,
     } = useContext(ResourceContext);
-    const { ResourceTypes, Resources, SelectedResourceType, SelectedResource, resourceId } = useSelector((state) => state.Reports)
+    const [selectedResources, setselectedResources] = useState([])
 
-    let subscriptionSelect = useMemo(() => manageResources.filter(x => x.resourceType == SelectedResourceType).filter(x => x.friendlyName != ""), [SelectedResourceType])
+    const { ResourceTypes, Resources, SelectedResourceType, SelectedResource, resourceId, metricsLoader } = useSelector((state) => state.Reports)
+    const [Loader, setLoader] = useState(false)
 
-    console.log(resourceId)
+    const { apiManagement, logicApp, sqlDatabase, AppServiceSite } = useSelector((state) => state.Reports)
+
+    let ResourceSelect = useMemo(() => manageResources.filter(x => x.resourceType == SelectedResourceType).filter(i => i.friendlyName != ""), [SelectedResourceType])
+
     useEffect(() => {
         dispatch(GetAllresourcesandResourcetype())
     }, [])
 
     useEffect(() => {
-        BasedonResourceType()
+        FunctionBasedonResourceType()
     }, [SelectedResourceType, resourceId])
 
     useEffect(() => {
-        if (subscriptionSelect[0]) {
-            dispatch(setSelectedResourceId(subscriptionSelect[0].resourceId))
+        if (selectedResources[0]) {
+            dispatch(setSelectedResourceId(selectedResources[0].resourceId))
         }
+    }, [SelectedResourceType, selectedResources])
+    useEffect(() => {
+
+        getResources()
+    }, [SelectedResourceType])
 
 
-    }, [SelectedResourceType, subscriptionSelect])
-
-    const getWorkFlowStatus = () => {
-        endpointsParams.map(async (paramsName, index) => {
-            try {
-                let res = await GetMethod(endPoints.getMetricsAPIManagement(resourceId, paramsName))
-                let [firstItem] = res.data.value
-                setAPIManagement(state => ({
-                    ...state, [paramsName]: firstItem
-                }))
-            } catch (error) {
-                console.log(error)
-            }
-        })
+    const getResources = async () => {
+        try {
+            let res = await GetMethod(endPoints.getResourcesbysubidandresourceid(SelectedResourceType))
+            setselectedResources(res?.data)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
-    function BasedonResourceType() {
+    function FunctionBasedonResourceType() {
         switch (SelectedResourceType) {
-            case 'APIManagement': getWorkFlowStatus()
-            case 'LogicApp': return endPoints.getMetricsLogicApp
-            case 'BotServices': return endPoints.getMetricsbotServices
-            case 'SQLDataBase': return endPoints.getMetricsSQLDatabase
+            case 'APIManagement': dispatch(GetApiManagement(resourceId)); break;
+            case 'LogicApp': dispatch(GetLogicApp("/subscriptions/abde34c8-4147-4bf7-9744-54056591ff01/resourceGroups/logicapps-qa/providers/Microsoft.Logic/workflows/ci-menuinputtimer-qa")); break;
+            case 'AppServiceSite': dispatch(GetAppServiceSite(resourceId)); break;
+            case 'SQLDataBase': dispatch(GetSqlDatabase(resourceId)); break;
         }
     }
 
-
-    let successfullRequest = useMemo(() => APIManagement?.SuccessfulRequests?.timeseries ? APIManagement?.SuccessfulRequests?.timeseries[0] : [], [APIManagement])
-    let failedRequest = useMemo(() => APIManagement?.FailedRequests?.timeseries ? APIManagement?.FailedRequests?.timeseries[0] : [], [APIManagement])
-    let capacity = useMemo(() => APIManagement?.Capacity?.timeseries ? APIManagement?.Capacity?.timeseries[0] : [], [APIManagement])
-    let UnAuthorized = useMemo(() => APIManagement?.UnauthorizedRequests?.timeseries ? APIManagement?.UnauthorizedRequests?.timeseries[0] : [], [APIManagement])
     return (
         <>
             <Box>
                 <Box className="ReportGridContainer">
-                    <Box sx={{
-                        display: 'flex',
-                        justifyContent: "space-between",
-                        alignItems: "center"
-                    }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: "flex-start",
+                            alignItems: "center",
+                            gap: "100px"
+                        }}
+                    >
                         <span style={{ fontWeight: 600, fontSize: "18px" }}>Resource Health</span>
                         <Box
                             sx={{
                                 display: 'flex',
                                 justifyContent: "center",
-                                alignItems: "center"
+                                alignItems: "center",
                             }}
                         >
-                            <span style={{ fontWeight: 500, fontSize: "14px" }}>Subscription</span> &emsp;
+                            <span style={{ fontWeight: 500, fontSize: "14px" }}>Resource</span> &emsp;
                             <FormSelect
-                                menuItems={subscriptionSelect.map((x) => ({
-                                    name: x.friendlyName, id: x.resourceId
+                                menuItems={selectedResources?.map((x) => ({
+                                    name: x.resourceName, id: x.resourceId
                                 }))}
                                 handleSelectChange={(e) => {
                                     dispatch(setSelectedResourceId(e.target.value))
@@ -110,61 +102,108 @@ function Reports() {
                                 labelVisible={false}
                                 backGroundColor="#ECEDEF"
                             />
-
                         </Box>
                     </Box>
 
                     <Grid container spacing={2} mt={2} mb={2} mr={2}>
                         <Grid item xs={5} md={2} justifyContent={"flex-start"} sx={{ height: "70vh", overflowY: "scroll" }}>
                             <List dense={true}>
-                                {ResourceTypes.map((item, index) => (
-                                    <Tooltip title={item.resourceTypeFriendlyName.length > 20 ? item.resourceTypeFriendlyName : null} placement="top" followCursor>
-                                        <ListItem>
-                                            <ListItemButton
-                                                onClick={(e) => {
-                                                    e.preventDefault()
-                                                    dispatch(setSelectedResourceType(item.resourceTypeFriendlyName))
-                                                }}
-                                                selected={ResourceTypes[index]?.resourceTypeFriendlyName == SelectedResourceType}
-                                                sx={{
-                                                    "&.Mui-selected": {
-                                                        backgroundColor: "#ECEDEF",
-                                                        color: "#1E1E1E",
-                                                        fontWeight: 600
-                                                    },
-                                                }}
-                                            >
-                                                <ListItemText
+                                {ResourceTypes.filter(x => x.resourceTypeFriendlyName == "APIManagement" ||
+                                    x.resourceTypeFriendlyName == "LogicApp" ||
+                                    x.resourceTypeFriendlyName == "AppServiceSite" ||
+                                    x.resourceTypeFriendlyName == "SQLDataBase").map((item, index) => (
+                                        <Tooltip title={item.resourceTypeFriendlyName.length > 20 ? item.resourceTypeFriendlyName : null} placement="top" followCursor>
+                                            <ListItem>
+                                                <ListItemButton
+                                                    onClick={(e) => {
+                                                        e.preventDefault()
+                                                        dispatch(setSelectedResourceType(item.resourceTypeFriendlyName))
+                                                    }}
+                                                    selected={ResourceTypes[index]?.resourceTypeFriendlyName == SelectedResourceType}
                                                     sx={{
-                                                        overflow: "hidden", textOverflow: "ellipsis", color: "#141414"
-                                                    }} primary={item.resourceTypeFriendlyName} />
-                                            </ListItemButton>
-                                        </ListItem>
-                                    </Tooltip>
-                                ))}
+                                                        "&.Mui-selected": {
+                                                            backgroundColor: "#ECEDEF",
+                                                            color: "#1E1E1E",
+                                                            fontWeight: 600
+                                                        },
+                                                    }}
+                                                >
+                                                    <ListItemText
+                                                        sx={{
+                                                            overflow: "hidden", textOverflow: "ellipsis", color: "#141414"
+                                                        }} primary={item.resourceTypeFriendlyName} />
+                                                </ListItemButton>
+                                            </ListItem>
+                                        </Tooltip>
+                                    ))}
                             </List>
                         </Grid>
                         <Grid item xs={5} md={10}>
-                            {{
+
+                            {metricsLoader ? <div
+                                style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}
+                            ><img style={{ height: "20px", widht: "20px" }} src={loaderGIF}></img></div> : {
                                 'APIManagement':
+                                    <Grid container>
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={apiManagement?.successFulRequestsTime?.map(x => dayjs(x).format("HH:mm"))} data={apiManagement?.successFulRequestsCount} title="Successfull Request" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={apiManagement?.failedRequestsTime?.map(x => dayjs(x).format("HH:mm"))} data={apiManagement?.failedRequestsCount} title="Failed Request" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={apiManagement?.capacityTime?.map(x => dayjs(x).format("HH:mm"))} data={apiManagement?.capacityAverage} title="Capacity" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={apiManagement?.unAuthorizedRequestsTime?.map(x => dayjs(x).format("HH:mm"))} data={apiManagement?.unAuthorizedRequestsCount} title="Un authorized Request" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                    </Grid>,
+                                'LogicApp':
+                                    <Grid container>
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={logicApp?.actionsFailedTime?.map(x => dayjs(x).format("HH:mm"))} data={logicApp?.actionsFailedCount} title="Action Failed" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={logicApp?.runsFailedTime?.map(x => dayjs(x).format("HH:mm"))} data={logicApp?.runsFailedCount} title="Run Failed" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={logicApp?.totalBillableExecutionsTime?.map(x => dayjs(x).format("HH:mm"))} data={logicApp?.totalBillableExecutions} title="Total Bill Execution" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={logicApp?.triggersFailedTime?.map(x => dayjs(x).format("HH:mm"))} data={logicApp?.triggersFailedCount} title="Trigger Failed Time" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                    </Grid>,
+                                'SQLDataBase':
                                     <Grid container >
                                         <Grid item md={6}>
-                                            <LineChart xAxis={successfullRequest?.data?.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={successfullRequest?.data?.map(x => x.total)} title="Successfull Request" xAxisName="Time" yAxisName="Count" />
+                                            <LineChart xAxis={sqlDatabase?.connectionFailedTime?.map(x => dayjs(x).format("HH:mm"))} data={sqlDatabase?.connectionFailedCount} title="Connection Failed" xAxisName="Time" yAxisName="Count" />
                                         </Grid>
                                         <Grid item md={6}>
-                                            <LineChart xAxis={failedRequest?.data?.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={failedRequest?.data?.map(x => x.total)} title="Failed Request" xAxisName="Time" yAxisName="Count" />
+                                            <LineChart xAxis={sqlDatabase?.connectionSuccessTime?.map(x => dayjs(x).format("HH:mm"))} data={sqlDatabase?.connectionSuccessCount} title="Connection Success" xAxisName="Time" yAxisName="Count" />
                                         </Grid>
                                         <Grid item md={6}>
-                                            <LineChart xAxis={capacity?.data?.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={capacity?.data?.map(x => x.average)} title="Capacity" xAxisName="Time" yAxisName="Count" />
+                                            <LineChart xAxis={sqlDatabase?.cpuPercentTime?.map(x => dayjs(x).format("HH:mm"))} data={sqlDatabase?.cpuPercentCount} title="CPU Percent" xAxisName="Time" yAxisName="Count" />
                                         </Grid>
                                         <Grid item md={6}>
-                                            <LineChart xAxis={UnAuthorized?.data?.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={UnAuthorized?.data?.map(x => x.total)} title="UnAuthorized Request" xAxisName="Time" yAxisName="Count" />
+                                            <LineChart xAxis={sqlDatabase?.connectionFailedUserErrorTime?.map(x => dayjs(x).format("HH:mm"))} data={sqlDatabase?.connectionFailedUserErrorCount} title="Connection Failed User Error" xAxisName="Time" yAxisName="Count" />
                                         </Grid>
-
                                     </Grid>,
-                                // 'LogicApp': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total ? x.total : 0)} title="Run Failure Percentage" xAxisName="Date" yAxisName="Percentage" />,
-                                // 'BotServices': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format("HH:mm"))} data={ChartData?.timeseries[0]?.data.map(x => x.count ? x.count : 0)} title="Request traffic" xAxisName="Time" yAxisName="Count" />,
-                                // 'SQLDataBase': <LineChart xAxis={ChartData?.timeseries[0]?.data.map(x => dayjs(x.timeStamp).format('DD/MM/YYYY'))} data={ChartData?.timeseries[0]?.data.map(x => x.total)} title="Total dead locks" xAxisName="Date" yAxisName="Count" />
+                                'AppServiceSite':
+                                    <Grid container>
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} data={AppServiceSite?.http2xxCount} title="Http 2xx" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <StackedLineChart xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} data401={AppServiceSite.http401Count} data403={AppServiceSite.http403Count} data404={AppServiceSite.http404Count} data406={AppServiceSite.http406Count} data4xx={AppServiceSite.http4xxCount} title="Request 400" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <StackedChart2 xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} data={AppServiceSite?.cpuPercentCount} data3xx={AppServiceSite.http3xxCount} data5xx={AppServiceSite.http5xxCount} title="Http 3xx & Http 5xx" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <LineChart xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} data={AppServiceSite?.http101Count} title="Http 101" xAxisName="Time" yAxisName="Count" />
+                                        </Grid>
+                                    </Grid>,
+
                             }[SelectedResourceType]}
                         </Grid>
                     </Grid>
@@ -176,33 +215,6 @@ function Reports() {
 
 export default Reports
 
-
-
-{/* <Box className='reportTable'>
-                                <Box className='reportHeader'>
-                                    <Grid container>
-                                        <Grid item xs={3}>
-                                            <span>No</span>
-                                        </Grid>
-                                        <Grid item xs={5}>
-                                            <span>Test Details</span>
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <span>Test Details</span>
-                                        </Grid>
-                                    </Grid>
-                                </Box>
-                                <Box className='reportRow'>
-                                    <Grid container>
-                                        <Grid item xs={3}>
-                                            <span>1</span>
-                                        </Grid>
-                                        <Grid item xs={5}>
-                                            <span>Test</span>
-                                        </Grid>
-                                        <Grid item xs={4}>
-                                            <span>Test</span>
-                                        </Grid>
-                                    </Grid>
-                                </Box>
-                            </Box> */}
+let status400 = {
+    "4xx": "http4xxCount"
+}

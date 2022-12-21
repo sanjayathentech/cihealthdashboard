@@ -20,6 +20,13 @@ export const endPoints = {
   getAgentcalls: (tenantId, userId) => `getagentcalldetailsbyuserid/${tenantId}/${userId}`,
 
 
+  getAPIManagement: (resourceId) => `getapimanagementmetrics?resourceId=${resourceId}`,
+  getLogicApp: (resourceId) => `getWorkFlowmetrics?resourceId=${resourceId}`,
+  getAppserviceSiteMetrics: (resourceId) => `getAppServiceSiteMetrics?resourceId=${resourceId}`,
+  getSQLDatabase: (resourceId) => `getDatabaseMatrics?resourceId=${resourceId}`,
+
+  getResourcesbysubidandresourceid: (resourceName) => `getresourcesbysubidandresourceid?subID=${"abde34c8-4147-4bf7-9744-54056591ff01"}&resourceType=${resourceName}`,
+
   getMetricsAPIManagement: (resourceId, request) => `https://management.azure.com${resourceId}/providers/microsoft.Insights/metrics?api-version=2019-07-01&metricnames=${request}`,
   getMetricsLogicApp: "https://management.azure.com/subscriptions/abde34c8-4147-4bf7-9744-54056591ff01/resourceGroups/logicapps/providers/Microsoft.Logic/workflows/ci-report-trigger-dev/providers/microsoft.Insights/metrics?timespan=2022-12-15T14:30:00.000Z/2022-12-19T15:30:00.000Z&interval=PT1H&metricnames=RunFailurePercentage&aggregation=total&metricNamespace=microsoft.logic%2Fworkflows&autoadjusttimegrain=true&validatedimensions=false&api-version=2019-07-01",
   getMetricsbotServices: "https://management.azure.com/subscriptions/abde34c8-4147-4bf7-9744-54056591ff01/resourceGroups/cibot/providers/Microsoft.BotService/botServices/altigen-test-bot/providers/microsoft.Insights/metrics?timespan=2022-12-18T16:00:00.000Z/2022-12-19T16:15:00.000Z&interval=PT15M&metricnames=RequestsTraffic&aggregation=count&metricNamespace=microsoft.botservice%2Fbotservices&autoadjusttimegrain=true&validatedimensions=false&api-version=2019-07-01",

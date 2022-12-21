@@ -190,8 +190,6 @@ function ManageResources() {
 
     const [showEdit, setshowEdit] = useState(false)
     const handleChangeTEXT = async (value, openField, index, item) => {
-
-
         setshowEdit(openField)
         const data = {
             ...item,

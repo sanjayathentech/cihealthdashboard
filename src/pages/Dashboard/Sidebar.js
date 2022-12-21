@@ -185,7 +185,6 @@ function Sidebar({ Children }) {
     }
 
     const getResources = async (friendlyData) => {
-
         try {
             let res = await GetMethod(endPoints.generateToken)
             localStorage.setItem('token', res.data);

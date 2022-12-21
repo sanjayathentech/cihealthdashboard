@@ -1,3 +1,4 @@
+import { FastRewind } from "@mui/icons-material";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { endPoints } from "../../api/apiEndpoints/endPoints";
 import { GetMethod } from "../../api/apiMethods/apiMethods";
@@ -12,12 +13,64 @@ export const GetAllresourcesandResourcetype = createAsyncThunk("Reports/getAllre
     }
 });
 
+export const GetApiManagement = createAsyncThunk("Reports/GetApiManagement", async (resourceId, { rejectWithValue }) => {
+    try {
+        let res = await GetMethod(endPoints.getAPIManagement(resourceId))
+        return res.data
+    } catch (error) {
+
+    }
+})
+
+export const GetLogicApp = createAsyncThunk("Reports/GetLogicApp", async (resourceId, { rejectWithValue }) => {
+
+    try {
+        let res = await GetMethod(endPoints.getLogicApp(resourceId))
+        return res.data ?? []
+    } catch (error) {
+        return rejectWithValue([], error);
+    }
+
+})
+
+export const GetSqlDatabase = createAsyncThunk("Reports/getSqlDatabase", async (resourceId, { rejectWithValue }) => {
+
+    try {
+        let res = await GetMethod(endPoints.getSQLDatabase(resourceId))
+        return res.data ?? []
+    } catch (error) {
+        return rejectWithValue([], error);
+    }
+
+})
+
+export const GetAppServiceSite = createAsyncThunk("Reports/GetAppServiceSite", async (resourceId, { rejectWithValue }) => {
+
+    try {
+        let res = await GetMethod(endPoints.getAppserviceSiteMetrics(resourceId))
+        console.log(res)
+        return res.data ?? []
+    } catch (error) {
+        return rejectWithValue([], error);
+    }
+
+})
+
+
+
+
+
 const initialState = {
     ResourceTypes: [],
     Resources: [],
     SelectedResourceType: "",
     SelectedResource: "",
-    resourceId: ""
+    resourceId: "",
+    apiManagement: {},
+    logicApp: {},
+    sqlDatabase: {},
+    AppServiceSite: {},
+    metricsLoader: false
 };
 
 export const ReportSlice = createSlice({
@@ -46,7 +99,50 @@ export const ReportSlice = createSlice({
             .addCase(GetAllresourcesandResourcetype.pending, (state) => {
 
             })
-    },
+            .addCase(GetApiManagement.fulfilled, (state, { payload }) => {
+                state.apiManagement = payload
+                state.metricsLoader = false
+            })
+            .addCase(GetApiManagement.rejected, (state, { payload }) => {
+                state.metricsLoader = false
+            })
+            .addCase(GetApiManagement.pending, (state, { payload }) => {
+                state.metricsLoader = true
+            })
+
+            .addCase(GetLogicApp.fulfilled, (state, { payload }) => {
+                state.logicApp = payload
+                state.metricsLoader = false
+            })
+            .addCase(GetLogicApp.rejected, (state, { payload }) => {
+                state.metricsLoader = false
+            })
+            .addCase(GetLogicApp.pending, (state, { payload }) => {
+                state.metricsLoader = true
+            })
+
+            .addCase(GetSqlDatabase.fulfilled, (state, { payload }) => {
+                state.sqlDatabase = payload
+                state.metricsLoader = false
+            })
+            .addCase(GetSqlDatabase.rejected, (state, { payload }) => {
+                state.metricsLoader = false
+            })
+            .addCase(GetSqlDatabase.pending, (state, { payload }) => {
+                state.metricsLoader = true
+            })
+
+            .addCase(GetAppServiceSite.fulfilled, (state, { payload }) => {
+                state.AppServiceSite = payload
+                state.metricsLoader = false
+            })
+            .addCase(GetAppServiceSite.rejected, (state, { payload }) => {
+                state.metricsLoader = false
+            })
+            .addCase(GetAppServiceSite.pending, (state, { payload }) => {
+                state.metricsLoader = true
+            })
+    }
 });
 
 

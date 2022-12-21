@@ -3,15 +3,13 @@ import React from 'react'
 import ReactEcharts from 'echarts-for-react'
 
 
-function LineChart({ xAxis, data, title, xAxisName, yAxisName }) {
+function StackedChart2({ xAxis, data, title, xAxisName, yAxisName, data3xx, data5xx }) {
 
     const option = {
         legend: {
-            orient: 'horizontal',
+            orient: 'vertical',
             x: 'right',
             top: 'center',
-            rotate: 30,
-            textStyle: { color: 'red' },
         },
         title: {
             text: title
@@ -40,11 +38,22 @@ function LineChart({ xAxis, data, title, xAxisName, yAxisName }) {
 
         series: [
             {
-                data: data,
+                name: '3xx',
                 type: 'line',
+                stack: 'Total',
                 areaStyle: {},
                 showSymbol: false,
-            }
+                data: data3xx
+            },
+            {
+                name: '5xx',
+                type: 'line',
+                stack: 'Total',
+                areaStyle: {},
+                showSymbol: false,
+                data: data5xx
+            },
+
         ]
     };
 
@@ -55,6 +64,6 @@ function LineChart({ xAxis, data, title, xAxisName, yAxisName }) {
     )
 }
 
-export default LineChart
+export default StackedChart2
 
 
