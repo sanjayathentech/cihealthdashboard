@@ -316,7 +316,7 @@ function Insights() {
                   className="name-text"
                   style={{ fontSize: "18px", fontWeight: 600 }}
                 >
-                  Total Calls
+                  Total Calls by Customer
                 </span>
               </Box>
             </Grid>

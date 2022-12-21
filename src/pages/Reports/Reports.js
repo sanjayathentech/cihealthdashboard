@@ -268,7 +268,7 @@ function Reports() {
                                             <LineChart xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} data={AppServiceSite?.http2xxCount} title="Http 2xx" xAxisName="Time" yAxisName="Count" />
                                         </Grid>
                                         <Grid item md={6}>
-                                            <StackedLineChart series={series400} xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} title="Request 400" xAxisName="Time" yAxisName="Count" />
+                                            <StackedLineChart series={series400} xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} title="Http 400" xAxisName="Time" yAxisName="Count" />
                                         </Grid>
                                         <Grid item md={6}>
                                             <StackedLineChart series={seriesxx} xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} title="Http 3xx & Http 5xx" xAxisName="Time" yAxisName="Count" />
