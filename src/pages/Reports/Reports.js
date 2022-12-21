@@ -26,6 +26,7 @@ function Reports() {
     } = useContext(ResourceContext);
     const [selectedResources, setselectedResources] = useState([])
 
+    let logicAppSelect = useMemo(() => selectedResources.filter(x => x.friendlyName != ""), [selectedResources])
     const { ResourceTypes, Resources, SelectedResourceType, SelectedResource, resourceId, metricsLoader } = useSelector((state) => state.Reports)
     const [Loader, setLoader] = useState(false)
 
@@ -43,9 +44,16 @@ function Reports() {
 
     useEffect(() => {
         if (selectedResources[0]) {
-            dispatch(setSelectedResourceId(selectedResources[0].resourceId))
+
+            if (SelectedResourceType == "LogicApp") {
+                dispatch(setSelectedResourceId(selectedResources[0]?.resourceId))
+            } else {
+                if (logicAppSelect[0]) {
+                    dispatch(setSelectedResourceId(logicAppSelect[0]?.resourceId))
+                }
+            }
         }
-    }, [SelectedResourceType, selectedResources])
+    }, [SelectedResourceType, selectedResources, logicAppSelect])
     useEffect(() => {
 
         getResources()
@@ -64,13 +72,78 @@ function Reports() {
     function FunctionBasedonResourceType() {
         switch (SelectedResourceType) {
             case 'APIManagement': dispatch(GetApiManagement(resourceId)); break;
-            case 'LogicApp': dispatch(GetLogicApp("/subscriptions/abde34c8-4147-4bf7-9744-54056591ff01/resourceGroups/logicapps-qa/providers/Microsoft.Logic/workflows/ci-menuinputtimer-qa")); break;
+            case 'LogicApp': dispatch(GetLogicApp(resourceId)); break;
             case 'AppServiceSite': dispatch(GetAppServiceSite(resourceId)); break;
             case 'SQLDataBase': dispatch(GetSqlDatabase(resourceId)); break;
         }
     }
 
-    console.log(SelectedResourceType)
+
+    console.log(logicAppSelect)
+
+    let series400 = [
+        {
+            name: '4xx',
+            type: 'line',
+            stack: 'Total',
+            areaStyle: {},
+            showSymbol: false,
+            data: AppServiceSite?.http4xxCount
+        },
+        {
+            name: '401',
+            type: 'line',
+            stack: 'Total',
+            areaStyle: {},
+            showSymbol: false,
+            data: AppServiceSite?.http401Count
+        },
+        {
+            name: '403',
+            type: 'line',
+            stack: 'Total',
+            areaStyle: {},
+            showSymbol: false,
+            data: AppServiceSite?.http403Count
+        },
+        {
+            name: '404',
+            type: 'line',
+            stack: 'Total',
+            areaStyle: {},
+            showSymbol: false,
+            data: AppServiceSite?.http404Count
+        },
+        {
+            name: '406',
+            type: 'line',
+            stack: 'Total',
+            areaStyle: {},
+            showSymbol: false,
+            data: AppServiceSite?.http406Count
+        },
+    ]
+
+    let seriesxx = [
+        {
+            name: '3xx',
+            type: 'line',
+            stack: 'Total',
+            areaStyle: {},
+            showSymbol: false,
+            data: AppServiceSite?.http3xxCount
+        },
+        {
+            name: '5xx',
+            type: 'line',
+            stack: 'Total',
+            areaStyle: {},
+            showSymbol: false,
+            data: AppServiceSite?.http5xxCount
+        },
+
+    ]
+
     return (
         <>
             <Box>
@@ -93,9 +166,12 @@ function Reports() {
                         >
                             <span style={{ fontWeight: 500, fontSize: "14px" }}>Resource</span> &emsp;
                             <FormSelect
-                                menuItems={selectedResources?.map((x) => ({
+                                menuItems={SelectedResourceType == "LogicApp" ? selectedResources?.map((x) => ({
                                     name: x.resourceName, id: x.resourceId
-                                }))}
+                                })) : logicAppSelect.map((x) => ({
+                                    name: x.friendlyName, id: x.resourceId
+                                }))
+                                }
                                 handleSelectChange={(e) => {
                                     dispatch(setSelectedResourceId(e.target.value))
                                 }}
@@ -192,10 +268,10 @@ function Reports() {
                                             <LineChart xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} data={AppServiceSite?.http2xxCount} title="Http 2xx" xAxisName="Time" yAxisName="Count" />
                                         </Grid>
                                         <Grid item md={6}>
-                                            <StackedLineChart xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} data401={AppServiceSite.http401Count} data403={AppServiceSite.http403Count} data404={AppServiceSite.http404Count} data406={AppServiceSite.http406Count} data4xx={AppServiceSite.http4xxCount} title="Request 400" xAxisName="Time" yAxisName="Count" />
+                                            <StackedLineChart series={series400} xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} title="Request 400" xAxisName="Time" yAxisName="Count" />
                                         </Grid>
                                         <Grid item md={6}>
-                                            <StackedChart2 xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} data={AppServiceSite?.cpuPercentCount} data3xx={AppServiceSite.http3xxCount} data5xx={AppServiceSite.http5xxCount} title="Http 3xx & Http 5xx" xAxisName="Time" yAxisName="Count" />
+                                            <StackedLineChart series={seriesxx} xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} title="Http 3xx & Http 5xx" xAxisName="Time" yAxisName="Count" />
                                         </Grid>
                                         <Grid item md={6}>
                                             <LineChart xAxis={AppServiceSite?.requestsTime?.map(x => dayjs(x).format("HH:mm"))} data={AppServiceSite?.http101Count} title="Http 101" xAxisName="Time" yAxisName="Count" />

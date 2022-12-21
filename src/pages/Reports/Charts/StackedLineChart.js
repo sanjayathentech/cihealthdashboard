@@ -3,7 +3,7 @@ import React from 'react'
 import ReactEcharts from 'echarts-for-react'
 
 
-function StackedLineChart({ xAxis, data, title, xAxisName, yAxisName, data401, data403, data404, data406, data4xx }) {
+function StackedLineChart({ xAxis, data, title, xAxisName, yAxisName, data401, data403, data404, data406, data4xx, series }) {
 
     const option = {
         legend: {
@@ -36,48 +36,7 @@ function StackedLineChart({ xAxis, data, title, xAxisName, yAxisName, data401, d
             type: 'value'
         },
 
-        series: [
-            {
-                name: '4xx',
-                type: 'line',
-                stack: 'Total',
-                areaStyle: {},
-                showSymbol: false,
-                data: data401
-            },
-            {
-                name: '401',
-                type: 'line',
-                stack: 'Total',
-                areaStyle: {},
-                showSymbol: false,
-                data: data401
-            },
-            {
-                name: '403',
-                type: 'line',
-                stack: 'Total',
-                areaStyle: {},
-                showSymbol: false,
-                data: data403
-            },
-            {
-                name: '404',
-                type: 'line',
-                stack: 'Total',
-                areaStyle: {},
-                showSymbol: false,
-                data: data404
-            },
-            {
-                name: '406',
-                type: 'line',
-                stack: 'Total',
-                areaStyle: {},
-                showSymbol: false,
-                data: data406
-            },
-        ]
+        series: series
     };
 
     return (
