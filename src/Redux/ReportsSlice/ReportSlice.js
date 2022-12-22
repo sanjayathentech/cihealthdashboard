@@ -3,13 +3,14 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { endPoints } from "../../api/apiEndpoints/endPoints";
 import { GetMethod } from "../../api/apiMethods/apiMethods";
 
-export const GetAllresourcesandResourcetype = createAsyncThunk("Reports/getAllresourcesandResourcetype", async (_, { rejectWithValue }) => {
+export const GetAllresourcesandResourcetype = createAsyncThunk("Reports/getAllresourcesandResourcetype", async ({ getResources }, { rejectWithValue }) => {
     try {
         let res = await GetMethod(endPoints.getAllresourcesandResourcetype)
         let [firstType] = res.data.filter(x => x.resourceTypeFriendlyName == "APIManagement" ||
             x.resourceTypeFriendlyName == "LogicApp" ||
             x.resourceTypeFriendlyName == "AppServiceSite" ||
             x.resourceTypeFriendlyName == "SQLDataBase")
+        getResources(firstType.resourceTypeFriendlyName)
         return { data: res.data ?? [], selectId: firstType.resourceTypeFriendlyName }
     } catch (error) {
         return rejectWithValue({ error: error });

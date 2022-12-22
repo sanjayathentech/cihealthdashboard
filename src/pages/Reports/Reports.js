@@ -35,51 +35,35 @@ function Reports() {
     let ResourceSelect = useMemo(() => manageResources.filter(x => x.resourceType == SelectedResourceType).filter(i => i.friendlyName != ""), [SelectedResourceType])
 
     useEffect(() => {
-        dispatch(GetAllresourcesandResourcetype())
+        dispatch(GetAllresourcesandResourcetype({ getResources }))
     }, [])
-
-    useEffect(() => {
-        FunctionBasedonResourceType()
-    }, [SelectedResourceType, resourceId])
-
-    useEffect(() => {
-        if (selectedResources[0]) {
-
-            if (SelectedResourceType == "LogicApp") {
-                dispatch(setSelectedResourceId(selectedResources[0]?.resourceId))
-            } else {
-                if (logicAppSelect[0]) {
-                    dispatch(setSelectedResourceId(logicAppSelect[0]?.resourceId))
+    const getResources = async (friendlyName) => {
+        try {
+            let res = await GetMethod(endPoints.getResourcesbysubidandresourceid(friendlyName))
+            setselectedResources(res?.data)
+            if (res.data[0]) {
+                if (friendlyName == "LogicApp") {
+                    dispatch(setSelectedResourceId(res?.data[0]?.resourceId))
+                    FunctionBasedonResourceType(res?.data[0]?.resourceId, friendlyName)
+                } else {
+                    dispatch(setSelectedResourceId(res?.data.filter(x => x.friendlyName != "")[0]?.resourceId))
+                    FunctionBasedonResourceType(res?.data.filter(x => x.friendlyName != "")[0]?.resourceId, friendlyName)
                 }
             }
-        }
-    }, [SelectedResourceType, selectedResources, logicAppSelect])
-    useEffect(() => {
 
-        getResources()
-    }, [SelectedResourceType])
-
-
-    const getResources = async () => {
-        try {
-            let res = await GetMethod(endPoints.getResourcesbysubidandresourceid(SelectedResourceType))
-            setselectedResources(res?.data)
         } catch (error) {
             console.log(error)
         }
     }
 
-    function FunctionBasedonResourceType() {
-        switch (SelectedResourceType) {
-            case 'APIManagement': dispatch(GetApiManagement(resourceId)); break;
-            case 'LogicApp': dispatch(GetLogicApp(resourceId)); break;
-            case 'AppServiceSite': dispatch(GetAppServiceSite(resourceId)); break;
-            case 'SQLDataBase': dispatch(GetSqlDatabase(resourceId)); break;
+    function FunctionBasedonResourceType(id, type) {
+        switch (type) {
+            case 'APIManagement': dispatch(GetApiManagement(id)); break;
+            case 'LogicApp': dispatch(GetLogicApp(id)); break;
+            case 'AppServiceSite': dispatch(GetAppServiceSite(id)); break;
+            case 'SQLDataBase': dispatch(GetSqlDatabase(id)); break;
         }
     }
-
-
-    console.log(logicAppSelect)
 
     let series400 = [
         {
@@ -174,6 +158,7 @@ function Reports() {
                                 }
                                 handleSelectChange={(e) => {
                                     dispatch(setSelectedResourceId(e.target.value))
+                                    FunctionBasedonResourceType(e.target.value, SelectedResourceType)
                                 }}
                                 selectOption={resourceId}
                                 labelVisible={false}
@@ -192,6 +177,7 @@ function Reports() {
                                                 onClick={(e) => {
                                                     e.preventDefault()
                                                     dispatch(setSelectedResourceType(item.resourceTypeFriendlyName))
+                                                    getResources(item.resourceTypeFriendlyName)
                                                 }}
                                                 selected={ResourceTypes[index]?.resourceTypeFriendlyName == SelectedResourceType}
                                                 sx={{
@@ -259,7 +245,7 @@ function Reports() {
                                             <LineChart xAxis={sqlDatabase?.cpuPercentTime?.map(x => dayjs(x).format("HH:mm"))} data={sqlDatabase?.cpuPercentCount} title="CPU Percent" xAxisName="Time" yAxisName="Count" />
                                         </Grid>
                                         <Grid item md={6}>
-                                            <LineChart xAxis={sqlDatabase?.connectionFailedUserErrorTime?.map(x => dayjs(x).format("HH:mm"))} data={sqlDatabase?.connectionFailedUserErrorCount} title="Connection Failed User Error" xAxisName="Time" yAxisName="Count" />
+                                            <LineChart xAxis={sqlDatabase?.connectionFailedUserErrorTime?.map(x => dayjs(x).format("HH:mm"))} data={sqlDatabase?.connectionFailedUserErrorCount} title={sqlDatabase?.connectionFailedUserErrorCount == 0 ? "Connection Failed User Error - No Records found" : "Connection Failed User Error"} xAxisName="Time" yAxisName="Count" />
                                         </Grid>
                                     </Grid>,
                                 'AppServiceSite':
