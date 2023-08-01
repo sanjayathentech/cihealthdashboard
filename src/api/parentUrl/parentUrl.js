@@ -1,3 +1,3 @@
 export const parentUrl = {
-    url : process.env.REACT_APP_PARENTHOST
+    url : 'https://cihealthapidev.azurewebsites.net'
 }

@@ -38,7 +38,11 @@ function Health() {
     const { health, loader, pullResources, fetchloader, filteredhealth, setfilteredhealth } = useContext(ResourceContext)
 
 
-    const [paginated, setpaginated] = useState([])
+    const [paginated, setpaginated] = useState([]);
+
+
+
+    console.log(paginated);
 
     const [age, setAge] = React.useState('All');
 
@@ -196,8 +200,6 @@ function Health() {
 export default Health
 
 
-const SkeletonLoading = () => {
 
-}
 
 

@@ -11,18 +11,6 @@ import {
   setSelectedTenant,
 } from "../../Redux/InsightSlice/InsightSlice";
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
-import { fontWeight } from "@mui/system";
-import { object } from "yup";
-
-let CallsDetails = {
-  TotalCalls: 20,
-  RejectedCalls: 0,
-  ActiveCalls: 10,
-  ClosedCalls: 10,
-  AnsweredCalls: 0,
-  InternalalTransferredCalls: 0,
-  ExternalTransferredCalls: 0,
-};
 
 function Insights() {
   const dispatch = useDispatch();
@@ -35,16 +23,6 @@ function Insights() {
     selectedAgent,
     agentcall,
   } = useSelector((state) => state.Insight);
-  console.log({
-    AgentPresence,
-    callDetails,
-    users,
-    insightsArray,
-    selectedAgent,
-    agentcall,
-  });
-
-  console.log(users)
 
   let sum =
     AgentPresence?.ready +
@@ -56,8 +34,11 @@ function Insights() {
     if (selectedTenant) {
       dispatch(getAgentDetails(selectedTenant));
     }
-
   }, [selectedTenant]);
+
+
+  console.log('tenent',selectedTenant)
+
   useEffect(() => {
     dispatch(
       getAgentcall({ tenentid: selectedTenant, userid: selectedAgent }));

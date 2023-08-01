@@ -35,7 +35,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GetAllTenant } from '../../Redux/InsightSlice/InsightSlice';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 
-import { GetAllresourcesandResourcetype } from "../../Redux/ReportsSlice/ReportSlice"
+
 
 const drawerWidth = 240;
 
@@ -189,6 +189,7 @@ function Sidebar({ Children }) {
             let res = await GetMethod(endPoints.generateToken)
             localStorage.setItem('token', res.data);
             if (res) {
+
                 proceedAzureApi(friendlyData);
             }
 
@@ -201,6 +202,7 @@ function Sidebar({ Children }) {
         setLoader(true)
         try {
             let res = await GetMethod(endPoints.getHealthStatus)
+          
             setLoader(false)
             setHealth(res.data);
             setfilteredhealth(res.data)
@@ -209,23 +211,6 @@ function Sidebar({ Children }) {
             console.log(error)
         }
     }
-
-    // const proceedAzureApi = async (friendlyData) => {
-    //     setLoader(true)
-    //     setHealth([]);
-    //     setfilteredhealth([])
-    //     for (let i = 0; i < friendlyData.length; i++) {
-    //         GetMethod(`https://management.azure.com${friendlyData[i].resourceId}/providers/Microsoft.ResourceHealth/availabilityStatuses/current?api-version=2018-07-01`).then((res) => {
-    //             setHealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
-    //             setfilteredhealth(previousState => [...previousState, { ...res, friendlyname: friendlyData[i].friendlyName }])
-    //             if (i <= friendlyData.length) {
-    //                 console.log(i)
-    //                 setLoader(false)
-    //             }
-    //         })
-    //     }
-
-    // }
 
     return (
         <Box sx={{ display: 'flex' }} >

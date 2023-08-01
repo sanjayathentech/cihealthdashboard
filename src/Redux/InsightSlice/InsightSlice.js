@@ -5,6 +5,7 @@ import { GetMethod } from "../../api/apiMethods/apiMethods";
 export const GetAllTenant = createAsyncThunk(
   "Insight/getAllTenant",
   async (_, { rejectWithValue }) => {
+    
     try {
       let { data: insights } = await GetMethod(endPoints.getTenantDetails);
       const [FirstTenant, secondTanent] = insights;
@@ -36,6 +37,7 @@ export const GetAllTenant = createAsyncThunk(
 export const getInsightDetails = createAsyncThunk(
   "Insight/getInsightDetails",
   async (id) => {
+    debugger;
     try {
       let [Agents, callDetails] = await Promise.all([
         GetMethod(endPoints.getUserPresence(id)),
@@ -56,6 +58,7 @@ export const getAgentDetails = createAsyncThunk(
   "/getagentdetails/id",
   async (id) => {
     try {
+      debugger;
       const users = await GetMethod(endPoints.getAgentdetails(id));
       console.log(users);
       return {
@@ -68,14 +71,12 @@ export const getAgentDetails = createAsyncThunk(
 );
 
 export const getAgentcall = createAsyncThunk(
-  "/getcreateasyncall/Id/id",
-  async ({ tenentid, userid }) => {
+  "/getcreateasyncall/Id/id",async ({ tenentid, userid }) => {
     try {
       console.log("agent api", tenentid, userid);
       const agentcall = await GetMethod(
         endPoints.getAgentcalls(tenentid, userid)
       );
-
       return { agentcall: agentcall.data };
     } catch (err) {
       return err;
@@ -105,15 +106,23 @@ export const InsightSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(GetAllTenant.fulfilled, (state, { payload }) => {
+      
         state.insightsArray = payload.insights;
         const [FirstTenant] = payload.insights;
         state.AgentPresence = payload.Agents;
         state.callDetails = payload.callDetails;
         state.selectedTenant = FirstTenant.id;
       })
-      .addCase(GetAllTenant.rejected, (state, action) => { })
-      .addCase(GetAllTenant.pending, (state) => { })
+      .addCase(GetAllTenant.rejected, (state, action) => {
+        console.log(action)
+    
+       })
+      .addCase(GetAllTenant.pending, (state) => {
+        
+        state.callDetails = {}
+       })
       .addCase(getInsightDetails.fulfilled, (state, { payload }) => {
+        debugger;
         state.AgentPresence = payload.Agents;
         state.callDetails = payload.callDetails;
       })

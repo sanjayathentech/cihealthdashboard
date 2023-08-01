@@ -6,10 +6,10 @@ import { GetMethod } from "../../api/apiMethods/apiMethods";
 export const GetAllresourcesandResourcetype = createAsyncThunk("Reports/getAllresourcesandResourcetype", async ({ getResources }, { rejectWithValue }) => {
     try {
         let res = await GetMethod(endPoints.getAllresourcesandResourcetype)
-        let [firstType] = res.data.filter(x => x.resourceTypeFriendlyName == "APIManagement" ||
-            x.resourceTypeFriendlyName == "LogicApp" ||
-            x.resourceTypeFriendlyName == "AppServiceSite" ||
-            x.resourceTypeFriendlyName == "SQLDataBase")
+        let [firstType] = res.data.filter(x => x.resourceTypeFriendlyName == "API Management" ||
+            x.resourceTypeFriendlyName == "Logic App" ||
+            x.resourceTypeFriendlyName == "App ServiceSite" ||
+            x.resourceTypeFriendlyName == "SQL DataBase")
         getResources(firstType.resourceTypeFriendlyName)
         return { data: res.data ?? [], selectId: firstType.resourceTypeFriendlyName }
     } catch (error) {
@@ -18,6 +18,7 @@ export const GetAllresourcesandResourcetype = createAsyncThunk("Reports/getAllre
 });
 
 export const GetApiManagement = createAsyncThunk("Reports/GetApiManagement", async (resourceId, { rejectWithValue }) => {
+   
     try {
         let res = await GetMethod(endPoints.getAPIManagement(resourceId))
         return res.data
